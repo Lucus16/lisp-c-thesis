@@ -1,0 +1,24 @@
+IDEA
+- Build a Lisp interpreter in C
+- Generate C code using Lisp
+- Generate its own interpreter using Lisp
+- Modularize the interpreter for extensibility
+
+DESIGN
+- function extension
+- namespace extension
+- interfaces
+- chars and strings
+- importing
+
+IMPLEMENT
+- repl
+- var
+- dyn
+- std library
+
+DONE
+- refcounting garbage collection
+- tail recursion
+- type tags
+- pattern matching
