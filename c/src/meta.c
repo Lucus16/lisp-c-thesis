@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "symbol.h"
 #include "value.h"
 #include "type.h"
 #include "pair.h"
@@ -42,6 +43,7 @@ Value meta_refer(Meta *m) {
 }
 
 Value		pair_free(Pair pair);
+void		symbol_free(Symbol symbol);
 
 void meta_free(Meta *m) {
 	while (m) {
@@ -52,6 +54,9 @@ void meta_free(Meta *m) {
 			case TYPE_PAIR:
 				m = pair_free(m);
 				break;
+			case TYPE_SYMBOL:
+				symbol_free(m);
+				return;
 			default:
 				return;
 		}
