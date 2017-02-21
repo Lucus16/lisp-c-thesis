@@ -4,6 +4,7 @@
 
 #include "value.h"
 #include "type.h"
+#include "pair.h"
 
 #define META_REFCOUNT_SHIFT (24)
 #define META_REFCOUNT_ONE (1 << (META_REFCOUNT_SHIFT))
@@ -40,12 +41,17 @@ Value meta_refer(Meta *m) {
 	return m;
 }
 
+Value		pair_free(Pair pair);
+
 void meta_free(Meta *m) {
 	while (m) {
 		if ((size_t)m & 0x7) { return; } // Not a pointer.
 		*m -= META_REFCOUNT_ONE;
 		if (*m & META_REFCOUNT_MASK) { return; }
 		switch (*m & TYPE_MASK) {
+			case TYPE_PAIR:
+				m = pair_free(m);
+				break;
 			default:
 				return;
 		}
