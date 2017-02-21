@@ -1,3 +1,6 @@
+VG=valgrind --leak-check=full --track-origins=yes --error-exitcode=1
+CC=clang -g -std=c11 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Werror
+
 all: obj/meta.o obj/pair.o obj/symbol.o
 
 obj/meta.o: src/meta.c src/symbol.h src/value.h src/type.h src/pair.h

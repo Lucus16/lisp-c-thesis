@@ -9,11 +9,11 @@
 
 #define META_REFCOUNT_SHIFT (24)
 #define META_REFCOUNT_ONE (1 << (META_REFCOUNT_SHIFT))
-#define META_REFCOUNT_MASK ((-1) << (META_REFCOUNT_SHIFT))
+#define META_REFCOUNT_MASK (0xffffffffffffffff << (META_REFCOUNT_SHIFT))
 
 typedef uint64_t Meta;
 
-Value meta_new(Type type, size_t size) {
+Meta *meta_new(Type type, size_t size) {
 	Meta *meta = malloc(size);
 	*meta = type | META_REFCOUNT_ONE;
 	return meta;
@@ -61,4 +61,8 @@ void meta_free(Meta *m) {
 				return;
 		}
 	}
+}
+
+void meta_abort() {
+	exit(1);
 }
