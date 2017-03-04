@@ -4,6 +4,7 @@
 typedef enum {
 	TYPE_PAIR,
 	TYPE_SYMBOL,
+	TYPE_UNIQ,
 	TYPE_NEXT_UNUSED,
 	TYPE_MASK = 0xffffff,
 	TYPE_NULL,

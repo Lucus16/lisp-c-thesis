@@ -1,12 +1,11 @@
 #include "value.h"
 #include "meta.h"
 
-typedef struct Pair *Pair;
-struct Pair {
+typedef struct {
 	Meta _meta;
 	Value car;
 	Value cdr;
-};
+} *Pair;
 
 Pair pair_new(Value car, Value cdr) {
 	Pair pair = meta_new(TYPE_PAIR, sizeof(*pair));
