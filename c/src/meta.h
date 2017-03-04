@@ -16,6 +16,7 @@ bool		meta_is_ptr(Value value);
 Type		meta_ptr_type(Value value);
 Value		meta_refer(Value value);
 Value		meta_ptr_refer(Value value);
+bool		meta_is_single_ref(Value value);
 void		meta_free(Value value);
 void		meta_abort();
 
