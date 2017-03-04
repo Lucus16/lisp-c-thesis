@@ -3,6 +3,8 @@ IDEA
 - Generate C code using Lisp
 - Generate its own interpreter using Lisp
 - Modularize the interpreter for extensibility
+- Keep functions like eval, apply, mkstruct, read, ... as close as possible to
+  their C counterparts.
 
 DESIGN
 - function extension
