@@ -4,6 +4,7 @@
 #include "value.h"
 #include "type.h"
 #include "meta.h"
+#include "char.h"
 
 typedef struct String *String;
 struct String {
@@ -72,29 +73,24 @@ const char *str_start(String s) {
 	return s->start;
 }
 
-char str_get(String s, size_t index) {
-	return *(s->start + index);
+Char str_get(String s, size_t index) {
+	return char_new(*(s->start + index));
 }
 
-char str_head(String s) {
-	return *(s->start);
+Char str_head(String s) {
+	return char_new(*(s->start));
 }
 
 String str_tail(String s) {
 	return str_view_new(s, 1, s->end - s->start);
 }
 
-String uniqify(String s) {
+String str_set(String s, size_t index, Char value) {
 	if (!meta_is_single_ref(s) || (meta_ptr_type(s) == TYPE_STRING_VIEW &&
 				!meta_is_single_ref(s->base))) {
-		return str_new(s->start, s->end - s->start);
+		s = str_new(s->start, s->end - s->start);
 	}
-	return s;
-}
-
-String str_set(String s, size_t index, char value) {
-	s = uniqify(s);
-	*(s->start + index) = value;
+	*(s->start + index) = char_get(value);
 	return s;
 }
 

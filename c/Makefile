@@ -15,8 +15,11 @@ obj/symbol.o: src/symbol.c src/value.h src/type.h src/pair.h src/meta.h
 obj/uniq.o: src/uniq.c src/value.h src/type.h src/meta.h
 	$(CC) -c -o $@ $<
 
-obj/str.o: src/str.c src/value.h src/type.h src/meta.h
+obj/str.o: src/str.c src/value.h src/type.h src/meta.h src/char.h
 	$(CC) -c -o $@ $<
 
 obj/int.o: src/int.c
+	$(CC) -c -o $@ $<
+
+obj/char.o: src/char.c
 	$(CC) -c -o $@ $<

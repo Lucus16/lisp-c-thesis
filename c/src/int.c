@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef int64_t Int;
 
@@ -30,6 +31,6 @@ Int int_modulo(Int a, Int b) {
 	return a % (b & ~7);
 }
 
-Int int_less_than(Int a, Int b) {
+bool int_less_than(Int a, Int b) {
 	return a < b;
 }
