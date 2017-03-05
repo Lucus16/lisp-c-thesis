@@ -10,6 +10,8 @@ typedef enum {
 	TYPE_NEXT_UNUSED,
 	TYPE_MASK = 0xffffff,
 	TYPE_NULL,
+	TYPE_INT,
+	TYPE_CHAR,
 } Type;
 
 #endif // TYPE_H_INCLUDED
