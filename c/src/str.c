@@ -18,13 +18,7 @@ struct String {
 };
 
 size_t power_of_two(size_t s) {
-	s |= s >> 32;
-	s |= s >> 16;
-	s |= s >> 8;
-	s |= s >> 4;
-	s |= s >> 2;
-	s |= s >> 1;
-	return s + 1;
+	return 0x8000000000000000 >> (__builtin_clzll(s) + 1);
 }
 
 String str_new(const char *content, size_t buf_size) {
