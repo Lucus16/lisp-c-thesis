@@ -51,8 +51,11 @@ Value meta_ptr_refer(Meta *m) {
 	return m;
 }
 
-Value		pair_free(Pair pair);
-void		symbol_free(Symbol symbol);
+Value		pair_free(Value pair);
+void		symbol_free(Value symbol);
+void		uniq_free(Value uniq);
+void		str_free(Value str);
+Value		str_view_free(Value str_view);
 
 void meta_free(Meta *m) {
 	while (m) {
@@ -66,6 +69,15 @@ void meta_free(Meta *m) {
 			case TYPE_SYMBOL:
 				symbol_free(m);
 				return;
+			case TYPE_UNIQ:
+				uniq_free(m);
+				return;
+			case TYPE_STRING:
+				str_free(m);
+				return;
+			case TYPE_STRING_VIEW:
+				m = str_view_free(m);
+				break;
 			default:
 				return;
 		}
