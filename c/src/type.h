@@ -8,8 +8,7 @@ typedef enum {
 	TYPE_STRING,
 	TYPE_STRING_VIEW,
 	TYPE_NEXT_UNUSED,
-	TYPE_MASK = 0xffffff,
-	TYPE_NULL,
+	TYPE_NULL = 0x1000000,
 	TYPE_INT,
 	TYPE_CHAR,
 } Type;

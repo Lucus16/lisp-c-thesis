@@ -7,15 +7,15 @@
 #include "type.h"
 #include "pair.h"
 
-#define META_REFCOUNT_SHIFT (24)
-#define META_REFCOUNT_ONE (1 << (META_REFCOUNT_SHIFT))
-#define META_REFCOUNT_MASK (0xffffffffffffffff << (META_REFCOUNT_SHIFT))
-
-typedef uint64_t Meta;
+typedef struct {
+	size_t refcount : 40;
+	Type type : 24;
+} Meta;
 
 Meta *meta_new(Type type, size_t size) {
 	Meta *meta = malloc(size);
-	*meta = type | META_REFCOUNT_ONE;
+	meta->type = type;
+	meta->refcount = 1;
 	return meta;
 }
 
@@ -24,7 +24,7 @@ Type meta_type(Meta *value) {
 	if (((size_t)value) & 0x7) {
 		return TYPE_NULL + (((size_t)value) & 0x7);
 	}
-	return *value & TYPE_MASK;
+	return value->type;
 }
 
 bool meta_is_ptr(Meta *value) {
@@ -32,22 +32,22 @@ bool meta_is_ptr(Meta *value) {
 }
 
 Type meta_ptr_type(Meta *value) {
-	return *value & TYPE_MASK;
+	return value->type;
 }
 
 bool meta_is_single_ref(Meta *value) {
-	return ((*value) & META_REFCOUNT_MASK) == META_REFCOUNT_ONE;
+	return value->refcount == 1;
 }
 
 Value meta_refer(Meta *m) {
 	if (m != NULL && !((size_t)m & 0x7)) {
-		*m += META_REFCOUNT_ONE;
+		m->refcount++;
 	}
 	return m;
 }
 
 Value meta_ptr_refer(Meta *m) {
-	*m += META_REFCOUNT_ONE;
+	m->refcount++;
 	return m;
 }
 
@@ -60,9 +60,9 @@ Value		str_view_free(Value str_view);
 void meta_free(Meta *m) {
 	while (m) {
 		if ((size_t)m & 0x7) { return; } // Not a pointer.
-		*m -= META_REFCOUNT_ONE;
-		if (*m & META_REFCOUNT_MASK) { return; }
-		switch (*m & TYPE_MASK) {
+		m->refcount--;
+		if (m->refcount) { return; }
+		switch (m->type) {
 			case TYPE_PAIR:
 				m = pair_free(m);
 				break;
