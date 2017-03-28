@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-typedef void *Char;
+typedef struct {} *Char;
 
 Char		char_new(char c);
 char		char_get(Char c);

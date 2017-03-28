@@ -1,7 +1,7 @@
 #ifndef SYMBOL_H_INCLUDED
 #define SYMBOL_H_INCLUDED
 
-typedef void *Symbol;
+typedef struct {} *Symbol;
 
 Symbol		symbol_new(const char *name, size_t len);
 Symbol		unique_new(const char *name);

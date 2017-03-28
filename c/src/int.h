@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef void *Int;
+typedef struct {} *Int;
 
 Int			int_new(int64_t i);
 int64_t		int_get(Int i);

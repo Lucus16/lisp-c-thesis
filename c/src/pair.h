@@ -3,7 +3,7 @@
 
 #include "value.h"
 
-typedef void *Pair;
+typedef struct {} *Pair;
 
 Pair		pair_new(Value car, Value cdr);
 Value		pair_car(Pair pair);

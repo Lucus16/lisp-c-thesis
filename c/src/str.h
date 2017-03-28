@@ -6,7 +6,7 @@
 #include "value.h"
 #include "char.h"
 
-typedef void *String;
+typedef struct {} *String;
 
 String		str_new(const char *content, size_t buf_size); 
 String		str_view_new(String base, size_t start, size_t end); 

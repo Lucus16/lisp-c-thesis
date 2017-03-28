@@ -1,7 +1,7 @@
 #ifndef UNIQ_H_INCLUDED
 #define UNIQ_H_INCLUDED
 
-typedef void *Uniq;
+typedef struct {} *Uniq;
 
 Uniq		uniq_new();
 
