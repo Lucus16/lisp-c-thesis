@@ -6,6 +6,7 @@
 #include "value.h"
 #include "type.h"
 #include "pair.h"
+#include "free.h"
 
 typedef struct {
 	size_t refcount : 40;
@@ -51,51 +52,15 @@ Value meta_ptr_refer(Meta *m) {
 	return m;
 }
 
-void meta_abort() {
-	exit(1);
-}
-
-Value		pair_free(Value pair);
-void		symbol_free(Value symbol);
-void		uniq_free(Value uniq);
-void		str_free(Value str);
-Value		str_view_free(Value str_view);
-
 void meta_free(Meta *m) {
 	while (m) {
 		if ((size_t)m & 0x7) { return; } // Not a pointer.
 		m->refcount--;
 		if (m->refcount) { return; }
-		switch (m->type) {
-			case TYPE_PAIR:
-				m = pair_free(m);
-				break;
-			case TYPE_SYMBOL:
-				symbol_free(m);
-				return;
-			case TYPE_UNIQ:
-				uniq_free(m);
-				return;
-			case TYPE_STRING:
-				str_free(m);
-				return;
-			case TYPE_STRING_VIEW:
-				m = str_view_free(m);
-				break;
-			default:
-				return;
-		}
+		m = free_ptr_value(m);
 	}
 }
 
-void		bool_init();
-
-void meta_init() {
-	bool_init();
-}
-
-void		bool_exit();
-
-void meta_exit() {
-	bool_exit();
+void meta_abort() {
+	exit(1);
 }
