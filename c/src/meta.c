@@ -51,6 +51,10 @@ Value meta_ptr_refer(Meta *m) {
 	return m;
 }
 
+void meta_abort() {
+	exit(1);
+}
+
 Value		pair_free(Value pair);
 void		symbol_free(Value symbol);
 void		uniq_free(Value uniq);
@@ -84,6 +88,14 @@ void meta_free(Meta *m) {
 	}
 }
 
-void meta_abort() {
-	exit(1);
+void		bool_init();
+
+void meta_init() {
+	bool_init();
+}
+
+void		bool_exit();
+
+void meta_exit() {
+	bool_exit();
 }
