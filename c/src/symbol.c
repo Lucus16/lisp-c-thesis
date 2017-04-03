@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 
 #include "value.h"
 #include "pair.h"
@@ -36,4 +37,8 @@ Value symbol_free(Symbol symbol) {
 
 const char *symbol_name(Symbol symbol) {
 	return symbol->name;
+}
+
+void symbol_print(Symbol symbol) {
+	printf("%s", symbol->name);
 }

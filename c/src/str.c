@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "value.h"
 #include "type.h"
@@ -16,6 +17,14 @@ struct String {
 		char *buf_end;
 	};
 };
+
+void str_print(String string) {
+	printf("\"");
+	for (char *c = string->start; c < string->end; c++) {
+		char_print_unquoted(*c);
+	}
+	printf("\"");
+}
 
 size_t power_of_two(size_t s) {
 	return 0x8000000000000000 >> (__builtin_clzll(s) + 1);

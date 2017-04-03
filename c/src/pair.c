@@ -1,4 +1,7 @@
+#include <stdio.h>
+
 #include "value.h"
+#include "print.h"
 #include "meta.h"
 
 typedef struct {
@@ -37,4 +40,19 @@ void pair_set_car(Pair pair, Value value) {
 void pair_set_cdr(Pair pair, Value value) {
 	meta_free(pair->cdr);
 	pair->cdr = value;
+}
+
+void pair_print(Pair pair) {
+	printf("(");
+	print(pair->car);
+	for (Value v = pair->cdr; v; v = pair->cdr) {
+		if (meta_type(v) != TYPE_PAIR) {
+			printf(" . ");
+			print(v);
+			break;
+		}
+		printf(" ");
+		print(pair->car);
+	}
+	printf(")");
 }
