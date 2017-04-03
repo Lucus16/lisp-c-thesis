@@ -1,15 +1,76 @@
 #include <stdio.h>
 
-#include "value.h"
-#include "meta.h"
-#include "type.h"
+#include "core.h"
 
-void		pair_print(Value v);
-void		symbol_print(Value v);
-void		uniq_print(Value v);
-void		int_print(Value v);
-void		char_print(Value v);
-void		str_print(Value v);
+void print(Value v);
+
+void pair_print(Pair pair) {
+	printf("(");
+	print(pair_car(pair));
+	for (Value v = pair_cdr(pair); v; v = pair_cdr(pair)) {
+		if (meta_type(v) != TYPE_PAIR) {
+			printf(" . ");
+			print(v);
+			break;
+		}
+		printf(" ");
+		print(pair_car(pair));
+	}
+	printf(")");
+}
+
+void symbol_print(Symbol symbol) {
+	printf("%s", symbol_name(symbol));
+}
+
+void uniq_print(Uniq uniq) {
+	printf("<Unique %p>", uniq);
+}
+
+void int_print(Int i) {
+	printf("%li", int_get(i));
+}
+
+void char_print_unquoted(char c) {
+	switch (c) {
+		case ' ': case '!': case '#' ... '[': case ']' ... '~':
+			printf("%c", c); break;
+		case '"':
+			printf("\\\""); break;
+		case '\\':
+			printf("\\\\"); break;
+		case '\n':
+			printf("\\n"); break;
+		case '\t':
+			printf("\\t"); break;
+		case '\r':
+			printf("\\r"); break;
+		default:
+			printf("\\x%2x", c); break;
+	}
+}
+
+void char_print(Char ch) {
+	char c = char_get(ch);
+	if (c == '\'') {
+		printf("'\\''");
+	} else if (c == '"') {
+		printf("'\"'");
+	} else {
+		printf("'");
+		char_print_unquoted(c);
+		printf("'");
+	}
+}
+
+void str_print(String string) {
+	printf("\"");
+	size_t len = str_len(string);
+	for (size_t i = 0; i < len; i++) {
+		char_print_unquoted(str_get_char(string, i));
+	}
+	printf("\"");
+}
 
 void print(Value v) {
 	switch (meta_type(v)) {
@@ -26,7 +87,7 @@ void print(Value v) {
 		case TYPE_STRING: case TYPE_STRING_VIEW:
 			str_print(v); break;
 		case TYPE_NULL:
-			printf("()");
+			printf("()"); break;
 		default:
 			printf("<Unknown type %i>", meta_type(v)); break;
 	}

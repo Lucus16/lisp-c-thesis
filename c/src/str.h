@@ -13,6 +13,7 @@ String		str_view_new(String base, size_t start, size_t end);
 size_t		str_len(String s); 
 const char *str_start(String s); 
 Char		str_get(String s, size_t index); 
+char		str_get_char(String c, size_t index);
 Char		str_head(String s); 
 String		str_tail(String s); 
 String		str_set(String s, size_t index, Char value); 

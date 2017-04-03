@@ -38,5 +38,6 @@ obj/init.o: src/init.c
 obj/exit.o: src/exit.c
 	$(CC) -c -o $@ $<
 
-obj/print.o: src/print.c src/value.h src/meta.h src/type.h
+obj/print.o: src/print.c src/core.h src/value.h src/meta.h src/type.h \
+	src/pair.h src/symbol.h src/uniq.h src/str.h src/int.h src/char.h
 	$(CC) -c -o $@ $<

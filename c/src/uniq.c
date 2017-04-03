@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "meta.h"
 
 typedef struct {
@@ -14,8 +12,4 @@ Uniq uniq_new() {
 Value uniq_free(Uniq uniq) {
 	free(uniq);
 	return NULL;
-}
-
-void uniq_print(Uniq uniq) {
-	printf("<Unique %p>", uniq);
 }
