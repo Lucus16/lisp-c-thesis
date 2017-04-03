@@ -29,8 +29,9 @@ Symbol symbol_new(const char *name, size_t len) {
 	return meta_refer(symbol);
 }
 
-void symbol_free(Symbol symbol) {
+Value symbol_free(Symbol symbol) {
 	free(symbol);
+	return NULL;
 }
 
 const char *symbol_name(Symbol symbol) {

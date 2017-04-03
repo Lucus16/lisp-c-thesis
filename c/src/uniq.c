@@ -9,6 +9,7 @@ Uniq uniq_new() {
 	return uniq;
 }
 
-void uniq_free(Uniq uniq) {
+Value uniq_free(Uniq uniq) {
 	free(uniq);
+	return NULL;
 }

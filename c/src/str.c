@@ -48,9 +48,10 @@ String str_view_new(String base, size_t start, size_t end) {
 	return s;
 }
 
-void str_free(String s) {
+Value str_free(String s) {
 	free(s->start);
 	free(s);
+	return NULL;
 }
 
 Value str_view_free(String s) {

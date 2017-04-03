@@ -2,9 +2,9 @@
 #include "meta.h"
 
 Value		pair_free(Value pair);
-void		symbol_free(Value symbol);
-void		uniq_free(Value uniq);
-void		str_free(Value str);
+Value		symbol_free(Value symbol);
+Value		uniq_free(Value uniq);
+Value		str_free(Value str);
 Value		str_view_free(Value str_view);
 
 Value free_ptr_value(Value v) {
@@ -12,14 +12,11 @@ Value free_ptr_value(Value v) {
 		case TYPE_PAIR:
 			return pair_free(v);
 		case TYPE_SYMBOL:
-			symbol_free(v);
-			return NULL;
+			return symbol_free(v);
 		case TYPE_UNIQ:
-			uniq_free(v);
-			return NULL;
+			return uniq_free(v);
 		case TYPE_STRING:
-			str_free(v);
-			return NULL;
+			return str_free(v);
 		case TYPE_STRING_VIEW:
 			return str_view_free(v);
 		default:
