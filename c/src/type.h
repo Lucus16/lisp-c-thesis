@@ -2,7 +2,7 @@
 #define TYPE_H_INCLUDED
 
 typedef enum {
-	TYPE_PAIR,
+	TYPE_PAIR = 1,
 	TYPE_SYMBOL,
 	TYPE_UNIQ,
 	TYPE_STRING,
