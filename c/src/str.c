@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #include "value.h"
 #include "type.h"
@@ -158,4 +160,40 @@ String str_append(String dest, String src) {
 	memcpy(dest->end, src->start, str_len(src));
 	dest->end += str_len(src);
 	return dest;
+}
+
+String str_appendf(String prefix, const char *format, ...) {
+	va_list args1;
+	va_list args2;
+	va_start(args1, format);
+	va_copy(args2, args1);
+
+	int len = vsnprintf(NULL, 0, format, args1) + sizeof('\0');
+	prefix = buf_alloc(prefix, len);
+	int written = vsnprintf(prefix->end, len, format, args2);
+	if (written > 0) {
+		prefix->end += written;
+	}
+
+	va_end(args1);
+	va_end(args2);
+	return prefix;
+}
+
+String str_printf(const char *format, ...) {
+	va_list args1;
+	va_list args2;
+	va_start(args1, format);
+	va_copy(args2, args1);
+
+	int len = vsnprintf(NULL, 0, format, args1) + sizeof('\0');
+	String s = str_new(NULL, 0, len);
+	int written = vsnprintf(s->end, len, format, args2);
+	if (written > 0) {
+		s->end += written;
+	}
+
+	va_end(args1);
+	va_end(args2);
+	return s;
 }
