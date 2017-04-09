@@ -67,7 +67,7 @@ void str_print(String string) {
 	printf("\"");
 	size_t len = str_len(string);
 	for (size_t i = 0; i < len; i++) {
-		char_print_unquoted(str_get_char(string, i));
+		char_print_unquoted(str_get(string, i));
 	}
 	printf("\"");
 }
