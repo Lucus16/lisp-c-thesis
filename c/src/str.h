@@ -1,5 +1,4 @@
-#ifndef STR_H_INCLUDED
-#define STR_H_INCLUDED
+#pragma once
 
 #include <stdlib.h>
 
@@ -24,5 +23,3 @@ char		str_head(String s) {
 String		str_tail(String s) {
 	return str_slice(s, 1, str_len(s));
 }
-
-#endif // STR_H_INCLUDED

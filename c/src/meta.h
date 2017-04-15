@@ -1,5 +1,4 @@
-#ifndef META_H_INCLUDED
-#define META_H_INCLUDED
+#pragma once
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -24,5 +23,3 @@ void		meta_free(Value value);
 void		meta_init();
 void		meta_exit();
 bool		meta_truthy();
-
-#endif // META_H_INCLUDED

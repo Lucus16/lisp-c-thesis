@@ -1,8 +1,5 @@
-#ifndef BOOL_H_INCLUDED
-#define BOOL_H_INCLUDED
+#pragma once
 
 typedef struct {} *Bool;
 
 Bool bool_new(bool b);
-
-#endif // BOOL_H_INCLUDED

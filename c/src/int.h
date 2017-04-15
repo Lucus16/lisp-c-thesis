@@ -1,5 +1,4 @@
-#ifndef INT_H_INCLUDED
-#define INT_H_INCLUDED
+#pragma once
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -14,5 +13,3 @@ Int			int_multiply(Int a, Int b);
 Int			int_divide(Int a, Int b);
 Int			int_modulo(Int a, Int b);
 bool		int_less_than(Int a, Int b);
-
-#endif // INT_H_INCLUDED

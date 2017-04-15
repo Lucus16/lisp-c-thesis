@@ -1,5 +1,4 @@
-#ifndef TYPE_H_INCLUDED
-#define TYPE_H_INCLUDED
+#pragma once
 
 typedef enum {
 	TYPE_PAIR = 1,
@@ -12,5 +11,3 @@ typedef enum {
 	TYPE_INT,
 	TYPE_CHAR,
 } Type;
-
-#endif // TYPE_H_INCLUDED
