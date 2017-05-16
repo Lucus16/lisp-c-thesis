@@ -7,20 +7,33 @@ IDEA
   their C counterparts.
 
 DESIGN
-- function extension
-- namespace extension
-- interfaces
-- chars and strings
-- importing
+- functions
 
 IMPLEMENT
+- parsing
+- evaluating
+- reading
 - repl
-- var
-- dyn
 - std library
 
+DEFAULTS
+- var
+- namespaces
+- chars and strings
+- integers
+- pairs
+- booleans
+- symbols
+- printing
+- equality
+
 DONE
-- refcounting garbage collection
+- garbage collection
 - tail recursion
 - type tags
+
+OPTIONAL
 - pattern matching
+- interfaces
+- function extension
+- dynamic scope

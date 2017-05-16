@@ -2,7 +2,8 @@ VG=valgrind --leak-check=full --track-origins=yes --error-exitcode=1
 CC=clang -g -std=c11 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Werror
 
 all: obj/meta.o obj/pair.o obj/symbol.o obj/uniq.o obj/str.o obj/int.o \
-	obj/char.o obj/bool.o obj/free.o obj/init.o obj/print.o
+	obj/char.o obj/bool.o obj/free.o obj/init.o obj/print.o obj/ns.o \
+	obj/equals.o
 
 obj/meta.o: src/meta.c src/symbol.h src/value.h src/type.h src/pair.h \
 	src/free.h src/bool.h
@@ -37,4 +38,11 @@ obj/init.o: src/init.c
 
 obj/print.o: src/print.c src/core.h src/value.h src/meta.h src/type.h \
 	src/pair.h src/symbol.h src/uniq.h src/str.h src/int.h src/char.h
+	$(CC) -c -o $@ $<
+
+obj/equals.o: src/equals.c src/core.h src/value.h src/meta.h src/type.h \
+	src/pair.h src/symbol.h src/uniq.h src/str.h src/int.h src/char.h
+	$(CC) -c -o $@ $<
+
+obj/ns.o: src/ns.c src/value.h src/meta.h src/equals.h
 	$(CC) -c -o $@ $<
