@@ -48,7 +48,7 @@ String str_new(const char *start, size_t size, size_t buf_size) {
 	return s;
 }
 
-String str_view_new(String base, size_t start, size_t end) {
+String str_slice(String base, size_t start, size_t end) {
 	if (meta_ptr_type(base) == TYPE_STRING_VIEW && meta_is_single_ref(base)) {
 		base->end = base->start + end;
 		base->start += start;
@@ -77,10 +77,6 @@ size_t str_len(String s) {
 	return s->end - s->start;
 }
 
-const char *str_start(String s) {
-	return s->start;
-}
-
 char str_get(String s, size_t index) {
 	return s->start[index];
 }
@@ -90,7 +86,7 @@ Char str_head(String s) {
 }
 
 String str_tail(String s) {
-	return str_view_new(s, 1, s->end - s->start);
+	return str_slice(s, 1, s->end - s->start);
 }
 
 String str_set(String s, size_t index, char value) {
@@ -196,4 +192,8 @@ String str_printf(const char *format, ...) {
 	va_end(args1);
 	va_end(args2);
 	return s;
+}
+
+void str_print(FILE *stream, String s) {
+	fprintf(stream, "%*s", (int)str_len(s), s->start);
 }

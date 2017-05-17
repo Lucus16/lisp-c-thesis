@@ -6,6 +6,8 @@
 #include "symbol.h"
 #include "uniq.h"
 #include "str.h"
+#include "var.h"
+#include "ns.h"
 
 #include "int.h"
 #include "char.h"
