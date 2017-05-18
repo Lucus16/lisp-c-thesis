@@ -48,6 +48,10 @@ String str_new(const char *start, size_t size, size_t buf_size) {
 	return s;
 }
 
+String str_lit(const char *start) {
+	return str_new(start, strlen(start), strlen(start));
+}
+
 String str_slice(String base, size_t start, size_t end) {
 	if (meta_ptr_type(base) == TYPE_STRING_VIEW && meta_is_single_ref(base)) {
 		base->end = base->start + end;
