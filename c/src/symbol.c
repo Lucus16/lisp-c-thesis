@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "abort.h"
 #include "value.h"
 #include "pair.h"
 #include "meta.h"
@@ -12,7 +13,7 @@ typedef struct {
 Pair symbols;
 
 Symbol symbol_new(const char *name, size_t len) {
-	if (len == 0) { meta_abort("Zero length symbol."); }
+	if (len == 0) { abortf("Attempt to create zero length symbol."); }
 	Pair remaining = symbols;
 	while (remaining) {
 		Symbol symbol = pair_car(remaining);

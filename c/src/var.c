@@ -9,6 +9,7 @@ typedef struct {
 Var var_new(Value initial) {
 	Var var = meta_new(TYPE_VAR, sizeof(*var));
 	var->value = initial;
+	return var;
 }
 
 Value var_free(Var var) {

@@ -62,10 +62,6 @@ void meta_free(Meta *m) {
 	}
 }
 
-void meta_abort() {
-	exit(1);
-}
-
 bool meta_truthy(Meta *m) {
 	return m != NULL && (Value)m != bool_new(false);
 }

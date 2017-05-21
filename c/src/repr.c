@@ -8,10 +8,10 @@ String repr(Value v);
 String pair_repr(Pair pair) {
 	String r = str_new("(", 1, 0x40);
 	r = str_append(r, repr(pair_car(pair)));
-	for (Value v = pair_cdr(pair); v != NULL; v = pair_cdr(pair)) {
-		if (meta_type(v) != TYPE_PAIR) {
+	for (pair = pair_cdr(pair); pair != NIL; pair = pair_cdr(pair)) {
+		if (meta_type(pair) != TYPE_PAIR) {
 			r = str_appendf(r, " . ");
-			r = str_append(r, repr(v));
+			r = str_append(r, repr(pair));
 			break;
 		}
 		r = str_appendf(r, " ");

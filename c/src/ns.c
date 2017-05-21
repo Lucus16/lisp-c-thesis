@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "abort.h"
 #include "equals.h"
 #include "value.h"
 #include "meta.h"
@@ -62,7 +63,6 @@ Value ns_lookup(Namespace ns, Value key) {
 		}
 		ns = ns->super;
 	}
-	printf("Key does not exist.\n");
-	meta_abort();
+	abortf("Key does not exist.");
 	return NULL;
 }

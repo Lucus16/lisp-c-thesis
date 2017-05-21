@@ -7,6 +7,7 @@
 #include "type.h"
 #include "meta.h"
 #include "char.h"
+#include "symbol.h"
 
 typedef struct String *String;
 struct String {
@@ -85,14 +86,6 @@ char str_get(String s, size_t index) {
 	return s->start[index];
 }
 
-Char str_head(String s) {
-	return char_new(*(s->start));
-}
-
-String str_tail(String s) {
-	return str_slice(s, 1, s->end - s->start);
-}
-
 String str_set(String s, size_t index, char value) {
 	if (!meta_is_single_ref(s) || (meta_ptr_type(s) == TYPE_STRING_VIEW &&
 				!meta_is_single_ref(s->base))) {
@@ -162,6 +155,18 @@ String str_append(String dest, String src) {
 	return dest;
 }
 
+String str_append_char(String dest, char src) {
+	dest = buf_alloc(dest, 1);
+	*(dest->end++) = src;
+	return dest;
+}
+
+Symbol str_symbol(String s) {
+	Symbol r = symbol_new(s->start, str_len(s));
+	meta_free(s);
+	return r;
+}
+
 String str_appendf(String prefix, const char *format, ...) {
 	va_list args1;
 	va_list args2;
@@ -200,4 +205,12 @@ String str_printf(const char *format, ...) {
 
 void str_print(FILE *stream, String s) {
 	fprintf(stream, "%*s", (int)str_len(s), s->start);
+}
+
+char str_head(String s) {
+	return str_get(s, 0);
+}
+
+String str_tail(String s) {
+	return str_slice(s, 1, str_len(s));
 }

@@ -1,6 +1,7 @@
 #include "value.h"
 #include "meta.h"
 #include "type.h"
+#include "abort.h"
 
 #include "pair.h"
 #include "symbol.h"
