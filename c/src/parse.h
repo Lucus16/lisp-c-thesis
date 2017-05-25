@@ -3,5 +3,6 @@
 #include <stdio.h>
 
 #include "value.h"
+#include "uniq.h"
 
-Value parse_file(FILE *fp);
+Value parse_value(Reader reader);

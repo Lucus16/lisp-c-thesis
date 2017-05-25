@@ -48,8 +48,12 @@ String char_escape(char c) {
 			return str_lit("\\r");
 		case '\0':
 			return str_lit("\\0");
+		case '\a':
+			return str_lit("\\a");
+		case '\b':
+			return str_lit("\\b");
 		default:
-			return str_printf("\\x%2x", c);
+			return str_printf("\\x%02x", c);
 	}
 }
 

@@ -1,61 +1,20 @@
+#include "reader.h"
 #include "core.h"
 
 typedef size_t Index;
 
-typedef struct State {
-	FILE *fp;
-	char cur;
-	int next;
-	int line;
-	int col;
-} *State;
+Value parse_value(Reader reader);
 
-Value parse_value(State state);
-
-bool empty(State state) {
-	return state->next == EOF;
-}
-
-char peek(State state) {
-	return state->cur;
-}
-
-char next(State state) {
-	if (state->next == EOF) {
-		abortf("Unexpected end of file.");
-	}
-	if (state->cur == '\n') {
-		state->line += 1;
-		state->col = 1;
-	} else {
-		state->col += 1;
-	}
-	state->cur = state->next;
-	state->next = fgetc(state->fp);
-	return state->cur;
-}
-
-Value parse_file(FILE *fp) {
-	struct State state;
-	state.fp = fp;
-	state.next = 0;
-	next(&state);
-	next(&state);
-	state.line = 1;
-	state.col = 1;
-	Value result = parse_value(&state);
-	return result;
-}
-
-char skip_ws(State state) {
-	for (char c = peek(state); ; c = next(state)) {
+char skip_ws(Reader reader) {
+	for (char c = reader_peek(reader); ; c = reader_next(reader)) {
 		if (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
 			return c;
 		}
 	}
 }
 
-char escape(char c) {
+char escape(Reader reader) {
+	char c = reader_next(reader);
 	switch (c) {
 		case '\'': return '\'';
 		case '\\': return '\\';
@@ -66,67 +25,69 @@ char escape(char c) {
 		case '0': return '\0';
 		case 'a': return '\a';
 		case 'b': return '\b';
-		default:
-			abortf("Unknown escape sequence: \\%c", c);
+		default: {
+			String error = str_printf("Unknown escape sequence: \\%c", c);
+			reader_set_error(reader, error);
 			return '\0';
+		}
 	}
 }
 
-Symbol parse_symbol(State state) {
+Symbol parse_symbol(Reader reader) {
 	String name = str_new(NULL, 0, 16);
-	for (char c = peek(state); !empty(state); c = next(state)) {
+	for (char c = reader_peek(reader); !reader_empty(reader); c = reader_next(reader)) {
 		if (c <= ' ' || c == ')') { break; }
 		name = str_append_char(name, c);
 	}
 	return str_symbol(name);
 }
 
-String parse_str(State state) {
+String parse_str(Reader reader) {
 	String s = str_new(NULL, 0, 0x40);
-	for (char c = next(state); ; c = next(state)) {
+	for (char c = reader_next(reader); ; c = reader_next(reader)) {
 		if (c == '"') {
-			next(state);
+			reader_next(reader);
 			return s;
 		} else if (c == '\\') {
-			s = str_append_char(s, escape(next(state)));
+			s = str_append_char(s, escape(reader));
 		} else {
 			s = str_append_char(s, c);
 		}
 	}
 }
 
-Int parse_int(State state) {
+Int parse_int(Reader reader) {
 	uint64_t acc = 0;
-	for (char c = peek(state); !empty(state); c = next(state)) {
+	for (char c = reader_peek(reader); !reader_empty(reader); c = reader_next(reader)) {
 		if (c < '0' || c > '9') { break; }
 		acc = acc * 10 + (c - '0');
 	}
 	return int_new(acc);
 }
 
-Char parse_char(State state) {
-	char c = next(state);
+Char parse_char(Reader reader) {
+	char c = reader_next(reader);
 	if (c == '\\') {
-		c = escape(next(state));
+		c = escape(reader);
 	}
-	if (next(state) != '\'') {
-		abortf("Expected ' to close character literal.");
+	if (reader_next(reader) != '\'') {
+		reader_set_error(reader, str_lit("Expected ' to close character literal."));
 		return NULL;
 	}
-	next(state);
+	reader_next(reader);
 	return char_new(c);
 }
 
-Value parse_list(State state) {
+Value parse_list(Reader reader) {
 	Pair first = NIL;
 	Pair last = NIL;
-	next(state);
-	for (char c = skip_ws(state); ; c = skip_ws(state)) {
+	reader_next(reader);
+	for (char c = skip_ws(reader); ; c = skip_ws(reader)) {
 		if (c == ')') {
-			next(state);
+			reader_next(reader);
 			return first;
 		}
-		Value car = parse_value(state);
+		Value car = parse_value(reader);
 		Pair pair = pair_new(car, NIL);
 		if (first == NIL) {
 			first = last = pair;
@@ -137,20 +98,24 @@ Value parse_list(State state) {
 	}
 }
 
-Value parse_value(State state) {
-	switch (skip_ws(state)) {
+Value parse_value(Reader reader) {
+	char c = skip_ws(reader);
+	if (reader_error(reader)) {
+		return NULL;
+	}
+	switch (c) {
 		case '(':
-			return parse_list(state);
+			return parse_list(reader);
 		case '1' ... '9':
-			return parse_int(state);
+			return parse_int(reader);
 		case '"':
-			return parse_str(state);
+			return parse_str(reader);
 		case '\'':
-			return parse_char(state);
-		case '\x00' ... '\x1f': case '\x7f':
-			abortf("Unexpected character.");
+			return parse_char(reader);
+		case '\x00' ... '\x1f': case '\x7f': case ')':
+			reader_set_error(reader, str_printf("Unexpected character '%c'.", c));
 			return NULL;
 		default:
-			return parse_symbol(state);
+			return parse_symbol(reader);
 	}
 }

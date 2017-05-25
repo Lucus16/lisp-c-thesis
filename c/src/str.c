@@ -204,7 +204,7 @@ String str_printf(const char *format, ...) {
 }
 
 void str_print(FILE *stream, String s) {
-	fprintf(stream, "%*s", (int)str_len(s), s->start);
+	fprintf(stream, "%.*s", (int)str_len(s), s->start);
 }
 
 char str_head(String s) {

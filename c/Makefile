@@ -4,9 +4,10 @@ CORE=src/core.h src/value.h src/meta.h src/type.h src/var.h src/ns.h \
 	 src/pair.h src/symbol.h src/uniq.h src/str.h src/int.h src/char.h
 OBJS=obj/meta.o obj/pair.o obj/symbol.o obj/uniq.o obj/str.o obj/int.o \
 	 obj/char.o obj/bool.o obj/free.o obj/init.o obj/ns.o obj/equals.o \
-	 obj/repr.o obj/abort.o obj/parse.o obj/var.o
+	 obj/repr.o obj/abort.o obj/parse.o obj/var.o obj/reader.o
+BINS=bin/repl
 
-all: $(OBJS)
+all: $(OBJS) $(BINS)
 
 clean:
 	rm obj/*.o
@@ -61,5 +62,8 @@ obj/parse.o: src/parse.c $(CORE)
 obj/var.o: src/var.c src/value.h src/meta.h
 	$(CC) -c -o $@ $<
 
-bin/test_parse_print: src/test_parse_print.c $(OBJS)
+obj/reader.o: src/reader.c src/value.h src/meta.h src/str.h
+	$(CC) -c -o $@ $<
+
+bin/repl: src/repl.c $(OBJS)
 	$(CC) -o $@ $< $(OBJS)
