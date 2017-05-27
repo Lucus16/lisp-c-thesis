@@ -61,7 +61,3 @@ void meta_free(Meta *m) {
 		m = free_ptr_value(m);
 	}
 }
-
-bool meta_truthy(Meta *m) {
-	return m != NULL && (Value)m != bool_new(false);
-}

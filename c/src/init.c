@@ -1,5 +1,5 @@
-void		bool_init();
+void		constants_init();
 
 void init_all() {
-	bool_init();
+	constants_init();
 }

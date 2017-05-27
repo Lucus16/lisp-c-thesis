@@ -1,10 +1,10 @@
 VG=valgrind --leak-check=full --track-origins=yes --error-exitcode=1
 CC=clang -g -std=c11 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Werror
+CS=$(shell ls src/*.c)
+HS=$(shell ls src/*.h)
 CORE=src/core.h src/value.h src/meta.h src/type.h src/var.h src/ns.h \
 	 src/pair.h src/symbol.h src/uniq.h src/str.h src/int.h src/char.h
-OBJS=obj/meta.o obj/pair.o obj/symbol.o obj/uniq.o obj/str.o obj/int.o \
-	 obj/char.o obj/bool.o obj/free.o obj/init.o obj/ns.o obj/equals.o \
-	 obj/repr.o obj/abort.o obj/parse.o obj/var.o obj/reader.o
+OBJS=$(CS:src/%.c=obj/%.o)
 BINS=bin/repl
 
 all: $(OBJS) $(BINS)
@@ -65,5 +65,32 @@ obj/var.o: src/var.c src/value.h src/meta.h
 obj/reader.o: src/reader.c src/value.h src/meta.h src/str.h
 	$(CC) -c -o $@ $<
 
-bin/repl: src/repl.c $(OBJS)
-	$(CC) -o $@ $< $(OBJS)
+obj/closure.o: src/closure.c src/value.h src/meta.h src/ns.h
+	$(CC) -c -o $@ $<
+
+obj/prim.o: src/prim.c src/value.h src/meta.h
+	$(CC) -c -o $@ $<
+
+obj/special.o: src/special.c src/value.h src/meta.h
+	$(CC) -c -o $@ $<
+
+obj/eval.o: src/eval.c src/step.h
+	$(CC) -c -o $@ $<
+
+obj/constants.o: src/constants.c src/constants.h src/symbol.h src/meta.h src/uniq.h
+	$(CC) -c -o $@ $<
+
+obj/match.o: src/match.c src/value.h src/type.h src/ns.h
+	$(CC) -c -o $@ $<
+
+obj/repl.o: src/repl.c src/reader.h src/parse.h src/repr.h src/init.h src/str.h
+	$(CC) -c -o $@ $<
+
+obj/truthy.o: src/truthy.c src/value.h src/bool.h
+	$(CC) -c -o $@ $<
+
+obj/step.o: src/step.c src/step.h src/value.h
+	$(CC) -c -o $@ $<
+
+bin/repl: $(OBJS)
+	$(CC) -o $@ $(OBJS)

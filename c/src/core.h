@@ -9,6 +9,9 @@
 #include "str.h"
 #include "var.h"
 #include "ns.h"
+#include "prim.h"
+#include "special.h"
+#include "closure.h"
 
 #include "int.h"
 #include "char.h"
