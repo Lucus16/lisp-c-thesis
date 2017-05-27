@@ -1,6 +1,6 @@
-#include "value.h"
-#include "step.h"
-#include "meta.h"
+#include "../h/value.h"
+#include "../h/step.h"
+#include "../h/meta.h"
 
 typedef struct {
 	Meta _meta;

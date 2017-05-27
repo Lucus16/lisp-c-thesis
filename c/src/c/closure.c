@@ -1,8 +1,8 @@
-#include "value.h"
-#include "match.h"
-#include "meta.h"
-#include "step.h"
-#include "ns.h"
+#include "../h/value.h"
+#include "../h/match.h"
+#include "../h/meta.h"
+#include "../h/step.h"
+#include "../h/ns.h"
 
 typedef struct {
 	Meta _meta;

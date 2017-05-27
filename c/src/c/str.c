@@ -3,11 +3,11 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "value.h"
-#include "type.h"
-#include "meta.h"
-#include "char.h"
-#include "symbol.h"
+#include "../h/value.h"
+#include "../h/type.h"
+#include "../h/meta.h"
+#include "../h/char.h"
+#include "../h/symbol.h"
 
 typedef struct String *String;
 struct String {

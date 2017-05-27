@@ -1,4 +1,4 @@
-#include "meta.h"
+#include "../h/meta.h"
 
 typedef struct {
 	Meta _meta;

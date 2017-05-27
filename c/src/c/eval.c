@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
-#include "abort.h"
-#include "step.h"
-#include "core.h"
+#include "../h/abort.h"
+#include "../h/step.h"
+#include "../h/core.h"
 
 Value eval(Value code, Namespace stat);
 

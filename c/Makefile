@@ -1,30 +1,38 @@
 VG=valgrind --leak-check=full --track-origins=yes --error-exitcode=1
 CC=clang -g -std=c11 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Werror
-SOURCES=$(shell ls src/*.c)
-HEADERS=$(shell ls src/*.h)
-DEPENDS=$(SOURCES:src/%.c=dep/%.d)
-OBJECTS=$(SOURCES:src/%.c=obj/%.o)
+CS=$(wildcard src/c/*.c)
+BS=$(wildcard src/b/*.c)
+TS=$(wildcard src/t/*.c)
+ALLCS=$(CS) $(BS) $(TS)
+DEPENDS=$(ALLCS:src/%.c=dep/%.d)
+OBJECTS=$(CS:src/c/%.c=obj/%.o)
+BINS=$(BS:src/b/%.c=bin/%)
+TESTS=$(TS:src/t/%.c=test/%)
 
-BINS=bin/repl
-
-all: $(OBJECTS) $(BINS)
+all: $(OBJECTS) $(BINS) $(TESTS)
 
 clean:
-	rm obj/*.o
-	rm dep/*.d
+	rm -r obj/ dep/ bin/ test/
+	mkdir -p obj/ dep/{b,c,t} bin/ test/
 
 depend: $(DEPENDS)
 
-dep/%.d: src/%.c
-	$(CC) -MM $< -MT '$(@:dep/%.d=obj/%.o)' -MF $@
+dep/c/%.d: src/c/%.c
+	$(CC) -MM $< -MT '$(@:dep/c/%.d=obj/%.o)' -MF $@
 
-obj/%.o: src/%.c
+dep/b/%.d: src/b/%.c
+	$(CC) -MM $< -MT '$(@:dep/b/%.d=bin/%)' -MF $@
+
+dep/t/%.d: src/t/%.c
+	$(CC) -MM $< -MT '$(@:dep/t/%.d=test/%)' -MF $@
+
+obj/%.o: src/c/%.c
 	$(CC) -c -o $@ $<
 
-#bin/%: obj/%.o
-#	$(CC) -o $@ 
+bin/%: src/b/%.c
+	$(CC) -o $@ $< $(OBJECTS)
 
-bin/repl: $(OBJECTS)
-	$(CC) -o $@ $(OBJECTS)
+test/%: src/t/%.c
+	$(CC) -o $@ $< $(OBJECTS)
 
 include $(DEPENDS)

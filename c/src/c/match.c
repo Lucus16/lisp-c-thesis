@@ -1,9 +1,9 @@
-#include "equals.h"
-#include "value.h"
-#include "abort.h"
-#include "meta.h"
-#include "type.h"
-#include "core.h"
+#include "../h/equals.h"
+#include "../h/value.h"
+#include "../h/abort.h"
+#include "../h/meta.h"
+#include "../h/type.h"
+#include "../h/core.h"
 
 void match(Namespace ns, Value names, Value values) {
 	while (names != NIL) {

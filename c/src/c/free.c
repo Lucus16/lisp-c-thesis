@@ -1,5 +1,5 @@
-#include "value.h"
-#include "meta.h"
+#include "../h/value.h"
+#include "../h/meta.h"
 
 Value		pair_free(Value pair);
 Value		symbol_free(Value symbol);

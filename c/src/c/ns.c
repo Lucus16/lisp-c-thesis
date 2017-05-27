@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "abort.h"
-#include "equals.h"
-#include "value.h"
-#include "meta.h"
+#include "../h/abort.h"
+#include "../h/equals.h"
+#include "../h/value.h"
+#include "../h/meta.h"
 
 typedef struct NSEntry *NSEntry;
 struct NSEntry {

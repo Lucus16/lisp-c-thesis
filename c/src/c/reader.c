@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include "value.h"
-#include "meta.h"
-#include "str.h"
+#include "../h/value.h"
+#include "../h/meta.h"
+#include "../h/str.h"
 
 typedef struct {
 	Meta _meta;

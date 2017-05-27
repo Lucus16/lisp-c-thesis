@@ -1,8 +1,8 @@
-#include "reader.h"
-#include "parse.h"
-#include "repr.h"
-#include "init.h"
-#include "str.h"
+#include "../h/reader.h"
+#include "../h/parse.h"
+#include "../h/repr.h"
+#include "../h/init.h"
+#include "../h/str.h"
 
 void skip_line(Reader reader) {
 	for (char c = reader_peek(reader); ; c = reader_next(reader)) {

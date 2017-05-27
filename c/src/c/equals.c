@@ -1,4 +1,4 @@
-#include "core.h"
+#include "../h/core.h"
 
 bool equals(Value a, Value b);
 
