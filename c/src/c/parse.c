@@ -27,7 +27,7 @@ char escape(Reader reader) {
 		case 'b': return '\b';
 		default: {
 			String error = str_printf("Unknown escape sequence: \\%c", c);
-			reader_set_error(reader, error);
+			reader_error(reader, error);
 			return '\0';
 		}
 	}
@@ -71,7 +71,7 @@ Char parse_char(Reader reader) {
 		c = escape(reader);
 	}
 	if (reader_next(reader) != '\'') {
-		reader_set_error(reader, str_lit("Expected ' to close character literal."));
+		reader_error(reader, str_lit("Expected ' to close character literal."));
 		return NULL;
 	}
 	reader_next(reader);
@@ -100,20 +100,17 @@ Value parse_list(Reader reader) {
 
 Value parse_value(Reader reader) {
 	char c = skip_ws(reader);
-	if (reader_error(reader)) {
-		return NULL;
-	}
 	switch (c) {
 		case '(':
 			return parse_list(reader);
-		case '1' ... '9':
+		case '0' ... '9':
 			return parse_int(reader);
 		case '"':
 			return parse_str(reader);
 		case '\'':
 			return parse_char(reader);
 		case '\x00' ... '\x1f': case '\x7f': case ')':
-			reader_set_error(reader, str_printf("Unexpected character '%c'.", c));
+			reader_error(reader, str_printf("Unexpected character '%c'.", c));
 			return NULL;
 		default:
 			return parse_symbol(reader);

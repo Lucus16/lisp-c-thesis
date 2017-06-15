@@ -1,12 +1,13 @@
 #include <stdio.h>
 
+#include "../h/error.h"
 #include "../h/value.h"
 #include "../h/meta.h"
 #include "../h/str.h"
 
 typedef struct {
 	Meta _meta;
-	Value error;
+	Handler handler;
 	char cur;
 	int line;
 	int col;
@@ -24,40 +25,22 @@ bool reader_empty(Reader reader) {
 	}
 }
 
-bool reader_error(Reader reader) {
-	return reader->error != NIL;
-}
-
 bool reader_ok(Reader reader) {
-	return !reader_empty(reader) && !reader_error(reader);
+	return !reader_empty(reader);
 }
 
 char reader_peek(Reader reader) {
 	return reader->cur;
 }
 
-void reader_set_error(Reader reader, String error) {
-	reader->error = error;
-}
-
-void reader_clear_error(Reader reader) {
-	reader->error = NIL;
-}
-
-String reader_get_error(Reader reader) {
-	if (reader->error != NIL) {
-		return str_append(str_printf("At %i,%i: ", reader->line, reader->col),
-				reader->error);
-	} else {
-		return str_lit("No errors during parsing.");
-	}
+void reader_error(Reader reader, String error) {
+	error_handle(reader->handler, str_append(
+				str_printf("At %i,%i: ", reader->line, reader->col), error));
 }
 
 char reader_next(Reader reader) {
-	if (reader_error(reader)) {
-		return '\xff';
-	} else if (reader_empty(reader)) {
-		reader->error = str_lit("Unexpected end of file.");
+	if (reader_empty(reader)) {
+		reader_error(reader, str_lit("Unexpected end of file."));
 		return '\xff';
 	}
 	if (reader->cur == '\n') {
@@ -72,7 +55,7 @@ char reader_next(Reader reader) {
 	} else {
 		int r = fgetc(reader->fp);
 		if (r == -1) {
-			reader->error = str_lit("Unexpected end of file.");
+			reader_error(reader, str_lit("Unexpected end of file."));
 			return '\xff';
 		}
 		reader->cur = r;
@@ -81,9 +64,9 @@ char reader_next(Reader reader) {
 	return reader->cur;
 }
 
-Reader reader_file(FILE *fp) {
+Reader reader_file(FILE *fp, Handler handler) {
 	Reader reader = meta_new(TYPE_FILE_READER, sizeof(*reader));
-	reader->error = NIL;
+	reader->handler = handler;
 	reader->line = 1;
 	reader->col = 0;
 	reader->cur = 0;
@@ -92,9 +75,9 @@ Reader reader_file(FILE *fp) {
 	return reader;
 }
 
-Reader reader_string(String str) {
+Reader reader_string(String str, Handler handler) {
 	Reader reader = meta_new(TYPE_STRING_READER, sizeof(*reader));
-	reader->error = NIL;
+	reader->handler = handler;
 	reader->line = 1;
 	reader->col = 0;
 	reader->cur = 0;

@@ -1,7 +1,10 @@
+#include "../h/defaults.h"
 #include "../h/reader.h"
+#include "../h/error.h"
 #include "../h/parse.h"
 #include "../h/repr.h"
 #include "../h/init.h"
+#include "../h/eval.h"
 #include "../h/str.h"
 
 void skip_line(Reader reader) {
@@ -14,16 +17,17 @@ void skip_line(Reader reader) {
 
 int main(int argc, const char **argv) {
 	init_all();
-	Reader reader = reader_file(stdin);
-	Value v = parse_value(reader);
+	Handler handler = error_new_handler();
+	Reader reader = reader_file(stdin, handler);
+
 	while (!reader_empty(reader)) {
-		if (reader_error(reader)) {
-			str_print(stderr, str_append_char(reader_get_error(reader), '\n'));
-			reader_clear_error(reader);
+		if (error_occurred(handler)) {
+			str_println(stderr, error_get_msg(handler));
 			skip_line(reader);
 			continue;
 		}
-		str_print(stdout, str_append_char(repr(v), '\n'));
-		v = parse_value(reader);
+		Value code = parse_value(reader);
+		Value result = eval(code, defaults_get(), handler);
+		str_println(stdout, repr(result));
 	}
 }

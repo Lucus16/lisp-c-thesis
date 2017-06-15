@@ -207,6 +207,10 @@ void str_print(FILE *stream, String s) {
 	fprintf(stream, "%.*s", (int)str_len(s), s->start);
 }
 
+void str_println(FILE *stream, String s) {
+	fprintf(stream, "%.*s\n", (int)str_len(s), s->start);
+}
+
 char str_head(String s) {
 	return str_get(s, 0);
 }

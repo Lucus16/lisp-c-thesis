@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../h/abort.h"
 #include "../h/equals.h"
+#include "../h/error.h"
 #include "../h/value.h"
 #include "../h/meta.h"
+#include "../h/repr.h"
+#include "../h/step.h"
+#include "../h/str.h"
 
 typedef struct NSEntry *NSEntry;
 struct NSEntry {
@@ -25,6 +28,10 @@ Namespace ns_new(Namespace super) {
 	ns->super = super;
 	ns->first = NULL;
 	return ns;
+}
+
+Namespace ns_empty() {
+	return NULL;
 }
 
 void ns_insert(Namespace ns, Value key, Value value) {
@@ -53,7 +60,7 @@ Namespace ns_super(Namespace ns) {
 	return ns->super;
 }
 
-Value ns_lookup(Namespace ns, Value key) {
+Value ns_lookup(Namespace ns, Value key, Handler undef_handler) {
 	while (ns != NULL) {
 		NSEntry entry = ns->first;
 		while (entry != NULL) {
@@ -63,6 +70,6 @@ Value ns_lookup(Namespace ns, Value key) {
 		}
 		ns = ns->super;
 	}
-	abortf("Key does not exist.");
-	return NULL;
+	return error_handle(undef_handler,
+			str_append(str_lit("Undefined: "), repr(key)));
 }
