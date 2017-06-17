@@ -37,7 +37,7 @@ void check_arg_count(Value args, int min, int max, Handler handler) {
 	int orig_max = max;
 	while (min > 0) {
 		if (meta_type(args) != TYPE_PAIR) {
-			Value msg = str_append(str_printf(
+			Value msg = str_append(str_format(
 						"Too few arguments, expected at least %i, got %i: ",
 						orig_min, orig_min - min), repr(orig_args));
 			error_handle(handler, msg);
@@ -53,14 +53,14 @@ void check_arg_count(Value args, int min, int max, Handler handler) {
 		if (args == NIL) {
 			return;
 		} else if (meta_type(args) != TYPE_PAIR) {
-			Value msg = str_append(str_printf(
+			Value msg = str_append(str_format(
 						"Improper argument list: "), repr(orig_args));
 			error_handle(handler, msg);
 		}
 		args = pair_cdr(args);
 		max--;
 	}
-	Value msg = str_printf( "Too many arguments, expected at most %i.",
+	Value msg = str_format( "Too many arguments, expected at most %i.",
 			orig_max);
 	error_handle(handler, msg);
 }

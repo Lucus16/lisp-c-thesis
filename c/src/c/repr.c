@@ -25,17 +25,17 @@ String symbol_repr(Symbol symbol) {
 }
 
 String uniq_repr(Uniq uniq) {
-	return str_printf("<Unique %p>", uniq);
+	return str_format("<Unique %p>", uniq);
 }
 
 String int_repr(Int i) {
-	return str_printf("%li", int_get(i));
+	return str_format("%li", int_get(i));
 }
 
 String char_escape(char c) {
 	switch (c) {
 		case ' ': case '!': case '#' ... '[': case ']' ... '~':
-			return str_printf("%c", c);
+			return str_format("%c", c);
 		case '"':
 			return str_lit("\\\"");
 		case '\\':
@@ -53,7 +53,7 @@ String char_escape(char c) {
 		case '\b':
 			return str_lit("\\b");
 		default:
-			return str_printf("\\x%02x", c);
+			return str_format("\\x%02x", c);
 	}
 }
 
@@ -79,7 +79,7 @@ String str_repr(String str) {
 }
 
 String default_repr(Value v) {
-	return str_printf("<Unknown type %li>", meta_type(v));
+	return str_format("<Unknown type %li>", meta_type(v));
 }
 
 String repr(Value v) {

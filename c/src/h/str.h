@@ -23,6 +23,6 @@ char		str_head(String s);
 String		str_tail(String s);
 
 String		str_appendf(String prefix, const char *format, ...);
-String		str_printf(const char *format, ...);
+String		str_format(const char *format, ...);
 void		str_print(FILE *stream, String s);
 void		str_println(FILE *stream, String s);

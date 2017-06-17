@@ -185,7 +185,7 @@ String str_appendf(String prefix, const char *format, ...) {
 	return prefix;
 }
 
-String str_printf(const char *format, ...) {
+String str_format(const char *format, ...) {
 	va_list args1;
 	va_list args2;
 	va_start(args1, format);

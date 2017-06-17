@@ -20,6 +20,6 @@ Value type_str(Type type) {
 		case TYPE_NULL: return str_lit("niltype");
 		case TYPE_INT: return str_lit("integer");
 		case TYPE_CHAR: return str_lit("character");
-		default: return str_printf("unknown%i", type);
+		default: return str_format("unknown%i", type);
 	}
 }

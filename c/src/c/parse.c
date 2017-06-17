@@ -26,7 +26,7 @@ char escape(Reader reader) {
 		case 'a': return '\a';
 		case 'b': return '\b';
 		default: {
-			String error = str_printf("Unknown escape sequence: \\%c", c);
+			String error = str_format("Unknown escape sequence: \\%c", c);
 			reader_error(reader, error);
 			return '\0';
 		}
@@ -110,7 +110,7 @@ Value parse_value(Reader reader) {
 		case '\'':
 			return parse_char(reader);
 		case '\x00' ... '\x1f': case '\x7f': case ')':
-			reader_error(reader, str_printf("Unexpected character '%c'.", c));
+			reader_error(reader, str_format("Unexpected character '%c'.", c));
 			return NULL;
 		default:
 			return parse_symbol(reader);

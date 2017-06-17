@@ -54,7 +54,7 @@ Value apply(Value f, Value args, Namespace stat, Step step, Handler handler) {
 		case TYPE_NAMESPACE:
 			return ns_apply(f, args, step, handler);
 		default:
-			return error_handle(handler, str_printf(
+			return error_handle(handler, str_format(
 						"Attempt to apply value of type %i", meta_type(f)));
 	}
 }

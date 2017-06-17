@@ -35,7 +35,7 @@ char reader_peek(Reader reader) {
 
 void reader_error(Reader reader, String error) {
 	error_handle(reader->handler, str_append(
-				str_printf("At %i,%i: ", reader->line, reader->col), error));
+				str_format("At %i,%i: ", reader->line, reader->col), error));
 }
 
 char reader_next(Reader reader) {
