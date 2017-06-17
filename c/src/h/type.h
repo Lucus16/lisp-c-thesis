@@ -1,5 +1,7 @@
 #pragma once
 
+#include "value.h"
+
 typedef enum {
 	TYPE_PAIR = 1,
 	TYPE_SYMBOL,
@@ -21,3 +23,5 @@ typedef enum {
 	TYPE_INT,
 	TYPE_CHAR,
 } Type;
+
+Value type_str(Type type);

@@ -7,13 +7,9 @@ IDEA
   their C counterparts.
 
 DESIGN
-- functions
 
 IMPLEMENT
-- parsing
-- evaluating
-- reading
-- repl
+- default namespace
 - std library
 
 DEFAULTS
@@ -28,6 +24,11 @@ DEFAULTS
 - equality
 
 DONE
+- functions
+- parsing
+- evaluating
+- reading
+- repl
 - garbage collection
 - tail recursion
 - type tags
