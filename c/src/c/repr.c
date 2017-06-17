@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../h/constants.h"
 #include "../h/core.h"
 
 String repr(Value v);
@@ -25,6 +26,11 @@ String symbol_repr(Symbol symbol) {
 }
 
 String uniq_repr(Uniq uniq) {
+	if (uniq == BOOL_TRUE) {
+		return str_lit("true");
+	} else if (uniq == BOOL_FALSE) {
+		return str_lit("false");
+	}
 	return str_format("<Unique %p>", uniq);
 }
 

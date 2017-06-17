@@ -12,8 +12,8 @@ TESTS=$(TS:src/t/%.c=test/%)
 all: $(OBJECTS) $(BINS) $(TESTS)
 
 clean:
-	rm -r obj/ dep/ bin/ test/
-	mkdir -p obj/ dep/{b,c,t} bin/ test/
+	rm -r obj/ dep/ bin/ test/ || true
+	mkdir -p obj/ dep/{d,b,c,t} bin/ test/
 
 depend: $(DEPENDS)
 
@@ -29,10 +29,10 @@ dep/t/%.d: src/t/%.c
 obj/%.o: src/c/%.c
 	$(CC) -c -o $@ $<
 
-bin/%: src/b/%.c
+bin/%: src/b/%.c $(OBJECTS)
 	$(CC) -o $@ $< $(OBJECTS)
 
-test/%: src/t/%.c
+test/%: src/t/%.c $(OBJECTS)
 	$(CC) -o $@ $< $(OBJECTS)
 
 include $(DEPENDS)

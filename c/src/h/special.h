@@ -5,7 +5,8 @@
 #include "ns.h"
 
 typedef struct {} *SpecialForm;
-typedef Value (*SpecFP)(Value, Namespace, Step);
+typedef Value (SpecF)(Value, Namespace, Step);
+typedef SpecF *SpecFP;
 
 SpecialForm	special_new(SpecFP apply);
 Value		special_apply(SpecialForm f, Value args, Namespace stat, Step step);

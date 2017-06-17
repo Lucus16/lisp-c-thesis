@@ -61,14 +61,12 @@ Namespace ns_super(Namespace ns) {
 }
 
 Value ns_lookup(Namespace ns, Value key, Handler undef_handler) {
-	while (ns != NULL) {
-		NSEntry entry = ns->first;
-		while (entry != NULL) {
+	for (; ns != NULL; ns = ns->super) {
+		for (NSEntry entry = ns->first; entry != NULL; entry = entry->next) {
 			if (equals(entry->key, key)) {
 				return meta_refer(entry->value);
 			}
 		}
-		ns = ns->super;
 	}
 	return error_handle(undef_handler,
 			str_append(str_lit("Undefined: "), repr(key)));

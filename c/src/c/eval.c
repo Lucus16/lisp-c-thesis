@@ -46,7 +46,7 @@ Value ns_apply(Namespace ns, Value args, Step step, Handler handler) {
 Value apply(Value f, Value args, Namespace stat, Step step, Handler handler) {
 	switch (meta_type(f)) {
 		case TYPE_PRIMITIVE:
-			return prim_apply(f, eval_list(args, stat, handler), step);
+			return prim_apply(f, eval_list(args, stat, handler), step, handler);
 		case TYPE_SPECIAL_FORM:
 			return special_apply(f, args, stat, step);
 		case TYPE_CLOSURE:
