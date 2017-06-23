@@ -32,6 +32,8 @@ void special(const char *key, SpecFP value) {
 }
 
 SpecF d_case;
+SpecF d_if, d_and, d_or;
+SpecF d_fn;
 
 PrimF d_car, d_cdr, d_cons, d_ispair;
 PrimF d_abort, d_exit;
@@ -42,6 +44,10 @@ void defaults_fill() {
 	defaults_add("nil", NIL);
 
 	special("case", &d_case);
+	special("if", &d_if);
+	special("and", &d_and);
+	special("or", &d_or);
+	special("fn", &d_fn);
 
 	prim("car", &d_car);
 	prim("cdr", &d_cdr);

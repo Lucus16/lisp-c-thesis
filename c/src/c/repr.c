@@ -85,8 +85,8 @@ String str_repr(String str) {
 }
 
 String default_repr(Value v) {
-	return str_append(str_lit("<"),
-			str_append(type_str(meta_type(v)), str_lit(">")));
+	return str_append(str_lit("<"), str_append(type_str(meta_type(v)),
+				str_format(" %x>", v)));
 }
 
 String repr(Value v) {

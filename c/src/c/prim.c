@@ -20,5 +20,6 @@ Value prim_apply(Primitive prim, Value args, Namespace stat, Step step,
 	args = eval_list(args, stat, handler);
 	Value result = prim->apply(args, step, handler);
 	meta_free(prim);
+	meta_free(args);
 	return result;
 }

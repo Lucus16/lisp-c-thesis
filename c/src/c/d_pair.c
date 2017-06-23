@@ -17,14 +17,3 @@ Value d_cons(Value args, Step step, Handler handler) {
 	return pair_new(meta_refer(pair_car(args)),
 			meta_refer(pair_car(pair_cdr(args))));
 }
-
-Value d_ispair(Value args, Step step, Handler handler) {
-	while (meta_type(args) == TYPE_PAIR) {
-		if (meta_type(pair_car(args)) != TYPE_PAIR) {
-			return bool_new(false);
-		}
-		args = pair_cdr(args);
-	}
-	check_arg_count(args, 0, 0, handler);
-	return bool_new(true);
-}
