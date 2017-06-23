@@ -6,6 +6,10 @@ IDEA
 - Keep functions like eval, apply, mkstruct, read, ... as close as possible to
   their C counterparts.
 
+FIX
+- readline
+- bool type
+
 DESIGN
 
 IMPLEMENT

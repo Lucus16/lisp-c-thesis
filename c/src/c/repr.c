@@ -85,7 +85,8 @@ String str_repr(String str) {
 }
 
 String default_repr(Value v) {
-	return str_format("<Unknown type %li>", meta_type(v));
+	return str_append(str_lit("<"),
+			str_append(type_str(meta_type(v)), str_lit(">")));
 }
 
 String repr(Value v) {

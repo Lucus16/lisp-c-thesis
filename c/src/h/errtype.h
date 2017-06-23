@@ -1,0 +1,13 @@
+#pragma once
+
+typedef enum {
+	ERR_NONE,
+	ERR_UNEXPECTED_EOF,
+	ERR_UNEXPECTED_CHAR,
+	ERR_UNEXPECTED_ARGS,
+	ERR_NOT_APPLICABLE,
+	ERR_NO_MATCH,
+
+	ERR_NEXT_UNUSED,
+	ERR_ANY = 0xffff,
+} ErrorType;

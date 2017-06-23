@@ -14,4 +14,5 @@
 #include "closure.h"
 
 #include "int.h"
+#include "bool.h"
 #include "char.h"

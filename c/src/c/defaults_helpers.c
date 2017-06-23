@@ -30,18 +30,20 @@ int64_t check_arg_count(Value args, int64_t min, int64_t max, Handler handler) {
 	return count;
 }
 
-void as_handle(const char *intended, Type actual, Handler handler) {
+void as_handle(const char *intended, Value actual, Handler handler) {
 	Value msg = str_lit("Expected ");
 	msg = str_append(msg, str_lit(intended));
 	msg = str_append(msg, str_lit(", got "));
-	msg = str_append(msg, type_str(actual));
+	msg = str_append(msg, type_str(meta_type(actual)));
+	msg = str_append(msg, str_lit(" instead: "));
+	msg = str_append(msg, repr(actual));
 	error_handle(handler, msg);
 }
 
 Symbol as_symbol(Value arg, Handler handler) {
 	Type type = meta_type(arg);
 	if (type != TYPE_SYMBOL) {
-		as_handle("symbol", type, handler);
+		as_handle("symbol", arg, handler);
 	}
 	return arg;
 }
@@ -49,7 +51,7 @@ Symbol as_symbol(Value arg, Handler handler) {
 Pair as_pair(Value arg, Handler handler) {
 	Type type = meta_type(arg);
 	if (type != TYPE_PAIR) {
-		as_handle("pair", type, handler);
+		as_handle("pair", arg, handler);
 	}
 	return arg;
 }
@@ -57,7 +59,7 @@ Pair as_pair(Value arg, Handler handler) {
 Value as_key(Value arg, Handler handler) {
 	Type type = meta_type(arg);
 	if (type != TYPE_SYMBOL && type != TYPE_UNIQ) {
-		as_handle("key", type, handler);
+		as_handle("key", arg, handler);
 	}
 	return arg;
 }
@@ -65,7 +67,7 @@ Value as_key(Value arg, Handler handler) {
 String as_string(Value arg, Handler handler) {
 	Type type = meta_type(arg);
 	if (type != TYPE_STRING && type != TYPE_STRING_VIEW) {
-		as_handle("string", type, handler);
+		as_handle("string", arg, handler);
 	}
 	return arg;
 }
@@ -74,7 +76,7 @@ Value as_applicable(Value arg, Handler handler) {
 	Type type = meta_type(arg);
 	if (type != TYPE_PRIMITIVE && type != TYPE_SPECIAL_FORM && type !=
 			TYPE_CLOSURE && type != TYPE_VAU && type != TYPE_NAMESPACE) {
-		as_handle("applicable", type, handler);
+		as_handle("applicable", arg, handler);
 	}
 	return arg;
 }
@@ -83,7 +85,7 @@ Value as_function(Value arg, Handler handler) {
 	Type type = meta_type(arg);
 	if (type != TYPE_PRIMITIVE && type != TYPE_SPECIAL_FORM && type !=
 			TYPE_CLOSURE && type != TYPE_VAU) {
-		as_handle("function", type, handler);
+		as_handle("function", arg, handler);
 	}
 	return arg;
 }
@@ -91,7 +93,7 @@ Value as_function(Value arg, Handler handler) {
 Namespace as_namespace(Value arg, Handler handler) {
 	Type type = meta_type(arg);
 	if (type != TYPE_NAMESPACE) {
-		as_handle("namespace", type, handler);
+		as_handle("namespace", arg, handler);
 	}
 	return arg;
 }
@@ -99,7 +101,7 @@ Namespace as_namespace(Value arg, Handler handler) {
 Int as_int(Value arg, Handler handler) {
 	Type type = meta_type(arg);
 	if (type != TYPE_INT) {
-		as_handle("integer", type, handler);
+		as_handle("integer", arg, handler);
 	}
 	return arg;
 }

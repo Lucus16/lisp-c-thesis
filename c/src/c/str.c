@@ -205,10 +205,12 @@ String str_format(const char *format, ...) {
 
 void str_print(FILE *stream, String s) {
 	fprintf(stream, "%.*s", (int)str_len(s), s->start);
+	meta_free(s);
 }
 
 void str_println(FILE *stream, String s) {
 	fprintf(stream, "%.*s\n", (int)str_len(s), s->start);
+	meta_free(s);
 }
 
 char str_head(String s) {

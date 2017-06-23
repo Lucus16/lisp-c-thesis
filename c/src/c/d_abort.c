@@ -12,9 +12,11 @@ Value d_exit(Value args, Step step, Handler handler) {
 
 Value d_abort(Value args, Step step, Handler handler) {
 	int argc = check_arg_count(args, 0, 1, handler);
-	String msg = str_lit("Aborted.");
+	String msg;
 	if (argc > 0) {
 		msg = repr(pair_car(args));
+	} else {
+		msg = str_lit("Aborted.");
 	}
 	return error_handle(handler, msg);
 }

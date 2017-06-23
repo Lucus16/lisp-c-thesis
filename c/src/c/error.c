@@ -20,7 +20,9 @@ jmp_buf *error_get_buf(Handler handler) {
 }
 
 String error_get_msg(Handler handler) {
-	return handler->msg;
+	String msg = handler->msg;
+	handler->msg = NULL;
+	return msg;
 }
 
 void *error_handle(Handler handler, String msg) {

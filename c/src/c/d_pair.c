@@ -1,6 +1,6 @@
-#include "../h/constants.h"
 #include "../h/defaults.h"
 #include "../h/pair.h"
+#include "../h/bool.h"
 
 Value d_car(Value args, Step step, Handler handler) {
 	check_arg_count(args, 1, 1, handler);
@@ -21,10 +21,10 @@ Value d_cons(Value args, Step step, Handler handler) {
 Value d_ispair(Value args, Step step, Handler handler) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_PAIR) {
-			return BOOL_FALSE;
+			return bool_new(false);
 		}
 		args = pair_cdr(args);
 	}
 	check_arg_count(args, 0, 0, handler);
-	return BOOL_TRUE;
+	return bool_new(true);
 }

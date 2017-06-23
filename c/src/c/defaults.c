@@ -1,6 +1,5 @@
 #include <string.h>
 
-#include "../h/constants.h"
 #include "../h/core.h"
 
 Namespace DEFAULTS = NULL;
@@ -32,13 +31,17 @@ void special(const char *key, SpecFP value) {
 	defaults_add(key, special_new(value));
 }
 
+SpecF d_case;
+
 PrimF d_car, d_cdr, d_cons, d_ispair;
 PrimF d_abort, d_exit;
 
 void defaults_fill() {
-	defaults_add("true", BOOL_TRUE);
-	defaults_add("false", BOOL_FALSE);
+	defaults_add("true", bool_new(true));
+	defaults_add("false", bool_new(false));
 	defaults_add("nil", NIL);
+
+	special("case", &d_case);
 
 	prim("car", &d_car);
 	prim("cdr", &d_cdr);

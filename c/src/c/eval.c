@@ -4,14 +4,17 @@
 #include "../h/value.h"
 #include "../h/step.h"
 #include "../h/core.h"
+#include "../h/repr.h"
 
 Value eval(Value code, Namespace stat, Handler handler);
 
 Value eval_list(Value args, Namespace stat, Handler handler) {
+	Value orig_args = args;
 	Value first = NIL;
 	Value last = NIL;
 	while (meta_type(args) == TYPE_PAIR) {
-		Pair pair = pair_new(eval(pair_car(args), stat, handler), NIL);
+		Pair pair = pair_new(eval(meta_refer(pair_car(args)),
+						meta_refer(stat), handler), NIL);
 		if (last == NIL) {
 			first = last = pair;
 		} else {
@@ -20,6 +23,7 @@ Value eval_list(Value args, Namespace stat, Handler handler) {
 		}
 		args = pair_cdr(args);
 	}
+	meta_free(orig_args);
 	if (args != NIL) {
 		return error_handle(handler, str_lit("Improper argument list."));
 	}
@@ -32,7 +36,7 @@ Value ns_apply(Namespace ns, Value args, Step step, Handler handler) {
 		Value arg = pair_car(args);
 		if (meta_type(result) != TYPE_NAMESPACE) {
 			return error_handle(handler, str_append(
-						str_lit("Expected namespace, got: "), result));
+						str_lit("Expected namespace, got: "), repr(result)));
 		}
 		args = pair_cdr(args);
 		result = eval(arg, result, handler);
@@ -46,16 +50,17 @@ Value ns_apply(Namespace ns, Value args, Step step, Handler handler) {
 Value apply(Value f, Value args, Namespace stat, Step step, Handler handler) {
 	switch (meta_type(f)) {
 		case TYPE_PRIMITIVE:
-			return prim_apply(f, eval_list(args, stat, handler), step, handler);
+			return prim_apply(f, args, stat, step, handler);
 		case TYPE_SPECIAL_FORM:
-			return special_apply(f, args, stat, step);
+			return special_apply(f, args, stat, step, handler);
 		case TYPE_CLOSURE:
 			return closure_apply(f, eval_list(args, stat, handler), step, handler);
 		case TYPE_NAMESPACE:
 			return ns_apply(f, args, step, handler);
 		default:
-			return error_handle(handler, str_format(
-						"Attempt to apply value of type %i", meta_type(f)));
+			return error_handle(handler, str_append(
+						str_lit("Attempt to apply value of type "),
+						type_str(meta_type(f))));
 	}
 }
 
