@@ -28,7 +28,7 @@ void match(Namespace ns, Value names, Value values, Handler mismatch) {
 				break;
 			}
 		} else if (ntype == TYPE_SYMBOL) {
-			ns_insert(ns, names, values);
+			ns_insert(ns, meta_refer(names), meta_refer(values));
 			return;
 		} else if (equals(names, values)) {
 			return;

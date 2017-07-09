@@ -29,5 +29,6 @@ int main(int argc, const char **argv) {
 		Value code = parse_value(reader);
 		Value result = eval(code, defaults_get(), handler);
 		str_println(stdout, repr(result));
+		meta_free(result);
 	}
 }

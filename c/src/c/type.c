@@ -12,10 +12,10 @@ Value type_str(Type type) {
 		case TYPE_VAR: return str_lit("Variable");
 		case TYPE_FILE_READER:
 		case TYPE_STRING_READER: return str_lit("Reader");
-		case TYPE_CLOSURE: return str_lit("Closure");
-		case TYPE_PRIMITIVE: return str_lit("Primitive");
-		case TYPE_SPECIAL_FORM: return str_lit("Specialform");
-		case TYPE_VAU: return str_lit("Vau");
+		case TYPE_CLOSURE:
+		case TYPE_PRIMITIVE: return str_lit("Function");
+		case TYPE_SPECIAL_FORM:
+		case TYPE_VAU: return str_lit("Specialform");
 		case TYPE_HANDLER: return str_lit("Handler");
 		case TYPE_NULL: return str_lit("Nil");
 		case TYPE_INT: return str_lit("I61");

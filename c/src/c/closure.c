@@ -28,7 +28,10 @@ Value closure_free(Closure closure) {
 }
 
 Value closure_apply(Closure closure, Value args, Step step, Handler handler) {
-	Namespace stat = ns_new(closure->context);
+	Namespace stat = ns_new(meta_refer(closure->context));
 	match(stat, closure->params, args, handler);
-	return step_set(step, closure->body, stat);
+	Value code = meta_refer(closure->body);
+	meta_free(args);
+	meta_free(closure);
+	return step_set(step, code, stat);
 }
