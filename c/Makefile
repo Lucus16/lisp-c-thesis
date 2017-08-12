@@ -19,7 +19,7 @@ clean:
 depend: $(DEPENDS)
 
 debug-%: bin/%
-	$(VG) $<
+	rlwrap $(VG) $<
 
 dep/c/%.d: src/c/%.c
 	$(CC) -MM $< -MT '$(@:dep/c/%.d=obj/%.o)' -MF $@
