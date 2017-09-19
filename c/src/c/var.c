@@ -1,5 +1,7 @@
 #include "../h/value.h"
 #include "../h/meta.h"
+#include "../h/eval.h"
+#include "../h/pair.h"
 
 typedef struct {
 	Meta _meta;
@@ -19,7 +21,7 @@ Value var_free(Var var) {
 }
 
 Value var_get(Var var) {
-	return var->value;
+	return meta_refer(var->value);
 }
 
 void var_set(Var var, Value value) {

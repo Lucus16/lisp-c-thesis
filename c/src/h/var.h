@@ -1,6 +1,6 @@
 #pragma once
 
-typedef struct {} Var;
+typedef struct {} *Var;
 
 Var			var_new(Value initial);
 Value		var_get(Var var);

@@ -21,6 +21,9 @@ depend: $(DEPENDS)
 debug-%: bin/%
 	rlwrap $(VG) $<
 
+run-%: bin/%
+	rlwrap $<
+
 dep/c/%.d: src/c/%.c
 	$(CC) -MM $< -MT '$(@:dep/c/%.d=obj/%.o)' -MF $@
 

@@ -29,20 +29,37 @@ Value d_or(Value args, Namespace stat, Step step, Handler handler) {
 }
 
 Value d_if(Value args, Namespace stat, Step step, Handler handler) {
+	check_arg_count(args, 0, -1, handler);
 	while (true) {
 		if (args == NIL) {
 			return NIL;
 		}
-		check_arg_count(args, 1, -1, handler);
 		if (pair_cdr(args) == NIL) {
 			return step_set(step, pair_car(args), stat);
 		}
-		check_arg_count(args, 2, -1, handler);
-		Value cond = eval(pair_car(args), stat, handler);
+		Value cond = eval(meta_refer(pair_car(args)), meta_refer(stat), handler);
 		Value body = pair_car(pair_cdr(args));
-		args = pair_cdr(pair_cdr(args));
 		if (truthy(cond)) {
-			return step_set(step, body, stat);
+			meta_free(cond);
+			return step_set(step, meta_refer(body), stat);
+		} else {
+			meta_free(cond);
+			args = pair_cdr(pair_cdr(args));
 		}
 	}
+}
+
+Value d_not(Value args, Step step, Handler handler) {
+	check_arg_count(args, 1, 1, handler);
+	return bool_new(!truthy(as_bool(pair_car(args), handler)));
+}
+
+Value d_no(Value args, Step step, Handler handler) {
+	check_arg_count(args, 1, 1, handler);
+	return bool_new(pair_car(args) == NIL);
+}
+
+Value d_some(Value args, Step step, Handler handler) {
+	check_arg_count(args, 1, 1, handler);
+	return bool_new(pair_car(args) != NIL);
 }

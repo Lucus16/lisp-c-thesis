@@ -6,6 +6,7 @@
 #include "../h/init.h"
 #include "../h/eval.h"
 #include "../h/str.h"
+#include "../h/ns.h"
 
 void skip_line(Reader reader) {
 	for (char c = reader_peek(reader); ; c = reader_next(reader)) {
@@ -19,6 +20,7 @@ int main(int argc, const char **argv) {
 	init_all();
 	Handler handler = error_new_handler();
 	Reader reader = reader_file(stdin, handler);
+	Namespace stat = ns_new(defaults_get());
 
 	while (!reader_empty(reader)) {
 		if (error_occurred(handler)) {
@@ -27,8 +29,10 @@ int main(int argc, const char **argv) {
 			continue;
 		}
 		Value code = parse_value(reader);
-		Value result = eval(code, defaults_get(), handler);
-		str_println(stdout, repr(result));
+		Value result = eval(code, meta_refer(stat), handler);
+		if (result != NIL) {
+			str_println(stdout, repr(result));
+		}
 		meta_free(result);
 	}
 }

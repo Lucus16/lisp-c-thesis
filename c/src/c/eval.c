@@ -1,26 +1,18 @@
-#include <stdlib.h>
-
 #include "../h/error.h"
 #include "../h/value.h"
 #include "../h/step.h"
 #include "../h/core.h"
 #include "../h/repr.h"
+#include "../h/list.h"
 
 Value eval(Value code, Namespace stat, Handler handler);
 
 Value eval_list(Value args, Namespace stat, Handler handler) {
 	Value orig_args = args;
-	Value first = NIL;
-	Value last = NIL;
+	List result; list_init(&result);
 	while (meta_type(args) == TYPE_PAIR) {
-		Pair pair = pair_new(eval(meta_refer(pair_car(args)),
-						meta_refer(stat), handler), NIL);
-		if (last == NIL) {
-			first = last = pair;
-		} else {
-			pair_set_cdr(last, pair);
-			last = pair;
-		}
+		list_append(&result,
+				eval(meta_refer(pair_car(args)), meta_refer(stat), handler));
 		args = pair_cdr(args);
 	}
 	meta_free(orig_args);
@@ -28,25 +20,11 @@ Value eval_list(Value args, Namespace stat, Handler handler) {
 	if (args != NIL) {
 		return error_handle(handler, str_lit("Improper argument list."));
 	}
-	return first;
+	return list_get(&result);
 }
 
-Value ns_apply(Namespace ns, Value args, Step step, Handler handler) {
-	Value result = ns;
-	while (meta_type(args) == TYPE_PAIR) {
-		Value arg = pair_car(args);
-		if (meta_type(result) != TYPE_NAMESPACE) {
-			return error_handle(handler, str_append(
-						str_lit("Expected namespace, got: "), repr(result)));
-		}
-		args = pair_cdr(args);
-		result = eval(arg, result, handler);
-	}
-	if (args != NIL) {
-		return error_handle(handler, str_lit("Improper argument list."));
-	}
-	return result;
-}
+Value ns_apply(Value ns, Value args, Step step, Handler handler);
+Value var_apply(Value var, Value args, Step step, Handler handler);
 
 Value apply(Value f, Value args, Namespace stat, Step step, Handler handler) {
 	switch (meta_type(f)) {
@@ -58,6 +36,8 @@ Value apply(Value f, Value args, Namespace stat, Step step, Handler handler) {
 			return closure_apply(f, eval_list(args, stat, handler), step, handler);
 		case TYPE_NAMESPACE:
 			return ns_apply(f, args, step, handler);
+		case TYPE_VAR:
+			return var_apply(f, eval_list(args, stat, handler), step, handler);
 		default: {
 			String msg = str_append(str_lit("Attempt to apply value of type "),
 					type_str(meta_type(f)));

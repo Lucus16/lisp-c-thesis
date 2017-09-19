@@ -4,13 +4,17 @@ IDEA
 - Generate its own interpreter using Lisp
 - Modularize the interpreter for extensibility
 - Keep functions like eval, apply, mkstruct, read, ... as close as possible to
-  their C counterparts.
+  their C counterparts. Aka KISS
 
 FIX
 - readline
 - bool type
+- recursive data collection
+- collection on exit
+- repl should read whole lines at once because that is intuitive to the user.
 
 DESIGN
+- file io, File type
 
 IMPLEMENT
 - default namespace

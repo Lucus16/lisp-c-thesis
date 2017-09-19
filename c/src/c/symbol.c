@@ -7,7 +7,7 @@
 
 typedef struct {
 	Meta _meta;
-	char name[1];
+	char name[];
 } *Symbol;
 
 Pair symbols;
@@ -23,7 +23,7 @@ Symbol symbol_new(const char *name, size_t len) {
 		}
 		remaining = pair_cdr(remaining);
 	}
-	Symbol symbol = meta_new(TYPE_SYMBOL, sizeof(*symbol) + len);
+	Symbol symbol = meta_new(TYPE_SYMBOL, sizeof(*symbol) + len + 1);
 	strncpy(symbol->name, name, len);
 	symbol->name[len] = '\0';
 	symbols = pair_new(symbol, symbols);

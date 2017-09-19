@@ -1,33 +1,27 @@
+#include "../h/constants.h"
 #include "../h/core.h"
 #include "../h/repr.h"
 
 int64_t check_arg_count(Value args, int64_t min, int64_t max, Handler handler) {
 	Value orig_args = args;
-	int64_t count;
-	for (count = 0; count < min; count++) {
-		if (meta_type(args) != TYPE_PAIR) {
-			Value msg = str_append(str_format(
-						"Too few arguments, expected at least %i, got %i: ",
-						min, count), repr(orig_args));
-			error_handle(handler, msg);
-		}
-		args = pair_cdr(args);
+	int64_t count = 0;
+	for (; meta_type(args) == TYPE_PAIR; args = pair_cdr(args)) {
+		count++;
 	}
-	for (; count != max + 1; count++) {
-		if (args == NIL) {
-			return count;
-		} else if (meta_type(args) != TYPE_PAIR) {
-			Value msg = str_append(str_lit("Improper argument list: "),
-					repr(orig_args));
-			error_handle(handler, msg);
-		}
-		args = pair_cdr(args);
+	Value msg;
+	if (args != NIL) {
+		msg = str_lit("Improper argument list: ");
+	} else if (count < min) {
+		msg = str_format("Too few arguments, expected at least %i, got %i: ",
+				min, count);
+	} else if (max >= 0 && count > max) {
+		msg = str_format("Too many arguments, expected at most %i, got %i: ",
+				max, count);
+	} else {
+		return count;
 	}
-	Value msg = str_append(str_format(
-				"Too many arguments, expected at most %i, got at least %i: ",
-				max, count), repr(orig_args));
-	error_handle(handler, msg);
-	return count;
+	error_handle(handler, str_append(msg, repr(orig_args)));
+	return 0;
 }
 
 void as_handle(const char *intended, Value actual, Handler handler) {
@@ -102,6 +96,13 @@ Int as_int(Value arg, Handler handler) {
 	Type type = meta_type(arg);
 	if (type != TYPE_INT) {
 		as_handle("integer", arg, handler);
+	}
+	return arg;
+}
+
+Bool as_bool(Value arg, Handler handler) {
+	if (arg != BOOL_TRUE && arg != BOOL_FALSE) {
+		as_handle("boolean", arg, handler);
 	}
 	return arg;
 }
