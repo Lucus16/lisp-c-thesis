@@ -31,7 +31,7 @@ String uniq_repr(String r, Uniq uniq) {
 	} else if (uniq == BOOL_FALSE) {
 		return str_appendf(r, "false");
 	}
-	return str_appendf(r, "<Unique %p>", uniq);
+	return str_appendf(r, "<Unique %lx>", uniq);
 }
 
 String int_repr(String r, Int i) {
@@ -87,7 +87,7 @@ String str_repr(String r, String str) {
 String default_repr(String r, Value v) {
 	r = str_appendf(r, "<");
 	r = str_append(r, type_str(meta_type(v)));
-	return str_appendf(r, " %x>", v);
+	return str_appendf(r, " %lx>", v);
 }
 
 String value_repr(String prefix, Value v) {

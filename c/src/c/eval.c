@@ -34,6 +34,8 @@ Value apply(Value f, Value args, Namespace stat, Step step, Handler handler) {
 			return special_apply(f, args, stat, step, handler);
 		case TYPE_CLOSURE:
 			return closure_apply(f, eval_list(args, stat, handler), step, handler);
+		case TYPE_VAU:
+			return vau_apply(f, args, stat, step, handler);
 		case TYPE_NAMESPACE:
 			return ns_apply(f, args, step, handler);
 		case TYPE_VAR:

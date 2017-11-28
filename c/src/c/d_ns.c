@@ -56,9 +56,10 @@ Value d_this(Value args, Namespace stat, Step step, Handler handler) {
 Value d_super(Value args, Namespace stat, Step step, Handler handler) {
 	check_arg_count(args, 0, 1, handler);
 	if (args == NIL) {
-		return ns_super(stat);
+		return meta_refer(ns_super(stat));
 	}
-	return ns_super(as_namespace(eval(pair_car(args), stat, handler), handler));
+	return meta_refer(ns_super(as_namespace(
+					eval(pair_car(args), stat, handler), handler)));
 }
 
 Value d_ns(Value args, Namespace stat, Step step, Handler handler) {
@@ -103,6 +104,21 @@ Value d_do(Value args, Namespace stat, Step step, Handler handler) {
 		result = pair_car(args);
 	}
 	return meta_refer(result);
+}
+
+Value d_devau(Value args, Namespace stat, Step step, Handler handler) {
+	check_arg_count(args, 3, -1, handler);
+	if (!ns_mutable(stat)) {
+		error_handle(handler, str_lit("Namespace not mutable."));
+	}
+	check_arg_count(pair_car(args), 1, -1, handler);
+	Value value = vau_new(
+			meta_refer(pair_cdr(pair_car(args))),
+			meta_refer(pair_car(pair_cdr(args))),
+			meta_refer(pair_cdr(pair_cdr(args))),
+			meta_refer(stat));
+	ns_insert(stat, meta_refer(pair_car(pair_car(args))), value);
+	return NIL;
 }
 
 Value d_def(Value args, Namespace stat, Step step, Handler handler) {

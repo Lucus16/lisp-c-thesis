@@ -24,6 +24,7 @@ int main(int argc, const char **argv) {
 
 	while (!reader_empty(reader)) {
 		if (error_occurred(handler)) {
+			if (reader_empty(reader)) { return 0; }
 			str_println(stderr, error_get_msg(handler));
 			skip_line(reader);
 			continue;

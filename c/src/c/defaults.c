@@ -39,18 +39,18 @@ PrimF d_uniq;
 SpecF d_case;
 SpecF d_if, d_and, d_or;
 PrimF d_not, d_no, d_some;
-SpecF d_fn;
+SpecF d_fn, d_vau;
+PrimF d_print;
 
 PrimF d_car, d_cdr, d_cons;
 PrimF d_ispair, d_isbool, d_issymbol, d_isuniq;
 PrimF d_abort, d_exit;
 PrimF d_var;
 
-SpecF d_this, d_super, d_ns, d_do, d_def, d_let;
+SpecF d_this, d_super, d_ns, d_do, d_devau, d_def, d_let;
 PrimF d_keys, d_freeze, d_eval;
 
 PrimF d_plus, d_eq;
-
 
 void defaults_fill() {
 	defaults_add("true", bool_new(true));
@@ -68,6 +68,8 @@ void defaults_fill() {
 	prim("no", &d_no);
 	prim("some", &d_some);
 	special("fn", &d_fn);
+	special("vau", &d_vau);
+	prim("print", &d_print);
 
 	prim("ispair", &d_ispair);
 	prim("isbool", &d_isbool);
@@ -85,6 +87,7 @@ void defaults_fill() {
 	special("super", &d_super);
 	special("ns", &d_ns);
 	special("do", &d_do);
+	special("devau", &d_devau);
 	special("def", &d_def);
 	special("let", &d_let);
 	prim("keys", &d_keys);

@@ -12,6 +12,7 @@
 #include "prim.h"
 #include "special.h"
 #include "closure.h"
+#include "vau.h"
 
 #include "int.h"
 #include "bool.h"

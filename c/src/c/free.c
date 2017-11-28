@@ -9,6 +9,7 @@ Value		str_view_free(Value str_view);
 Value		ns_free(Value ns);
 Value		var_free(Value var);
 Value		closure_free(Value closure);
+Value		vau_free(Value vau);
 
 Value free_ptr_value(Value v) {
 	switch (meta_ptr_type(v)) {
@@ -28,6 +29,8 @@ Value free_ptr_value(Value v) {
 			return var_free(v);
 		case TYPE_CLOSURE:
 			return closure_free(v);
+		case TYPE_VAU:
+			return vau_free(v);
 		default:
 			free(v);
 			return NULL;

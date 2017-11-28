@@ -59,7 +59,6 @@ char reader_next(Reader reader) {
 			return '\xff';
 		}
 		reader->cur = r;
-
 	}
 	return reader->cur;
 }
@@ -71,7 +70,7 @@ Reader reader_file(FILE *fp, Handler handler) {
 	reader->col = 0;
 	reader->cur = 0;
 	reader->fp = fp;
-	reader_next(reader);
+	reader->cur = ' ';
 	return reader;
 }
 
@@ -82,6 +81,6 @@ Reader reader_string(String str, Handler handler) {
 	reader->col = 0;
 	reader->cur = 0;
 	reader->str = str;
-	reader_next(reader);
+	reader->cur = ' ';
 	return reader;
 }
