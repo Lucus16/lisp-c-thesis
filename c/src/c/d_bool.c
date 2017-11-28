@@ -1,8 +1,8 @@
-#include "../h/constants.h"
-#include "../h/defaults.h"
-#include "../h/truthy.h"
-#include "../h/bool.h"
-#include "../h/eval.h"
+#include "constants.h"
+#include "defaults.h"
+#include "truthy.h"
+#include "bool.h"
+#include "eval.h"
 
 Value d_and(Value args, Namespace stat, Step step, Handler handler) {
 	while (args != NIL) {

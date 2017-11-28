@@ -1,6 +1,6 @@
-#include "../h/defaults.h"
-#include "../h/pair.h"
-#include "../h/bool.h"
+#include "defaults.h"
+#include "pair.h"
+#include "bool.h"
 
 Value d_car(Value args, Step step, Handler handler) {
 	check_arg_count(args, 1, 1, handler);

@@ -1,11 +1,11 @@
-#include "../h/defaults.h"
-#include "../h/equals.h"
-#include "../h/meta.h"
-#include "../h/pair.h"
-#include "../h/list.h"
-#include "../h/str.h"
-#include "../h/int.h"
-#include "../h/ns.h"
+#include "defaults.h"
+#include "equals.h"
+#include "meta.h"
+#include "pair.h"
+#include "list.h"
+#include "str.h"
+#include "int.h"
+#include "ns.h"
 
 Value plus_pair(Value args, Step step, Handler handler) {
 	if (args == NIL) { return NIL; }

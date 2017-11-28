@@ -1,6 +1,6 @@
-#include "../h/constants.h"
-#include "../h/meta.h"
-#include "../h/uniq.h"
+#include "constants.h"
+#include "meta.h"
+#include "uniq.h"
 
 typedef Uniq Bool;
 

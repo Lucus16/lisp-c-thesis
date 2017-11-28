@@ -1,6 +1,6 @@
-#include "../h/defaults.h"
-#include "../h/equals.h"
-#include "../h/meta.h"
+#include "defaults.h"
+#include "equals.h"
+#include "meta.h"
 
 Value d_is(Value args, Step step, Handler handler) {
 	if (meta_type(args) != TYPE_PAIR || meta_type(pair_cdr(args)) != TYPE_PAIR) {

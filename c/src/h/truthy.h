@@ -1,5 +1,5 @@
 #pragma once
 
-#include "../h/value.h"
+#include "value.h"
 
 bool truthy(Value v);

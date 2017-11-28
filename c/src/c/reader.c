@@ -1,9 +1,9 @@
 #include <stdio.h>
 
-#include "../h/error.h"
-#include "../h/value.h"
-#include "../h/meta.h"
-#include "../h/str.h"
+#include "error.h"
+#include "value.h"
+#include "meta.h"
+#include "str.h"
 
 typedef struct {
 	Meta _meta;

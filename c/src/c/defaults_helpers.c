@@ -1,6 +1,6 @@
-#include "../h/constants.h"
-#include "../h/core.h"
-#include "../h/repr.h"
+#include "constants.h"
+#include "core.h"
+#include "repr.h"
 
 int64_t check_arg_count(Value args, int64_t min, int64_t max, Handler handler) {
 	Value orig_args = args;

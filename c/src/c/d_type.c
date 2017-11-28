@@ -1,7 +1,7 @@
-#include "../h/constants.h"
-#include "../h/defaults.h"
-#include "../h/bool.h"
-#include "../h/pair.h"
+#include "constants.h"
+#include "defaults.h"
+#include "bool.h"
+#include "pair.h"
 
 Value d_ispair(Value args, Step step, Handler handler) {
 	while (meta_type(args) == TYPE_PAIR) {

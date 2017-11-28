@@ -1,11 +1,11 @@
-#include "../h/defaults.h"
-#include "../h/match.h"
-#include "../h/value.h"
-#include "../h/pair.h"
-#include "../h/eval.h"
-#include "../h/meta.h"
-#include "../h/repr.h"
-#include "../h/ns.h"
+#include "defaults.h"
+#include "match.h"
+#include "value.h"
+#include "pair.h"
+#include "eval.h"
+#include "meta.h"
+#include "repr.h"
+#include "ns.h"
 
 // Modules are regular L files that return a namespace
 // Functional forms should never have implicit do

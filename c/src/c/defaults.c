@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "../h/core.h"
+#include "core.h"
 
 Namespace DEFAULTS = NULL;
 

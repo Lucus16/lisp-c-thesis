@@ -1,5 +1,5 @@
-#include "../h/value.h"
-#include "../h/meta.h"
+#include "value.h"
+#include "meta.h"
 
 typedef struct {
 	Meta _meta;

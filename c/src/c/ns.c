@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../h/equals.h"
-#include "../h/error.h"
-#include "../h/value.h"
-#include "../h/meta.h"
-#include "../h/repr.h"
-#include "../h/step.h"
-#include "../h/list.h"
-#include "../h/str.h"
+#include "equals.h"
+#include "error.h"
+#include "value.h"
+#include "meta.h"
+#include "repr.h"
+#include "step.h"
+#include "list.h"
+#include "str.h"
 
 typedef struct NSEntry *NSEntry;
 struct NSEntry {

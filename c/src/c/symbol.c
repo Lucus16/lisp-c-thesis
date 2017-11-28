@@ -1,9 +1,9 @@
 #include <string.h>
 
-#include "../h/abort.h"
-#include "../h/value.h"
-#include "../h/pair.h"
-#include "../h/meta.h"
+#include "abort.h"
+#include "value.h"
+#include "pair.h"
+#include "meta.h"
 
 typedef struct {
 	Meta _meta;

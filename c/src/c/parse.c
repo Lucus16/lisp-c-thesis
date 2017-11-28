@@ -1,5 +1,5 @@
-#include "../h/reader.h"
-#include "../h/core.h"
+#include "reader.h"
+#include "core.h"
 
 typedef size_t Index;
 

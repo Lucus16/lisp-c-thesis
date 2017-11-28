@@ -1,5 +1,5 @@
-#include "../h/defaults.h"
-#include "../h/repr.h"
+#include "defaults.h"
+#include "repr.h"
 
 Value d_exit(Value args, Step step, Handler handler) {
 	int argc = check_arg_count(args, 0, 1, handler);

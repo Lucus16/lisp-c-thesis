@@ -1,5 +1,5 @@
 VG=valgrind --leak-check=full --track-origins=yes --error-exitcode=1
-CC=clang -g -std=c11 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Werror
+CC=clang -g -std=c11 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Werror -Isrc/h
 CS=$(wildcard src/c/*.c)
 BS=$(wildcard src/b/*.c)
 TS=$(wildcard src/t/*.c)

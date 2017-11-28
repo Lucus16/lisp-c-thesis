@@ -1,10 +1,10 @@
-#include "../h/defaults.h"
-#include "../h/value.h"
-#include "../h/meta.h"
-#include "../h/pair.h"
-#include "../h/eval.h"
-#include "../h/var.h"
-#include "../h/ns.h"
+#include "defaults.h"
+#include "value.h"
+#include "meta.h"
+#include "pair.h"
+#include "eval.h"
+#include "var.h"
+#include "ns.h"
 
 Value var_apply(Var var, Value args, Step step, Handler handler) {
 	if (args == NIL) {

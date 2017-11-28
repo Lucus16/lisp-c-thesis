@@ -1,10 +1,10 @@
-#include "../h/value.h"
-#include "../h/match.h"
-#include "../h/meta.h"
-#include "../h/step.h"
-#include "../h/pair.h"
-#include "../h/eval.h"
-#include "../h/ns.h"
+#include "value.h"
+#include "match.h"
+#include "meta.h"
+#include "step.h"
+#include "pair.h"
+#include "eval.h"
+#include "ns.h"
 
 typedef struct {
 	Meta _meta;

@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "../h/symbol.h"
-#include "../h/value.h"
-#include "../h/type.h"
-#include "../h/pair.h"
-#include "../h/free.h"
-#include "../h/bool.h"
+#include "symbol.h"
+#include "value.h"
+#include "type.h"
+#include "pair.h"
+#include "free.h"
+#include "bool.h"
 
 typedef struct {
 	size_t refcount : 40;

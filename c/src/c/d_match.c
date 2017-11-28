@@ -1,8 +1,8 @@
-#include "../h/defaults.h"
-#include "../h/match.h"
-#include "../h/eval.h"
-#include "../h/pair.h"
-#include "../h/repr.h"
+#include "defaults.h"
+#include "match.h"
+#include "eval.h"
+#include "pair.h"
+#include "repr.h"
 
 Value d_case(Value args, Namespace stat, Step step, Handler handler) {
 	check_arg_count(args, 1, -1, handler);

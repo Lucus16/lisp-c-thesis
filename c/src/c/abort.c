@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../h/str.h"
+#include "str.h"
 
 void abortf(const char *format, ...) {
 	va_list args;

@@ -1,7 +1,7 @@
-#include "../h/constants.h"
-#include "../h/symbol.h"
-#include "../h/meta.h"
-#include "../h/uniq.h"
+#include "constants.h"
+#include "symbol.h"
+#include "meta.h"
+#include "uniq.h"
 
 void constants_exit() {
 	meta_free(BOOL_FALSE);

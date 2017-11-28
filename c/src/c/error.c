@@ -1,8 +1,8 @@
 #include <setjmp.h>
 
-#include "../h/errtype.h"
-#include "../h/meta.h"
-#include "../h/str.h"
+#include "errtype.h"
+#include "meta.h"
+#include "str.h"
 
 typedef struct {
 	Meta _meta;

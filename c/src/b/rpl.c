@@ -1,10 +1,10 @@
-#include "../h/defaults.h"
-#include "../h/reader.h"
-#include "../h/error.h"
-#include "../h/parse.h"
-#include "../h/repr.h"
-#include "../h/init.h"
-#include "../h/str.h"
+#include "defaults.h"
+#include "reader.h"
+#include "error.h"
+#include "parse.h"
+#include "repr.h"
+#include "init.h"
+#include "str.h"
 
 void skip_line(Reader reader) {
 	for (char c = reader_peek(reader); ; c = reader_next(reader)) {

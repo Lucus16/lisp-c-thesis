@@ -1,5 +1,5 @@
-#include "../h/type.h"
-#include "../h/str.h"
+#include "type.h"
+#include "str.h"
 
 Value type_str(Type type) {
 	switch (type) {

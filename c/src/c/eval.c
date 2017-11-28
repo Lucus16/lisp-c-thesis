@@ -1,9 +1,9 @@
-#include "../h/error.h"
-#include "../h/value.h"
-#include "../h/step.h"
-#include "../h/core.h"
-#include "../h/repr.h"
-#include "../h/list.h"
+#include "error.h"
+#include "value.h"
+#include "step.h"
+#include "core.h"
+#include "repr.h"
+#include "list.h"
 
 Value eval(Value code, Namespace stat, Handler handler);
 

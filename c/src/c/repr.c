@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../h/constants.h"
-#include "../h/core.h"
+#include "constants.h"
+#include "core.h"
 
 String value_repr(String prefix, Value v);
 

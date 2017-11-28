@@ -1,11 +1,11 @@
-#include "../h/constants.h"
-#include "../h/equals.h"
-#include "../h/value.h"
-#include "../h/error.h"
-#include "../h/meta.h"
-#include "../h/type.h"
-#include "../h/core.h"
-#include "../h/repr.h"
+#include "constants.h"
+#include "equals.h"
+#include "value.h"
+#include "error.h"
+#include "meta.h"
+#include "type.h"
+#include "core.h"
+#include "repr.h"
 
 void match(Namespace ns, Value names, Value values, Handler mismatch) {
 	while (true) {

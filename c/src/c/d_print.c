@@ -1,6 +1,6 @@
-#include "../h/defaults.h"
-#include "../h/repr.h"
-#include "../h/str.h"
+#include "defaults.h"
+#include "repr.h"
+#include "str.h"
 
 Value d_print(Value args, Step step, Handler handler) {
 	check_arg_count(args, 1, 1, handler);

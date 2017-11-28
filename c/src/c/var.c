@@ -1,7 +1,7 @@
-#include "../h/value.h"
-#include "../h/meta.h"
-#include "../h/eval.h"
-#include "../h/pair.h"
+#include "value.h"
+#include "meta.h"
+#include "eval.h"
+#include "pair.h"
 
 typedef struct {
 	Meta _meta;
