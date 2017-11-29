@@ -1,10 +1,14 @@
 IDEA
+- KISS
 - Build a Lisp interpreter in C
 - Generate C code using Lisp
+	- Initial code generation should have one on one correspondence to C,
+	  otherwise, arbitrary abstractions aren't possible. First make the Lisp to
+	  C translation, then build abstractions on top of it.
 - Generate its own interpreter using Lisp
 - Modularize the interpreter for extensibility
 - Keep functions like eval, apply, mkstruct, read, ... as close as possible to
-  their C counterparts. Aka KISS
+  their C counterparts
 
 FIX
 - readline
