@@ -74,6 +74,14 @@ Reader reader_file(FILE *fp, Handler handler) {
 	return reader;
 }
 
+Reader reader_path(const char *path, Handler handler) {
+	FILE *fp = fopen(path, "r");
+	if (fp == NULL) {
+		error_handle(handler, str_format("File not found: %s", path));
+	}
+	return reader_file(fp, handler);
+}
+
 Reader reader_string(String str, Handler handler) {
 	Reader reader = meta_new(TYPE_STRING_READER, sizeof(*reader));
 	reader->handler = handler;

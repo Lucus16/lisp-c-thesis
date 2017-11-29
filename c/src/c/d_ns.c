@@ -97,6 +97,7 @@ Value d_eval(Value args, Step step, Handler handler) {
 }
 
 Value d_do(Value args, Namespace stat, Step step, Handler handler) {
+	check_arg_count(args, 0, -1, handler);
 	stat = ns_new(meta_refer(stat));
 	args = eval_list(meta_refer(args), stat, handler);
 	Value result = NIL;

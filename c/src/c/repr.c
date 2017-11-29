@@ -79,7 +79,7 @@ String str_repr(String r, String str) {
 	r = str_appendf(r, "\"");
 	size_t end = str_len(str);
 	for (size_t i = 0; i < end; i++) {
-		char_escape(r, str_get(str, i));
+		r = char_escape(r, str_get(str, i));
 	}
 	return str_appendf(r, "\"");
 }

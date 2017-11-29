@@ -3,6 +3,7 @@
 #include "meta.h"
 #include "pair.h"
 #include "list.h"
+#include "char.h"
 #include "str.h"
 #include "int.h"
 #include "ns.h"
@@ -21,9 +22,16 @@ Value plus_pair(Value args, Step step, Handler handler) {
 
 Value plus_str(Value args, Step step, Handler handler) {
 	Value result = pair_car(args);
+	if (meta_type(result) == TYPE_CHAR) {
+		result = str_format("%c", char_get(result));
+	}
 	args = pair_cdr(args);
 	for (; args != NIL; args = pair_cdr(args)) {
-		result = str_append(result, as_string(pair_car(args), handler));
+		if (meta_type(pair_car(args)) == TYPE_CHAR) {
+			result = str_append_char(result, char_get(pair_car(args)));
+		} else {
+			result = str_append(result, as_string(pair_car(args), handler));
+		}
 	}
 	return result;
 }
@@ -53,6 +61,7 @@ Value d_plus(Value args, Step step, Handler handler) {
 			return plus_pair(args, step, handler);
 		case TYPE_STRING:
 		case TYPE_STRING_VIEW:
+		case TYPE_CHAR:
 			return plus_str(args, step, handler);
 		case TYPE_NAMESPACE:
 			return plus_ns(args, step, handler);
@@ -64,14 +73,16 @@ Value d_plus(Value args, Step step, Handler handler) {
 	}
 }
 
-Value d_equals(Value args, Step step, Handler handler) {
+Value d_lt(Value args, Step step, Handler handler) {
+	check_arg_count(args, 0, -1, handler);
 	if (args == NIL) { return NIL; }
 	Value v = pair_car(args);
 	args = pair_cdr(args);
 	while (args != NIL) {
-		if (!equals(pair_car(args), v)) {
+		if (!int_less_than(v, pair_car(args))) {
 			return bool_new(false);
 		}
+		v = pair_car(args);
 	}
 	return bool_new(true);
 }

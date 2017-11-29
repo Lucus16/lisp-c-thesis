@@ -7,6 +7,9 @@ Value parse_value(Reader reader);
 
 char skip_ws(Reader reader) {
 	for (char c = reader_peek(reader); ; c = reader_next(reader)) {
+		if (c == ';') {
+			for (; c != '\n'; c = reader_next(reader)) { }
+		}
 		if (c != ' ' && c != '\n' && c != '\t' && c != '\r') {
 			return c;
 		}

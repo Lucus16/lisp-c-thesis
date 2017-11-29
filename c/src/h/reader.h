@@ -9,6 +9,7 @@
 
 typedef struct {} *Reader;
 
+Reader		reader_path(const char *path, Handler handler);
 Reader		reader_file(FILE *fp, Handler handler);
 Reader		reader_string(String str, Handler handler);
 

@@ -9,18 +9,18 @@ Value d_case(Value args, Namespace stat, Step step, Handler handler) {
 	Value values = eval(pair_car(args), stat, handler);
 	args = pair_cdr(args);
 	while (args != NIL) {
-		if (pair_cdr(as_pair(args, handler)) == NIL) {
+		if (pair_cdr(args) == NIL) {
 			return step_set(step, pair_car(args), stat);
 		}
-		check_arg_count(args, 2, -1, handler);
 		Value names = pair_car(args);
 		Value body = pair_car(pair_cdr(args));
 		args = pair_cdr(pair_cdr(args));
 		Handler mismatch = error_new_handler();
+		Namespace newstat = ns_new(meta_refer(stat));
 		if (error_occurred(mismatch)) {
+			meta_free(newstat);
 			continue;
 		}
-		Namespace newstat = ns_new(stat);
 		match(newstat, names, values, mismatch);
 		return step_set(step, body, newstat);
 	}

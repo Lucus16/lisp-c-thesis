@@ -142,7 +142,7 @@ size_t buf_space(String s) {
 String buf_alloc(String s, size_t size) {
 	if (buf_space(s) < size) {
 		size_t s_len = str_len(s);
-		size_t new_size = max(power_of_two(s_len + 1), s_len + size);
+		size_t new_size = max(power_of_two(s->buf_end - s->start + 1), s_len + size);
 		s = str_new(s->start, s_len, new_size);
 	}
 	return s;
@@ -173,7 +173,7 @@ String str_appendf(String prefix, const char *format, ...) {
 	va_start(args1, format);
 	va_copy(args2, args1);
 
-	int len = vsnprintf(NULL, 0, format, args1) + sizeof('\0');
+	int len = vsnprintf(NULL, 0, format, args1) + 1;
 	prefix = buf_alloc(prefix, len);
 	int written = vsnprintf(prefix->end, len, format, args2);
 	if (written > 0) {
@@ -191,7 +191,7 @@ String str_format(const char *format, ...) {
 	va_start(args1, format);
 	va_copy(args2, args1);
 
-	int len = vsnprintf(NULL, 0, format, args1) + sizeof('\0');
+	int len = vsnprintf(NULL, 0, format, args1) + 1;
 	String s = str_new(NULL, 0, len);
 	int written = vsnprintf(s->end, len, format, args2);
 	if (written > 0) {
