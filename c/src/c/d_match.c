@@ -6,11 +6,11 @@
 
 Value d_case(Value args, Namespace stat, Step step, Handler handler) {
 	check_arg_count(args, 1, -1, handler);
-	Value values = eval(pair_car(args), stat, handler);
+	Value values = eval(meta_refer(pair_car(args)), meta_refer(stat), handler);
 	args = pair_cdr(args);
 	while (args != NIL) {
 		if (pair_cdr(args) == NIL) {
-			return step_set(step, pair_car(args), stat);
+			return step_set(step, meta_refer(pair_car(args)), stat);
 		}
 		Value names = pair_car(args);
 		Value body = pair_car(pair_cdr(args));
@@ -22,7 +22,7 @@ Value d_case(Value args, Namespace stat, Step step, Handler handler) {
 			continue;
 		}
 		match(newstat, names, values, mismatch);
-		return step_set(step, body, newstat);
+		return step_set(step, meta_refer(body), newstat);
 	}
 	return error_handle(handler, str_append(str_lit("No match for: "),
 				repr(values)));

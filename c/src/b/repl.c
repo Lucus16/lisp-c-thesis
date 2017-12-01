@@ -21,7 +21,10 @@ void skip_line(Reader reader) {
 int run_file(Handler handler, Reader reader, Namespace ns, bool interactive) {
 	while (!reader_empty(reader)) {
 		if (error_occurred(handler)) {
-			if (reader_empty(reader)) { return 0; }
+			if (reader_empty(reader)) {
+				meta_free(error_get_msg(handler));
+				return 0;
+			}
 			str_println(stderr, error_get_msg(handler));
 			skip_line(reader);
 			if (interactive) {

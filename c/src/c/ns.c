@@ -101,6 +101,7 @@ bool single_defines(Namespace ns, Value key) {
 		if (entry->key == key) {
 			return true;
 		}
+		entry = entry->next;
 	}
 	return false;
 }

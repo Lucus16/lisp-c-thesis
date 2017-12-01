@@ -31,7 +31,7 @@ String uniq_repr(String r, Uniq uniq) {
 	} else if (uniq == BOOL_FALSE) {
 		return str_appendf(r, "false");
 	}
-	return str_appendf(r, "<Unique %lx>", uniq);
+	return str_appendf(r, "<Unique %p>", uniq);
 }
 
 String int_repr(String r, Int i) {

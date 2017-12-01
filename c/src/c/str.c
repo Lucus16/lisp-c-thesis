@@ -143,7 +143,9 @@ String buf_alloc(String s, size_t size) {
 	if (buf_space(s) < size) {
 		size_t s_len = str_len(s);
 		size_t new_size = max(power_of_two(s->buf_end - s->start + 1), s_len + size);
+		String olds = s;
 		s = str_new(s->start, s_len, new_size);
+		meta_free(olds);
 	}
 	return s;
 }
@@ -152,6 +154,7 @@ String str_append(String dest, String src) {
 	dest = buf_alloc(dest, str_len(src));
 	memcpy(dest->end, src->start, str_len(src));
 	dest->end += str_len(src);
+	meta_free(src);
 	return dest;
 }
 

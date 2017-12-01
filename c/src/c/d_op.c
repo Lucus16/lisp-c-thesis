@@ -24,13 +24,16 @@ Value plus_str(Value args, Step step, Handler handler) {
 	Value result = pair_car(args);
 	if (meta_type(result) == TYPE_CHAR) {
 		result = str_format("%c", char_get(result));
+	} else {
+		result = meta_refer(result);
 	}
 	args = pair_cdr(args);
 	for (; args != NIL; args = pair_cdr(args)) {
 		if (meta_type(pair_car(args)) == TYPE_CHAR) {
 			result = str_append_char(result, char_get(pair_car(args)));
 		} else {
-			result = str_append(result, as_string(pair_car(args), handler));
+			result = str_append(result,
+					meta_refer(as_string(pair_car(args), handler)));
 		}
 	}
 	return result;
@@ -69,7 +72,8 @@ Value d_plus(Value args, Step step, Handler handler) {
 			return plus_int(args, step, handler);
 		default:
 			return error_handle(handler,
-					str_format("+ not defined on values of this type."));
+					str_append(str_lit("+ not defined on values of type "),
+						type_str(meta_type(pair_car(args)))));
 	}
 }
 
@@ -83,6 +87,12 @@ Value d_lt(Value args, Step step, Handler handler) {
 			return bool_new(false);
 		}
 		v = pair_car(args);
+		args = pair_cdr(args);
 	}
 	return bool_new(true);
+}
+
+Value d_dec(Value args, Step step, Handler handler) {
+	check_arg_count(args, 1, 1, handler);
+	return int_subtract(pair_car(args), int_new(1));
 }

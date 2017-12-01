@@ -7,10 +7,12 @@
 Value d_and(Value args, Namespace stat, Step step, Handler handler) {
 	while (args != NIL) {
 		check_arg_count(args, 1, -1, handler);
-		Value arg = eval(pair_car(args), stat, handler);
+		Value arg = eval(meta_refer(pair_car(args)), meta_refer(stat), handler);
 		if (!truthy(arg)) {
+			meta_free(arg);
 			return bool_new(false);
 		}
+		meta_refer(arg);
 		args = pair_cdr(args);
 	}
 	return bool_new(true);
@@ -19,10 +21,12 @@ Value d_and(Value args, Namespace stat, Step step, Handler handler) {
 Value d_or(Value args, Namespace stat, Step step, Handler handler) {
 	while (args != NIL) {
 		check_arg_count(args, 1, -1, handler);
-		Value arg = eval(pair_car(args), stat, handler);
+		Value arg = eval(meta_refer(pair_car(args)), meta_refer(stat), handler);
 		if (truthy(arg)) {
+			meta_free(arg);
 			return bool_new(true);
 		}
+		meta_free(arg);
 		args = pair_cdr(args);
 	}
 	return bool_new(false);
@@ -35,7 +39,7 @@ Value d_if(Value args, Namespace stat, Step step, Handler handler) {
 			return NIL;
 		}
 		if (pair_cdr(args) == NIL) {
-			return step_set(step, pair_car(args), stat);
+			return step_set(step, meta_refer(pair_car(args)), stat);
 		}
 		Value cond = eval(meta_refer(pair_car(args)), meta_refer(stat), handler);
 		Value body = pair_car(pair_cdr(args));

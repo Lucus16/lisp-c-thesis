@@ -48,9 +48,9 @@ PrimF d_abort, d_exit;
 PrimF d_var;
 
 SpecF d_this, d_super, d_ns, d_do, d_devau, d_def, d_let;
-PrimF d_keys, d_freeze, d_eval;
+PrimF d_keys, d_freeze, d_eval, d_apply;
 
-PrimF d_plus, d_eq, d_lt;
+PrimF d_plus, d_eq, d_lt, d_dec;
 
 void defaults_fill() {
 	defaults_add("true", bool_new(true));
@@ -96,8 +96,10 @@ void defaults_fill() {
 	prim("keys", &d_keys);
 	prim("freeze", &d_freeze);
 	prim("eval", &d_eval);
+	prim("apply", &d_apply);
 
 	prim("+", &d_plus);
 	prim("=", &d_eq);
 	prim("<", &d_lt);
+	prim("dec", &d_dec);
 }

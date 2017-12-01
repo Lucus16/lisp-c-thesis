@@ -13,7 +13,7 @@
 // GENERIC
 // (<namespace> <code>) executes code in the specified namespace
 // (this) and (super) return the respective namespaces
-// (ns (<nametree> <valuetree>) ...) constructs a new namespace
+// (ns <nametree> <valuetree> ...) constructs a new namespace
 // (keys <namespace>) returns a list of all names bound in the namespace
 // (defaults) returns the default namespace
 // (eval <code> <namespace>) is a function wrapping c eval
@@ -65,13 +65,11 @@ Value d_super(Value args, Namespace stat, Step step, Handler handler) {
 Value d_ns(Value args, Namespace stat, Step step, Handler handler) {
 	check_arg_count(args, 0, -1, handler);
 	Namespace result = ns_new(ns_empty());
-	while (meta_type(args) == TYPE_PAIR) {
-		Value arg = pair_car(args);
-		check_arg_count(arg, 2, 2, handler);
-		Value names = as_symbol(pair_car(arg), handler);
-		Value values = eval(pair_car(pair_cdr(arg)), stat, handler);
+	while (args != NIL && pair_cdr(args) != NIL) {
+		Value names = pair_car(args);
+		Value values = eval(pair_car(pair_cdr(args)), stat, handler);
 		match(result, names, values, handler);
-		args = pair_cdr(args);
+		args = pair_cdr(pair_cdr(args));
 	}
 	return result;
 }
@@ -94,6 +92,25 @@ Value d_eval(Value args, Step step, Handler handler) {
 	return eval(meta_refer(pair_car(args)),
 			meta_refer(as_namespace(pair_car(pair_cdr(args)), handler)),
 			handler);
+}
+
+Value d_apply(Value args, Step step, Handler handler) {
+	check_arg_count(args, 2, 2, handler);
+	Value f = meta_refer(pair_car(args));
+	args = meta_refer(pair_car(pair_cdr(args)));
+	switch (meta_type(f)) {
+		case TYPE_PRIMITIVE:
+			return prim_apply(f, args, step, handler);
+		case TYPE_CLOSURE:
+			return closure_apply(f, args, step, handler);
+		default: {
+			String msg = str_append(str_lit("Attempt to apply value of type "),
+					type_str(meta_type(f)));
+			meta_free(f);
+			meta_free(args);
+			return error_handle(handler, msg);
+		}
+	}
 }
 
 Value d_do(Value args, Namespace stat, Step step, Handler handler) {
@@ -155,6 +172,6 @@ Value d_let(Value args, Namespace stat, Step step, Handler handler) {
 	if (args == NIL) {
 		return NIL;
 	} else {
-		return step_set(step, pair_car(args), stat);
+		return step_set(step, meta_refer(pair_car(args)), stat);
 	}
 }

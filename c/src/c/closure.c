@@ -40,7 +40,7 @@ Value closure_apply(Closure closure, Value args, Step step, Handler handler) {
 	}
 	Value code = closure->body;
 	for (; pair_cdr(code) != NIL; code = pair_cdr(code)) {
-		eval(meta_refer(pair_car(code)), meta_refer(stat), handler);
+		meta_free(eval(meta_refer(pair_car(code)), meta_refer(stat), handler));
 	}
 	code = meta_refer(pair_car(code));
 	meta_free(closure);

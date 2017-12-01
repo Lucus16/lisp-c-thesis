@@ -8,5 +8,4 @@ typedef Value (PrimF)(Value, Step, Handler);
 typedef PrimF *PrimFP;
 
 Primitive	prim_new(PrimFP apply);
-Value		prim_apply(Primitive prim, Value args, Namespace stat, Step step,
-		Handler handler);
+Value		prim_apply(Primitive prim, Value args, Step step, Handler handler);

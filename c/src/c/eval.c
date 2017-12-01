@@ -29,7 +29,7 @@ Value var_apply(Value var, Value args, Step step, Handler handler);
 Value apply(Value f, Value args, Namespace stat, Step step, Handler handler) {
 	switch (meta_type(f)) {
 		case TYPE_PRIMITIVE:
-			return prim_apply(f, args, stat, step, handler);
+			return prim_apply(f, eval_list(args, stat, handler), step, handler);
 		case TYPE_SPECIAL_FORM:
 			return special_apply(f, args, stat, step, handler);
 		case TYPE_CLOSURE:
@@ -37,6 +37,7 @@ Value apply(Value f, Value args, Namespace stat, Step step, Handler handler) {
 		case TYPE_VAU:
 			return vau_apply(f, args, stat, step, handler);
 		case TYPE_NAMESPACE:
+			meta_free(stat);
 			return ns_apply(f, args, step, handler);
 		case TYPE_VAR:
 			return var_apply(f, eval_list(args, stat, handler), step, handler);
@@ -56,7 +57,7 @@ Value eval(Value code, Namespace stat, Handler handler) {
 	while (true) {
 		step.code = NULL;
 		Type ctype = meta_type(code);
-		if (ctype == TYPE_SYMBOL) {
+		if (ctype == TYPE_SYMBOL || ctype == TYPE_UNIQ) {
 			Value result = ns_lookup(stat, code, handler);
 			meta_free(stat);
 			meta_free(code);
@@ -66,8 +67,8 @@ Value eval(Value code, Namespace stat, Handler handler) {
 			Value r = apply(f, meta_refer(pair_cdr(code)), stat, &step, handler);
 			meta_free(code);
 			if (step.code != NULL) {
-				code = meta_refer(step.code);
-				stat = meta_refer(step.stat);
+				code = step.code;
+				stat = step.stat;
 				continue;
 			}
 			return r;

@@ -15,9 +15,7 @@ Primitive prim_new(Value (*apply)(Value args, Step step, Handler handler)) {
 	return prim;
 }
 
-Value prim_apply(Primitive prim, Value args, Namespace stat, Step step,
-		Handler handler) {
-	args = eval_list(args, stat, handler);
+Value prim_apply(Primitive prim, Value args, Step step, Handler handler) {
 	Value result = prim->apply(args, step, handler);
 	meta_free(prim);
 	meta_free(args);
