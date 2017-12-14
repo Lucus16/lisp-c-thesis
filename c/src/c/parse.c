@@ -1,3 +1,4 @@
+#include "constants.h"
 #include "reader.h"
 #include "core.h"
 
@@ -39,7 +40,9 @@ char escape(Reader reader) {
 Symbol parse_symbol(Reader reader) {
 	String name = str_new(NULL, 0, 16);
 	for (char c = reader_peek(reader); !reader_empty(reader); c = reader_next(reader)) {
-		if (c <= ' ' || c == ')') { break; }
+		if (c <= ' ' || c == ')' || c == ']' || c == '}') {
+			break;
+		}
 		name = str_append_char(name, c);
 	}
 	return str_symbol(name);
@@ -84,9 +87,22 @@ Char parse_char(Reader reader) {
 Value parse_list(Reader reader) {
 	Pair first = NIL;
 	Pair last = NIL;
+	char ender;
+	switch (reader_peek(reader)) {
+		case '{':
+			ender = '}';
+			first = last = pair_new(meta_refer(SYMBOL_BRACES), NIL);
+			break;
+		case '[':
+			ender = ']';
+			first = last = pair_new(meta_refer(SYMBOL_BRACKETS), NIL);
+			break;
+		default:
+			ender = ')';
+	}
 	reader_next(reader);
 	for (char c = skip_ws(reader); ; c = skip_ws(reader)) {
-		if (c == ')') {
+		if (c == ender) {
 			reader_next(reader);
 			return first;
 		}
@@ -105,6 +121,8 @@ Value parse_value(Reader reader) {
 	char c = skip_ws(reader);
 	switch (c) {
 		case '(':
+		case '[':
+		case '{':
 			return parse_list(reader);
 		case '0' ... '9':
 			return parse_int(reader);
@@ -112,7 +130,7 @@ Value parse_value(Reader reader) {
 			return parse_str(reader);
 		case '\'':
 			return parse_char(reader);
-		case '\x00' ... '\x1f': case '\x7f': case ')':
+		case '\x00' ... '\x1f': case '\x7f': case ')': case ']': case '}':
 			reader_error(reader, str_format("Unexpected character '%c'.", c));
 			return NULL;
 		default:

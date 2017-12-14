@@ -11,6 +11,8 @@ void constants_exit() {
 	meta_free(SYMBOL_QUOTE);
 	meta_free(SYMBOL_DOT);
 	meta_free(SYMBOL_ELLIPSIS);
+	meta_free(SYMBOL_BRACKETS);
+	meta_free(SYMBOL_BRACES);
 }
 
 void constants_init() {
@@ -21,6 +23,8 @@ void constants_init() {
 	SYMBOL_QUOTE = symbol_new("quote", 5);
 	SYMBOL_DOT = symbol_new(".", 1);
 	SYMBOL_ELLIPSIS = symbol_new("...", 3);
+	SYMBOL_BRACKETS = symbol_new("brackets", 8);
+	SYMBOL_BRACES = symbol_new("braces", 6);
 
 	atexit(constants_exit);
 }

@@ -67,8 +67,11 @@ Value d_ns(Value args, Namespace stat, Step step, Handler handler) {
 	Namespace result = ns_new(ns_empty());
 	while (args != NIL && pair_cdr(args) != NIL) {
 		Value names = pair_car(args);
-		Value values = eval(pair_car(pair_cdr(args)), stat, handler);
+		Value values = eval(meta_refer(pair_car(pair_cdr(args))),
+				meta_refer(stat), handler);
 		match(result, names, values, handler);
+		meta_free(names);
+		meta_free(values);
 		args = pair_cdr(pair_cdr(args));
 	}
 	return result;
@@ -89,9 +92,8 @@ Value d_freeze(Value args, Step step, Handler handler) {
 
 Value d_eval(Value args, Step step, Handler handler) {
 	check_arg_count(args, 2, 2, handler);
-	return eval(meta_refer(pair_car(args)),
-			meta_refer(as_namespace(pair_car(pair_cdr(args)), handler)),
-			handler);
+	return step_set(step, meta_refer(pair_car(args)),
+			meta_refer(as_namespace(pair_car(pair_cdr(args)), handler)));
 }
 
 Value d_apply(Value args, Step step, Handler handler) {
@@ -117,11 +119,14 @@ Value d_do(Value args, Namespace stat, Step step, Handler handler) {
 	check_arg_count(args, 0, -1, handler);
 	stat = ns_new(meta_refer(stat));
 	args = eval_list(meta_refer(args), stat, handler);
+	Value orig_args = args;
 	Value result = NIL;
 	for (; args != NIL; args = pair_cdr(args)) {
 		result = pair_car(args);
 	}
-	return meta_refer(result);
+	result = meta_refer(result);
+	meta_free(orig_args);
+	return result;
 }
 
 Value d_devau(Value args, Namespace stat, Step step, Handler handler) {
@@ -156,6 +161,22 @@ Value d_def(Value args, Namespace stat, Step step, Handler handler) {
 	}
 	Value value = d_do(pair_cdr(args), stat, step, handler);
 	ns_insert(stat, meta_refer(name), value);
+	return NIL;
+}
+
+Value d_bind(Value args, Namespace stat, Step step, Handler handler) {
+	check_arg_count(args, 2, 3, handler);
+	args = eval_list(args, meta_refer(stat), handler);
+	Value name = pair_car(args);
+	Value value = pair_car(pair_cdr(args));
+	Namespace ns;
+	if (pair_cdr(pair_cdr(args)) != NIL) {
+		ns = as_namespace(pair_car(pair_cdr(pair_cdr(args))), handler);
+	} else {
+		ns = stat;
+	}
+	match(ns, name, value, handler);
+	meta_free(stat);
 	return NIL;
 }
 

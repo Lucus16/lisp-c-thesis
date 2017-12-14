@@ -9,11 +9,8 @@
 
 void match(Namespace ns, Value names, Value values, Handler mismatch) {
 	while (true) {
-		if (names == SYMBOL_UNDERSCORE) {
-			return;
-		}
 		Type ntype = meta_type(names);
-		if (ntype == TYPE_SYMBOL) {
+		if (ntype == TYPE_SYMBOL || ntype == TYPE_UNIQ) {
 			ns_insert(ns, meta_refer(names), meta_refer(values));
 			return;
 		} else if (ntype != TYPE_PAIR) {

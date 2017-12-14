@@ -142,7 +142,7 @@ size_t buf_space(String s) {
 String buf_alloc(String s, size_t size) {
 	if (buf_space(s) < size) {
 		size_t s_len = str_len(s);
-		size_t new_size = max(power_of_two(s->buf_end - s->start + 1), s_len + size);
+		size_t new_size = power_of_two(s_len + size);
 		String olds = s;
 		s = str_new(s->start, s_len, new_size);
 		meta_free(olds);
