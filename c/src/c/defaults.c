@@ -43,14 +43,15 @@ SpecF d_fn, d_vau;
 PrimF d_print, d_repr;
 
 PrimF d_car, d_cdr, d_cons;
-PrimF d_ispair, d_isbool, d_issymbol, d_isuniq, d_ischar, d_isstr;
+PrimF d_ispair, d_isbool, d_issymbol, d_isuniq, d_ischar, d_isstr, d_isform;
+PrimF d_isfn;
 PrimF d_abort, d_exit;
 PrimF d_var;
 
-SpecF d_this, d_super, d_ns, d_do, d_devau, d_def, d_let, d_bind;
-PrimF d_keys, d_freeze, d_eval, d_apply;
+SpecF d_this, d_super, d_ns, d_do, d_devau, d_def, d_let;
+PrimF d_keys, d_freeze, d_eval, d_apply, d_bind, d_lookup;
 
-PrimF d_plus, d_eq, d_lt, d_dec;
+PrimF d_plus, d_minus, d_eq, d_lt, d_dec;
 
 SpecF d_try;
 PrimF d_error;
@@ -81,6 +82,8 @@ void defaults_fill() {
 	prim("isuniq", &d_isuniq);
 	prim("ischar", &d_ischar);
 	prim("isstr", &d_isstr);
+	prim("isform", &d_isform);
+	prim("isfn", &d_isfn);
 
 	prim("car", &d_car);
 	prim("cdr", &d_cdr);
@@ -96,13 +99,15 @@ void defaults_fill() {
 	special("devau", &d_devau);
 	special("def", &d_def);
 	special("let", &d_let);
-	special("bind", &d_bind);
 	prim("keys", &d_keys);
 	prim("freeze", &d_freeze);
 	prim("eval", &d_eval);
 	prim("apply", &d_apply);
+	prim("bind", &d_bind);
+	prim("lookup", &d_lookup);
 
 	prim("+", &d_plus);
+	prim("-", &d_minus);
 	prim("=", &d_eq);
 	prim("<", &d_lt);
 	prim("dec", &d_dec);
