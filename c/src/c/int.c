@@ -11,6 +11,10 @@ int64_t int_get(Int i) {
 	return i >> 3;
 }
 
+Int int_neg(Int a) {
+	return (-(a & ~7)) | 1;
+}
+
 Int int_add(Int a, Int b) {
 	return a + (b & ~7);
 }

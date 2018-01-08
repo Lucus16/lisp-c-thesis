@@ -40,7 +40,7 @@ Value plus_str(Value args, Step step, Handler handler) {
 }
 
 Value plus_ns(Value args, Step step, Handler handler) {
-	Value result = pair_car(args);
+	Value result = meta_refer(as_namespace(pair_car(args), handler));
 	args = pair_cdr(args);
 	for (; args != NIL; args = pair_cdr(args)) {
 		result = ns_append(result, as_namespace(pair_car(args), handler));
@@ -75,6 +75,21 @@ Value d_plus(Value args, Step step, Handler handler) {
 					str_append(str_lit("+ not defined on values of type "),
 						type_str(meta_type(pair_car(args)))));
 	}
+}
+
+Value d_minus(Value args, Step step, Handler handler) {
+	check_arg_count(args, 0, -1, handler);
+	if (args == NIL) {
+		return int_new(0);
+	}
+	if (pair_cdr(args) == NIL) {
+		return int_neg(as_int(pair_car(args), handler));
+	}
+	Int result = as_int(pair_car(args), handler);
+	for (args = pair_cdr(args); args != NIL; args = pair_cdr(args)) {
+		result = int_subtract(result, as_int(pair_car(args), handler));
+	}
+	return result;
 }
 
 Value d_lt(Value args, Step step, Handler handler) {

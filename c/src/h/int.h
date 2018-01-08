@@ -7,6 +7,7 @@ typedef struct {} *Int;
 
 Int			int_new(int64_t i);
 int64_t		int_get(Int i);
+Int			int_neg(Int i);
 Int			int_add(Int a, Int b);
 Int			int_subtract(Int a, Int b);
 Int			int_multiply(Int a, Int b);
