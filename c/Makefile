@@ -1,15 +1,15 @@
-VG=valgrind --leak-check=full --track-origins=yes --error-exitcode=1
-CC=clang -g -std=c11 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Werror -Isrc/h
-CS=$(wildcard src/c/*.c)
-BS=$(wildcard src/b/*.c)
-TS=$(wildcard src/t/*.c)
-HS=$(wildcard src/*/*.h)
-ALLCS=$(CS) $(BS) $(TS)
-DEPENDS=$(ALLCS:src/%.c=dep/%.d)
-OBJECTS=$(CS:src/c/%.c=obj/%.o)
-BINS=$(BS:src/b/%.c=bin/%)
-TESTS=$(TS:src/t/%.c=test/%)
-SHELLTESTS=$(wildcard src/t/*.sh)
+VG:=valgrind --leak-check=full --track-origins=yes --error-exitcode=1
+CC:=clang -g -std=c11 -Wall -Wextra -Wno-unused -Wno-unused-parameter -Werror -Isrc/h
+CS:=$(wildcard src/c/*.c)
+BS:=$(wildcard src/b/*.c)
+TS:=$(wildcard src/t/*.c)
+HS:=$(wildcard src/*/*.h)
+ALLCS:=$(CS) $(BS) $(TS)
+DEPENDS:=$(ALLCS:src/%.c=dep/%.d)
+OBJECTS:=$(CS:src/c/%.c=obj/%.o)
+BINS:=$(BS:src/b/%.c=bin/%)
+TESTS:=$(TS:src/t/%.c=test/%)
+SHELLTESTS:=$(wildcard src/t/*.sh)
 
 all: tags $(OBJECTS) $(BINS) $(TESTS)
 
