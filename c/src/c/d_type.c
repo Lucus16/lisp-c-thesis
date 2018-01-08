@@ -64,3 +64,25 @@ Value d_isstr(Value args, Step step, Handler handler) {
 	}
 	return bool_new(true);
 }
+
+Value d_isform(Value args, Step step, Handler handler) {
+	while (meta_type(args) == TYPE_PAIR) {
+		if (meta_type(pair_car(args)) != TYPE_VAU &&
+				meta_type(pair_car(args)) != TYPE_SPECIAL_FORM) {
+			return bool_new(false);
+		}
+		args = pair_cdr(args);
+	}
+	return bool_new(true);
+}
+
+Value d_isfn(Value args, Step step, Handler handler) {
+	while (meta_type(args) == TYPE_PAIR) {
+		if (meta_type(pair_car(args)) != TYPE_CLOSURE &&
+				meta_type(pair_car(args)) != TYPE_PRIMITIVE) {
+			return bool_new(false);
+		}
+		args = pair_cdr(args);
+	}
+	return bool_new(true);
+}
