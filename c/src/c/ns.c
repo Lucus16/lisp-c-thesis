@@ -88,7 +88,7 @@ Value ns_keys(Namespace ns) {
 	List result; list_init(&result);
 	for (; ns != NULL; ns = ns->super) {
 		for (NSEntry entry = ns->first; entry != NULL; entry = entry->next) {
-			list_append(&result, entry->key);
+			list_append(&result, meta_refer(entry->key));
 		}
 	}
 	return list_get(&result);
