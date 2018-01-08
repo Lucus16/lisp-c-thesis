@@ -164,20 +164,20 @@ Value d_def(Value args, Namespace stat, Step step, Handler handler) {
 	return NIL;
 }
 
-Value d_bind(Value args, Namespace stat, Step step, Handler handler) {
-	check_arg_count(args, 2, 3, handler);
-	args = eval_list(args, meta_refer(stat), handler);
-	Value name = pair_car(args);
-	Value value = pair_car(pair_cdr(args));
-	Namespace ns;
-	if (pair_cdr(pair_cdr(args)) != NIL) {
-		ns = as_namespace(pair_car(pair_cdr(pair_cdr(args))), handler);
-	} else {
-		ns = stat;
-	}
-	match(ns, name, value, handler);
-	meta_free(stat);
+Value d_bind(Value args, Step step, Handler handler) {
+	check_arg_count(args, 3, 3, handler);
+	Namespace ns = as_namespace(pair_car(args), handler);
+	Value name = meta_refer(pair_car(pair_cdr(args)));
+	Value value = meta_refer(pair_car(pair_cdr(pair_cdr(args))));
+	ns_insert(ns, name, value);
 	return NIL;
+}
+
+Value d_lookup(Value args, Step step, Handler handler) {
+	check_arg_count(args, 2, 2, handler);
+	Value name = pair_car(args);
+	Namespace ns = as_namespace(pair_car(pair_cdr(args)), handler);
+	return ns_lookup(ns, name, handler);
 }
 
 Value d_let(Value args, Namespace stat, Step step, Handler handler) {
