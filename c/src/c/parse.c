@@ -117,6 +117,12 @@ Value parse_list(Reader reader) {
 	}
 }
 
+Value parse_quote(Reader reader) {
+	reader_next(reader);
+	return pair_new(meta_refer(SYMBOL_QUOTE),
+			pair_new(parse_value(reader), NIL));
+}
+
 Value parse_value(Reader reader) {
 	char c = skip_ws(reader);
 	switch (c) {
@@ -124,6 +130,8 @@ Value parse_value(Reader reader) {
 		case '[':
 		case '{':
 			return parse_list(reader);
+		case '`':
+			return parse_quote(reader);
 		case '0' ... '9':
 			return parse_int(reader);
 		case '"':
