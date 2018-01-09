@@ -33,6 +33,9 @@ int run_file(Handler handler, Reader reader, Namespace ns, bool interactive) {
 				return 1;
 			}
 		}
+		if (interactive) {
+			str_print(stdout, str_lit("> "));
+		}
 		Value code = parse_value(reader);
 		Value result = eval(code, meta_refer(ns), handler);
 		if (interactive && result != NIL) {
