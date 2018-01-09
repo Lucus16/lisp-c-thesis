@@ -86,3 +86,13 @@ Value d_isfn(Value args, Step step, Handler handler) {
 	}
 	return bool_new(true);
 }
+
+Value d_isns(Value args, Step step, Handler handler) {
+	while (meta_type(args) == TYPE_PAIR) {
+		if (meta_type(pair_car(args)) != TYPE_NAMESPACE) {
+			return bool_new(false);
+		}
+		args = pair_cdr(args);
+	}
+	return bool_new(true);
+}

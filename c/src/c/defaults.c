@@ -44,7 +44,7 @@ PrimF d_print, d_repr;
 
 PrimF d_car, d_cdr, d_cons;
 PrimF d_ispair, d_isbool, d_issymbol, d_isuniq, d_ischar, d_isstr, d_isform;
-PrimF d_isfn;
+PrimF d_isfn, d_isns;
 PrimF d_abort, d_exit;
 PrimF d_var;
 
@@ -84,6 +84,7 @@ void defaults_fill() {
 	prim("isstr", &d_isstr);
 	prim("isform", &d_isform);
 	prim("isfn", &d_isfn);
+	prim("isns", &d_isns);
 
 	prim("car", &d_car);
 	prim("cdr", &d_cdr);
