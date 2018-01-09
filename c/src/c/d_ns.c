@@ -175,8 +175,8 @@ Value d_bind(Value args, Step step, Handler handler) {
 
 Value d_lookup(Value args, Step step, Handler handler) {
 	check_arg_count(args, 2, 2, handler);
-	Value name = pair_car(args);
-	Namespace ns = as_namespace(pair_car(pair_cdr(args)), handler);
+	Value name = pair_car(pair_cdr(args));
+	Namespace ns = as_namespace(pair_car(args), handler);
 	return ns_lookup(ns, name, handler);
 }
 
