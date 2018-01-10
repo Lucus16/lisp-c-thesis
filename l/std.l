@@ -13,6 +13,8 @@
 ;(devau (apply f l) e (eval (cons f (map1 quoted (eval l e))) e))
 ;(devau (using inner . body) outer (eval body (+ outer inner)))
 
+(def (islist x) (or (ispair x) (no x)))
+
 (def (range n)
   (def (range' n r)
     (if (< n 1) r
@@ -109,7 +111,7 @@
     (apply str (cons (+ (strx (car l)) (strx (car (cdr l)))) (cdr (cdr l))))))
 
 (def (match parent params args)
-  (apply (eval (list fn param (list this)) parent) args))
+  (apply (eval (list fn params (list this)) parent) args))
 
 (devau (defns name . stmts) e
   (eval (list def name (cons ns stmts)) e))
