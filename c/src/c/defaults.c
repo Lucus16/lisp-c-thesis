@@ -37,6 +37,7 @@ void special(const char *key, SpecFP value) {
 PrimF d_uniq;
 
 SpecF d_case;
+PrimF d_match;
 SpecF d_if, d_and, d_or;
 PrimF d_not, d_no, d_some;
 SpecF d_fn, d_vau;
@@ -65,6 +66,7 @@ void defaults_fill() {
 	prim("uniq", &d_uniq);
 
 	special("case", &d_case);
+	prim("match", &d_match);
 	special("if", &d_if);
 	special("and", &d_and);
 	special("or", &d_or);

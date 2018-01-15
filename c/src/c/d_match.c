@@ -27,3 +27,13 @@ Value d_case(Value args, Namespace stat, Step step, Handler handler) {
 	return error_handle(handler, str_append(str_lit("No match for: "),
 				repr(values)));
 }
+
+Value d_match(Value args, Step step, Handler handler) {
+	check_arg_count(args, 3, 3, handler);
+	Namespace ns = as_namespace(pair_car(args), handler);
+	Value names = pair_car(pair_cdr(args));
+	Value values = pair_car(pair_cdr(pair_cdr(args)));
+	Handler mismatch = error_new_handler();
+	match(ns, names, values, handler);
+	return meta_refer(ns);
+}
