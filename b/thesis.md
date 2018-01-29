@@ -5,14 +5,14 @@
 # Introduction
 
 Thousands of programming languages exist nowadays, yet all of them have various
-kinds of problems. New programming languages are built regularly. Some
+kinds of problems. New programming languages are created regularly. Some
 programming languages aim to be very generic, while others are only useful in
 some specific areas. Some languages introduce new features and some make
 features mainstream. However, it is often very hard or impossible to introduce
 such new features to existing programming languages.
 
 C++ is an example of a language that tries to add many such new features. The
-result is often that it ends up with ugly and confusing syntax and/or semantics.
+result is often that it ends up with ugly and confusing syntax and semantics.
 This happens because C++ has decades of legacy features that it needs to stay
 backwards-compatible with and because many of these features and design choices
 are tightly interwoven and strongly dependent on each other. This makes it hard
@@ -57,11 +57,36 @@ at run time.
 While Lisp allows arbitrary abstractions of its primitives by using macros, it
 is still limited by the primitives it makes available. For example, Clojure is
 fundamentally limited by the capabilities of the JVM, it cannot make
-abstractions that aren't based on the abstractions the JVM provides. This means
-it cannot support tail call optimization, has a significant startup time, and
+abstractions that aren't based on the primitives the JVM provides. This means it
+cannot support tail call optimization, has a significant startup time, and
 cannot be used for low-level programming.
 
-[ lisp allows all abstractions, but misses primitives ]
+Some other Lisp languages do not run on a VM, but nonetheless do not expose all
+primitives their implementations have access to. The reason for this is usually
+simple: In order to generate efficient code, they want to structure their code
+in a specific way so that they don't need to constantly check assumptions.
+Allowing access to arbitrary primitives risks breaking that structure and thus
+generating broken code.
+
+However, exposing all primitives also has an advantage: There is no longer a
+need for macros which build S-expressions which compile down to the right
+primitives if you can call the primitives directly. This is how F-expressions
+work: They take as parameters pieces of unevaluated code, just like macros, and
+in addition, they take an environment paramater. Their result is not a piece of
+code that can be compiled, but rather a result value, like a function. This
+means they need to run at run time, because the environment wouldn't be
+available otherwise. Therefor, they don't allow the same compile-time
+optimizations as macros do, but they allow all the same abstractions, in clearer
+and more readable code.
+
+[ describe current issues ]
+
+[ The following projects do allow access to all primitives: TODO ]
+
+[ pros and cons of dynamic languages ]
+
+[ the right balance between static and dynamic: using optional static analysis
+and making primitives fit well in such analysis ]
 
 [ macros are confusing, having language primitives available instead is better ]
 
@@ -70,7 +95,23 @@ language must be clear and simple, so that code that doesn't use safe
 abstractions can still comply with the conventions relatively easily and thus
 keep the program safe. ]
 
+# Identified Issues
+
+I have identified the following issues with the current state of the art of
+programming languages:
+
+- Abstraction is limited in most non-Lisp languages as they allow only specific
+  abstractions, and no generic abstraction of arbitrary syntactical structures.
+- Abstraction is further limited by the primitives a language chooses to expose.
+- Languages that allow large amounts of abstraction suffer from performance
+  penalties.
+- Languages are often limited by the languages or frameworks they are built
+  upon.
+
+# Goals
+
 [ GOALS:
+- Combine the performance of C with the power of Lisp
 - Modular, implementations of different features and data structures not
   strongly dependant on each other.
 - All primitives available.
