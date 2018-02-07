@@ -1,5 +1,9 @@
 [ title page with abstract and index ]
 
+[ possibility: write thesis as a guide for the reader to follow to come to the
+same conclusion. e.g.
+'We (the writer and the reader) have identified' vs 'I have identified' ]
+
 # Abstract
 
 # Introduction
@@ -72,7 +76,7 @@ However, exposing all primitives also has an advantage: There is no longer a
 need for macros which build S-expressions which compile down to the right
 primitives if you can call the primitives directly. This is how F-expressions
 work: They take as parameters pieces of unevaluated code, just like macros, and
-in addition, they take an environment paramater. Their result is not a piece of
+in addition, they take an environment parameter. Their result is not a piece of
 code that can be compiled, but rather a result value, like a function. This
 means they need to run at run time, because the environment wouldn't be
 available otherwise. Therefor, they don't allow the same compile-time
@@ -88,14 +92,14 @@ and more readable code.
 [ the right balance between static and dynamic: using optional static analysis
 and making primitives fit well in such analysis ]
 
-[ macros are confusing, having language primitives available instead is better ]
-
 [ In order to make all primitives available, the semantics of every part of the
 language must be clear and simple, so that code that doesn't use safe
 abstractions can still comply with the conventions relatively easily and thus
 keep the program safe. ]
 
 # Identified Issues
+
+[ TODO: Introduce all concepts and issues in the introduction. ]
 
 I have identified the following issues with the current state of the art of
 programming languages:
@@ -105,40 +109,71 @@ programming languages:
 - Abstraction is further limited by the primitives a language chooses to expose.
 - Languages that allow large amounts of abstraction suffer from performance
   penalties.
-- Languages are often limited by the languages or frameworks they are built
-  upon.
+- Compilers are large, complicated programs with many interdependencies that
+  make it hard to understand and modify.
 
 # Goals
 
-[ GOALS:
-- Combine the performance of C with the power of Lisp
-- Modular, implementations of different features and data structures not
-  strongly dependant on each other.
-- All primitives available.
-- Minimal, easy to understand and easy to hack. Avoid hard-to-understand macros.
-- A minimal Lisp interpreter written in C. One on one correspondence between C
-  and Lisp functions.
-- A minimal C code generation library written in Lisp. One on one correspondence
-  between C syntax and S-expressions.
-- A minimal Lisp interpreter in C, generated from Lisp code.
-- Simple examples of abstractions and analyses made possible.
-- Self-hosting, depends only on a C compiler and a previous version of the
-  interpreter, not on any C code as that is generated.
-]
+Based on the issues I have identified above, I have set the following goals for
+this thesis. I want to build a programming language that:
 
-# Simplicity
+- Can match Lisp in abstraction facilities.
+- Can match C in primitives made available.
+- Can match C in performance.
+- Is easy to understand and easy to modify.
 
-[ TODO: EXPAND
-- Prefer F-expressions over macros.
-]
+# The Solution
 
-# Interpreter
+As my goals have been mostly defined in terms of C and Lisp, the most
+straightforward thing to do would be to combine them in some way. This has
+already been attempted several times, but I have found all of these attempts to
+be lacking in some area.
 
-# C Generator
+The most obvious method of combination is to compile Lisp to C. In fact, after C
+became an established programming language, this has been a fairly common
+practice for beginning Lisp languages. The problem is that many Lisp concepts
+don't match well onto C concepts in a performant manner. [ TODO: Expand ]
 
-# Generated Interpreter
+Another method I've seen a few times is to generate C code using Lisp. Rather
+than transforming Lisp code to C code, the Lisp code is simply run in an
+interpreter and its output is C code. This means Lisp concepts no longer need to
+directly match C concepts. Instead, the Lisp code can generate C code of any
+form in whatever way it sees fit. In order to make generating a C program not
+too much of a hassle, a C code generation library is used.
 
-# Example Abstractions
+[ Examples are cmera, TODO ]
+
+By producing C code, we can be assured that we're capable of reaching C
+performance, as well as having all its primitives available. By using Lisp to
+generate this C code, we have available all its abstraction facilities, and
+because we're not transforming the Lisp code to C code directly, we don't need
+to make use of confusing macros for abstraction and can make use of the much
+nicer fexprs instead.
+
+However, all implementations of this idea I've seen so far are written in an
+existing Lisp language, and these are often very large and complicated
+languages. One of our goals is to build something that is easy to understand and
+modify, something that is simple enough to be able to grasp it in its entirety
+in a matter of hours. Using a large existing language means all used parts of
+that language need to be learned first.
+
+A better option is therefor to use a very small and simple Lisp. In order to
+ensure it can be understood completely, we'll write it in C, which is already
+required knowledge because it is our target language for code generation. At
+this point, it can also serve as our primary example: Once we have a simple Lisp
+interpreter in C and a simple code generation library in this Lisp, we can
+generate the interpreter itself, coming full circle. On top of that, we can give
+some simple examples of abstractions that this makes possible and that will
+hopefully make our interpreter even clearer.
+
+[ make all primitives available ]
+[ keep it minimal ]
+[ keep it simple ]
+[ self hosting ]
+[ avoid macros, prefer fexprs ]
+[ keep it modular ]
+
+# Implementation
 
 # Related Work
 
@@ -161,6 +196,8 @@ programming languages:
 - More and better abstractions and static code analyses. Make it possible to
   analyse existing C code as well by building a parser.
 - An improved Lisp version, preferably in the direction of Clojure.
+- Split abstraction in layers, allowing programming at any level of abstraction
+  in the same language
 ]
 
 # References
