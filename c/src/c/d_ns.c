@@ -83,11 +83,10 @@ Value d_keys(Value args, Step step, Handler handler) {
 }
 
 Value d_freeze(Value args, Step step, Handler handler) {
-	check_arg_count(args, 0, -1, handler);
-	for (; args != NIL; args = pair_cdr(args)) {
-		ns_freeze(as_namespace(pair_car(args), handler));
-	}
-	return NIL;
+	check_arg_count(args, 1, 1, handler);
+	Namespace ns = as_namespace(pair_car(args), handler);
+	ns_freeze(ns);
+	return meta_refer(ns);
 }
 
 Value d_eval(Value args, Step step, Handler handler) {
@@ -174,10 +173,14 @@ Value d_bind(Value args, Step step, Handler handler) {
 }
 
 Value d_lookup(Value args, Step step, Handler handler) {
-	check_arg_count(args, 2, 2, handler);
+	check_arg_count(args, 2, 3, handler);
 	Value name = pair_car(pair_cdr(args));
 	Namespace ns = as_namespace(pair_car(args), handler);
-	return ns_lookup(ns, name, handler);
+	if (pair_cdr(pair_cdr(args)) == NIL) {
+		return ns_lookup(ns, name, handler);
+	} else {
+		return ns_lookup_default(ns, name, pair_car(pair_cdr(pair_cdr(args))));
+	}
 }
 
 Value d_let(Value args, Namespace stat, Step step, Handler handler) {

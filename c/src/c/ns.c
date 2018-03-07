@@ -64,6 +64,17 @@ Namespace ns_super(Namespace ns) {
 	return ns->super;
 }
 
+Value ns_lookup_default(Namespace ns, Value key, Value default_value) {
+	for (; ns != NULL; ns = ns->super) {
+		for (NSEntry entry = ns->first; entry != NULL; entry = entry->next) {
+			if (equals(entry->key, key)) {
+				return meta_refer(entry->value);
+			}
+		}
+	}
+	return meta_refer(default_value);
+}
+
 Value ns_lookup(Namespace ns, Value key, Handler undef_handler) {
 	for (; ns != NULL; ns = ns->super) {
 		for (NSEntry entry = ns->first; entry != NULL; entry = entry->next) {

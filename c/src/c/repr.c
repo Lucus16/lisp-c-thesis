@@ -46,18 +46,22 @@ String char_escape(String r, char c) {
 			return str_appendf(r, "\\\"");
 		case '\\':
 			return str_appendf(r, "\\\\");
-		case '\n':
-			return str_appendf(r, "\\n");
-		case '\t':
-			return str_appendf(r, "\\t");
-		case '\r':
-			return str_appendf(r, "\\r");
 		case '\0':
 			return str_appendf(r, "\\0");
 		case '\a':
 			return str_appendf(r, "\\a");
 		case '\b':
 			return str_appendf(r, "\\b");
+		case '\f':
+			return str_appendf(r, "\\f");
+		case '\n':
+			return str_appendf(r, "\\n");
+		case '\r':
+			return str_appendf(r, "\\r");
+		case '\t':
+			return str_appendf(r, "\\t");
+		case '\v':
+			return str_appendf(r, "\\v");
 		default:
 			return str_appendf(r, "\\x%02x", c);
 	}

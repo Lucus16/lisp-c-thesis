@@ -21,14 +21,17 @@ char escape(Reader reader) {
 	char c = reader_next(reader);
 	switch (c) {
 		case '\'': return '\'';
+		case '"': return '\"';
+		case '?': return '\?';
 		case '\\': return '\\';
-		case '"': return '"';
-		case 'r': return '\r';
-		case 'n': return '\n';
-		case 't': return '\t';
 		case '0': return '\0';
 		case 'a': return '\a';
 		case 'b': return '\b';
+		case 'f': return '\f';
+		case 'n': return '\n';
+		case 'r': return '\r';
+		case 't': return '\t';
+		case 'v': return '\v';
 		default: {
 			String error = str_format("Unknown escape sequence: \\%c", c);
 			reader_error(reader, error);

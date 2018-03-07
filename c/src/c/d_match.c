@@ -33,7 +33,6 @@ Value d_match(Value args, Step step, Handler handler) {
 	Namespace ns = as_namespace(pair_car(args), handler);
 	Value names = pair_car(pair_cdr(args));
 	Value values = pair_car(pair_cdr(pair_cdr(args)));
-	Handler mismatch = error_new_handler();
 	match(ns, names, values, handler);
 	return meta_refer(ns);
 }
