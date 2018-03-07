@@ -1,9 +1,5 @@
 [ title page with abstract and index ]
 
-[ possibility: write thesis as a guide for the reader to follow to come to the
-same conclusion. e.g.
-'We (the writer and the reader) have identified' vs 'I have identified' ]
-
 # Abstract
 
 # Introduction
@@ -85,12 +81,7 @@ and more readable code.
 
 [ describe current issues ]
 
-[ The following projects do allow access to all primitives: TODO ]
-
 [ pros and cons of dynamic languages ]
-
-[ the right balance between static and dynamic: using optional static analysis
-and making primitives fit well in such analysis ]
 
 [ In order to make all primitives available, the semantics of every part of the
 language must be clear and simple, so that code that doesn't use safe
@@ -110,7 +101,7 @@ programming languages:
 - Languages that allow large amounts of abstraction suffer from performance
   penalties.
 - Compilers are large, complicated programs with many interdependencies that
-  make it hard to understand and modify.
+  make them hard to understand and modify.
 
 # Goals
 
@@ -141,14 +132,14 @@ directly match C concepts. Instead, the Lisp code can generate C code of any
 form in whatever way it sees fit. In order to make generating a C program not
 too much of a hassle, a C code generation library is used.
 
-[ Examples are cmera, TODO ]
-
 By producing C code, we can be assured that we're capable of reaching C
 performance, as well as having all its primitives available. By using Lisp to
 generate this C code, we have available all its abstraction facilities, and
 because we're not transforming the Lisp code to C code directly, we don't need
 to make use of confusing macros for abstraction and can make use of the much
 nicer fexprs instead.
+
+[ Examples are cmera, TODO ]
 
 However, all implementations of this idea I've seen so far are written in an
 existing Lisp language, and these are often very large and complicated
@@ -166,6 +157,23 @@ generate the interpreter itself, coming full circle. On top of that, we can give
 some simple examples of abstractions that this makes possible and that will
 hopefully make our interpreter even clearer.
 
+At this point, it would be good to consider if there is still a need for Lisp:
+If the target is C, then the advantage of Lisp being good at generating its own
+code is lost. C is indeed a little harder to generate than Lisp, which is why
+the last translation step should be from simple Lisp data structures to actual C
+code. That way, most code manipulation will happen on simple data structures.
+This can still be done in other languages however. The value of Lisp here lies
+in that it can also abstract its own programs, and because performance isn't as
+much of an issue in what is essentially the "compiler", the more elegant
+F-expressions can be used.
+
+In summary, the central idea of this thesis is to build a simple Lisp
+interpreter and a simple C code generation library in that Lisp language, and
+then to use that library to generate the C code of the Lisp interpreter. While
+doing this it is important to constantly make sure that things stay simple,
+minimal and modular, to make it easy to play around and adapt this language for
+other purposes.
+
 [ make all primitives available ]
 [ keep it minimal ]
 [ keep it simple ]
@@ -179,18 +187,12 @@ hopefully make our interpreter even clearer.
 
 [ TODO: Go through bookmarks ]
 
-[ TODO: EXPAND
-- [cmera] is another project that has similarly created a mapping from
-  S-expressions to C syntax in order to use the power of Lisp for abstractions.
-  They use Common Lisp and macros however, which I find much harder to read, as
-  well as making self-hosting impossible.
-]
-
 # Conclusions
 
 # Future Work
 
 [ TODO: EXPAND
+
 - Better self-hosting: Generate machine code, either from the C S-expressions or
   from another abstractions layer. A better step might be to build a simple VM.
 - More and better abstractions and static code analyses. Make it possible to
@@ -198,6 +200,7 @@ hopefully make our interpreter even clearer.
 - An improved Lisp version, preferably in the direction of Clojure.
 - Split abstraction in layers, allowing programming at any level of abstraction
   in the same language
+
 ]
 
 # References
