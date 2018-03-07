@@ -96,6 +96,27 @@
       (each2 (cdr (cdr l)) f))))
 
 (def rawprint print)
+(def oldrepr repr)
+
+(def (nsrepr e)
+  (def (recur l)
+    (if (no l) nil
+      (+ (list ' ' (repr (car l)) ' ' "...")
+        (recur (cdr l)))))
+  (+ "(ns" (apply + (cons "" (recur (keys e)))) ")"))
+
+(def (listrepr l)
+  (def (recur l)
+    (if (no l) (list ")")
+      (cons ' ' (cons (repr (car l)) (recur (cdr l))))))
+  (if (no l) "()"
+    (no (cdr l)) (+ "(" (repr (car l)) ")")
+    (+ "(" (repr (car l)) (apply + (recur (cdr l))))))
+
+(def (repr x)
+  (if (isns x) (nsrepr x)
+    (ispair x) (listrepr x)
+    (oldrepr x)))
 
 (def (strx x)
   (if (isstr x) x
@@ -110,8 +131,11 @@
     (no (cdr l)) (strx (car l))
     (apply str (cons (+ (strx (car l)) (strx (car (cdr l)))) (cdr (cdr l))))))
 
-(def (match parent params args)
-  (apply (eval (list fn params (list this)) parent) args))
+(devau (lazy x) e
+  (def (result (var nil)))
+  (fn ()
+    (if (no (result)) (result (eval x e)))
+    (result)))
 
 (devau (defns name . stmts) e
   (eval (list def name (cons ns stmts)) e))
@@ -121,14 +145,19 @@
 
 (devau (defu . names) e (map1 [bind e _ (uniq)] names) nil)
 
+; Trace return value
+(devau (tracer . l) e
+  (def r (eval l e))
+  (print r)
+  r)
+
 ; TODO: Trace every call recursively
 (devau (trace . l) e
-  (if (isfn (eval (car l) e))
-    (do
-      (def f (car l))
-      (def l (eval (cons list (cdr l)) e))
-      (print (cons f l))
-      (apply (eval f e) l))
+  (def f (eval (car l) e))
+  (if (isfn f) (do
+      (def args (eval (cons list (cdr l)) e))
+      (print (cons (car l) args))
+      (apply f args))
     (do
       (print l)
       (eval l e))))
