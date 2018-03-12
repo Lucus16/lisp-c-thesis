@@ -4,7 +4,9 @@ bool equals(Value a, Value b);
 
 bool equals(Value a, Value b) {
 	while (true) {
-		if (meta_type(a) != meta_type(b)) {
+		if (a == b) {
+			return true;
+		} else if (meta_type(a) != meta_type(b)) {
 			return false;
 		}
 		switch (meta_type(a)) {
@@ -19,7 +21,7 @@ bool equals(Value a, Value b) {
 			case TYPE_STRING_VIEW:
 				return str_cmp(a, b) == 0;
 			default:
-				return a == b;
+				return false;
 		}
 	}
 }
