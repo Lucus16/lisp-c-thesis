@@ -11,7 +11,7 @@ Value d_try(Value args, Namespace stat, Step step, Handler outer) {
 		Symbol name = meta_refer(as_symbol(pair_car(pair_cdr(args)), outer));
 		ns_insert(stat, name, error_get_msg(inner));
 		Value code = meta_refer(pair_car(pair_cdr(pair_cdr(args))));
-		return step_set(step, code, stat);
+		return step_set(step, code, stat, outer);
 	}
 	Value code = meta_refer(pair_car(args));
 	Value result = eval(code, ns_new(meta_refer(stat)), inner);

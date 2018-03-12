@@ -44,5 +44,5 @@ Value closure_apply(Closure closure, Value args, Step step, Handler handler) {
 	}
 	code = meta_refer(pair_car(code));
 	meta_free(closure);
-	return step_set(step, code, stat);
+	return step_set(step, code, stat, handler);
 }

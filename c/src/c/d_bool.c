@@ -39,13 +39,13 @@ Value d_if(Value args, Namespace stat, Step step, Handler handler) {
 			return NIL;
 		}
 		if (pair_cdr(args) == NIL) {
-			return step_set(step, meta_refer(pair_car(args)), stat);
+			return step_set(step, meta_refer(pair_car(args)), stat, handler);
 		}
 		Value cond = eval(meta_refer(pair_car(args)), meta_refer(stat), handler);
 		Value body = pair_car(pair_cdr(args));
 		if (truthy(cond)) {
 			meta_free(cond);
-			return step_set(step, meta_refer(body), stat);
+			return step_set(step, meta_refer(body), stat, handler);
 		} else {
 			meta_free(cond);
 			args = pair_cdr(pair_cdr(args));

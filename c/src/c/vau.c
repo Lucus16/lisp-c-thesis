@@ -44,5 +44,5 @@ Value vau_apply(Vau vau, Value args, Namespace outer, Step step, Handler handler
 	}
 	code = meta_refer(pair_car(code));
 	meta_free(vau);
-	return step_set(step, code, inner);
+	return step_set(step, code, inner, handler);
 }

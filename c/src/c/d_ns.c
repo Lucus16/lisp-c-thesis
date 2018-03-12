@@ -92,7 +92,8 @@ Value d_freeze(Value args, Step step, Handler handler) {
 Value d_eval(Value args, Step step, Handler handler) {
 	check_arg_count(args, 2, 2, handler);
 	return step_set(step, meta_refer(pair_car(args)),
-			meta_refer(as_namespace(pair_car(pair_cdr(args)), handler)));
+			meta_refer(as_namespace(pair_car(pair_cdr(args)), handler)),
+			handler);
 }
 
 Value d_apply(Value args, Step step, Handler handler) {
@@ -196,6 +197,6 @@ Value d_let(Value args, Namespace stat, Step step, Handler handler) {
 	if (args == NIL) {
 		return NIL;
 	} else {
-		return step_set(step, meta_refer(pair_car(args)), stat);
+		return step_set(step, meta_refer(pair_car(args)), stat, handler);
 	}
 }

@@ -10,7 +10,7 @@ Value d_case(Value args, Namespace stat, Step step, Handler handler) {
 	args = pair_cdr(args);
 	while (args != NIL) {
 		if (pair_cdr(args) == NIL) {
-			return step_set(step, meta_refer(pair_car(args)), stat);
+			return step_set(step, meta_refer(pair_car(args)), stat, handler);
 		}
 		Value names = pair_car(args);
 		Value body = pair_car(pair_cdr(args));
@@ -19,10 +19,12 @@ Value d_case(Value args, Namespace stat, Step step, Handler handler) {
 		Namespace newstat = ns_new(meta_refer(stat));
 		if (error_occurred(mismatch)) {
 			meta_free(newstat);
+			meta_free(mismatch);
 			continue;
 		}
 		match(newstat, names, values, mismatch);
-		return step_set(step, meta_refer(body), newstat);
+		meta_free(mismatch);
+		return step_set(step, meta_refer(body), newstat, handler);
 	}
 	return error_handle(handler, str_append(str_lit("No match for: "),
 				repr(values)));
