@@ -58,8 +58,9 @@ Value d_super(Value args, Namespace stat, Step step, Handler handler) {
 	if (args == NIL) {
 		return meta_refer(ns_super(stat));
 	}
-	return meta_refer(ns_super(as_namespace(
-					eval(pair_car(args), stat, handler), handler)));
+	return meta_refer(ns_super(as_namespace(eval(
+						meta_refer(pair_car(args)),
+						meta_refer(stat), handler), handler)));
 }
 
 Value d_ns(Value args, Namespace stat, Step step, Handler handler) {
