@@ -6,12 +6,12 @@ bool equals(Value a, Value b) {
 	while (true) {
 		if (a == b) {
 			return true;
-		} else if (meta_type(a) != meta_type(b)) {
-			return false;
 		}
 		switch (meta_type(a)) {
 			case TYPE_PAIR:
-				if (!equals(pair_car(a), pair_car(b))) {
+				if (meta_type(b) != TYPE_PAIR) {
+					return false;
+				} else if (!equals(pair_car(a), pair_car(b))) {
 					return false;
 				}
 				a = pair_cdr(a);
@@ -19,6 +19,10 @@ bool equals(Value a, Value b) {
 				break;
 			case TYPE_STRING:
 			case TYPE_STRING_VIEW:
+				if (meta_type(b) != TYPE_STRING &&
+						meta_type(b) != TYPE_STRING_VIEW) {
+					return false;
+				}
 				return str_cmp(a, b) == 0;
 			default:
 				return false;
