@@ -3,12 +3,12 @@
 ; TODO: nested lines in e.g. structs
 
 ; CONFIGURATION
-(def indentation "\t")
-(def newline "\n")
+(def indentation '\t')
+(def newline '\n')
 
 (def (step9 l) (apply + l))
 
-(defu uline uindent uspaced)
+(defu uline uindent uspaced ulinetoken)
 
 (def (indent' level tail)
   (if (= level 0) tail
@@ -18,27 +18,37 @@
 (def (indent . l) (cons uindent l))
 (def (spaced . l) (cons uspaced l))
 
-(def (step8a tree level tail) (if
-    (no tree) tail
-    (not (ispair tree)) (step8b tree tail)
-    (= (car tree) uline) (indent' level (step8b (cdr tree) (cons newline tail)))
-    (= (car tree) uindent) (step8a (cdr tree) (inc level) tail)
-    (= (car tree) uspaced) (if
-      (no (cdr tree)) nil
-      (no (cdr (cdr tree))) (step8a (tree 1) level tail)
-      (step8a (tree 1) level (cons " "
-          (step8a (cons uspaced (cdr (cdr tree))) level tail))))
-    (step8a (car tree) level (step8a (cdr tree) level tail))))
+(def (cons-fixline head tail)
+  (if (and (ispair tail) (= (car tail) ulinetoken))
+    (cons head (cons newline (cdr tail)))
+    (cons head tail)))
 
-(def (step8b tree tail) (if
+(def (flatten-spaced tree level tail) (if
     (no tree) tail
-    (isstr tree) (cons tree tail)
+    (no (cdr tree)) (flatten-c (car tree) level tail)
+    (flatten-c (car tree) level (cons-fixline ' '
+        (flatten-spaced (cdr tree) level tail)))))
+
+(def (flatten-line tree level tail)
+  (def tail (if (and (ispair tail) (= (car tail) ulinetoken))
+      (cdr tail) tail))
+  (cons ulinetoken (indent' level
+      (flatten-c tree level (cons newline tail)))))
+
+(def (flatten-c tree level tail) (if
+    (no tree) tail
+    (or (isstr tree) (ischar tree)) (cons-fixline tree tail)
     (not (ispair tree)) (error (+ "Expected string, found: " (repr tree)))
-    (step8b (car tree) (step8b (cdr tree) tail))))
+    (= (car tree) uindent) (flatten-c (cdr tree) (inc level) tail)
+    (= (car tree) uline) (flatten-line (cdr tree) level tail)
+    (= (car tree) uspaced) (flatten-spaced (cdr tree) level tail)
+    (flatten-c (car tree) level (flatten-c (cdr tree) level tail))))
 
-(def (step8 tree) (step8a tree 0 nil))
+(def (step8 tree)
+  (def result (flatten-c tree 0 nil))
+  (if (= (car result) ulinetoken) (cdr result) result))
 
-(def (parenthesize x) (list "(" x ")"))
+(def (parenthesize x) (list '(' x ')'))
 (def (sepby sep l)
   (if (no l) nil
     (no (cdr l)) l
@@ -66,17 +76,20 @@
     (no (cdr l)) (list (car l))
     (cons (car l) (cons " " (commalist (cdr l))))))
 
-(def (commalist l)
+(def (commalist' l)
   (if (no l) nil
     (no (cdr l)) (list (car l))
-    (cons (list (car l) ", ") (commalist (cdr l)))))
+    (cons (list (car l) ',') (commalist' (cdr l)))))
+
+(def (commalist l)
+  (cons uspaced (commalist' l)))
 
 (def (each2 l f)
   (if (no l) nil
     (cons (f (l 0) (l 1)) (each2 (cdr (cdr l)) f))))
 
 (def (paramlist params)
-  (commalist (each2 params (fn (name type) (list name " " type)))))
+  (commalist (each2 params (fn (name type) (spaced name type)))))
 
 (def (fragment parent params emitexpr env)
   (def result (new parent
@@ -89,19 +102,21 @@
 (devau (deffrag (name . params) emitexpr) o
   (bind O name (fragment Fragment params emitexpr o)))
 
-(def (asstmt x) (if (isa Expression x) (ExpressionStmt x) x))
+(def (asstmt x) (if (isa Expression x) ((O ExpressionStmt new) x) x))
 
 ; SIMPLE C CODE
 
 (deffrag (TranslationUnit declns)
-  (map1 [list (emit _) (line) (line)] declns))
+  (map1 [list (line) (emit _)] declns))
 
 (deffrag (Identifier name)
   (str name))
 (def Identifier (O Identifier))
 
 (deffrag (FunctionDefinition returntype name params cstmt)
-  (list (emit returntype) (emit name) (map1 emit params) (emit cstmt)))
+  (spaced (emit returntype)
+    (list (emit name) (parenthesize (commalist (map1 emit params))))
+    (emit cstmt)))
 
 ; Define multiple fragments with a specific parent object
 (devau (deffrags parent . l) o
@@ -109,8 +124,11 @@
   (each2 l (fn ((name . params) emitexpr)
       (bind O name (fragment parent params emitexpr o)))))
 
+(deffrags PPDirective
+  (IncludeDirective header) (line "#include " header))
+
 (deffrags Expression
-  (AssignmentExpr lhs rhs) (line (emit lhs) " = " (emit rhs))
+  (AssignmentExpr lhs rhs) (list (emit lhs) " = " (emit rhs))
   (PtrAccessExpr object member) (list (emit object) "->" (emit member))
   (AccessExpr object member) (list (emit object) "." (emit member))
   (CallExpr function args) (list
@@ -119,6 +137,7 @@
   (SizeofExpr expr) (list "sizeof(" (emit expr) ")"))
 
 (deffrags Statement
+  (ExpressionStmt expr) (line (emit expr) ';')
   (CompoundStmt stmts) (list "{" (indent (map1 emit stmts)) "}")
   (ReturnStmt expr) (line "return " (emit expr) ";"))
 
@@ -132,13 +151,13 @@
   (list "*" (emit declr)))
 
 (deffrag (MemberDecln type name)
-  (list (emit type) " " (emit name)))
+  (line (spaced (emit type) (emit name)) ';'))
 
 (deffrag (ParamDecln type name)
   (list (emit type) " " (emit name)))
 
 (deffrag (Declaration type declarators)
-  (list (emit type) (commalist (map1 emit declarators))))
+  (line (spaced (emit type) (commalist (map1 emit declarators))) ';'))
 
 (deffrag (DeclaratorInitializer declarator initializer)
   (list (emit declarator) " = " (emit initializer)))
@@ -167,8 +186,14 @@
   sizeof SizeofExpr)
 
 ; Create some non-trivial constructors
-(defin C do (fn stmts ((O CompoundStmt new) stmts)))
+(defin C do (fn stmts ((O CompoundStmt new) (map asstmt stmts))))
 (defin C id (vau (name) _ ((O Identifier new) name)))
+
+(defin C include (vau (header) env
+    (def header (eval-or-id header env))
+    ((O IncludeDirective new) (if
+        (isstr header) (repr header)
+        (issymbol header) (+ '<' (repr header) '>')))))
 
 (defin C call (vau (function . args) env
     ((O CallExpr new) (eval-or-id function env)
@@ -180,16 +205,16 @@
           (eval-or-id value env))))))
 
 (defin C struct (vau l env
-    ((O StructSpec new) (each2 l (fn (type name)
+    ((O StructSpec new) (each2 l (fn (name type)
           ((O MemberDecln new) (eval-or-id type env) (eval-or-id name env)))))))
 
 (defin C defn (vau (name params returntype . body) env
     ((O FunctionDefinition new)
       (eval-or-id returntype env)
       (eval-or-id name env)
-      (each2 params (fn (type name) ((O ParamDecln new)
+      (each2 params (fn (name type) ((O ParamDecln new)
             (eval-or-id type env) (eval-or-id name env))))
-      ((O CompoundStmt new) (map1 [eval-or-id _ env] body)))))
+      ((O CompoundStmt new) (map1 [asstmt (eval-or-id _ env)] body)))))
 
 (def cfile (vau declns _
     ((O TranslationUnit new) (map1 [eval _ C] declns))))
@@ -197,12 +222,16 @@
 ; PAIR EXAMPLE USAGE
 
 (def pair.c (cfile
+    (include "value.h")
+    (include "meta.h")
+
     (typedef (struct
         _meta Meta
         car Value
         cdr Value) (ptr Pair))
 
     (defn pair_new (car Value cdr Value) Pair
+      (:= nil nil nil)
       (:= pair Pair (call meta_new TYPE_PAIR (sizeof (deref pair))))
       (= (-> pair car) car)
       (= (-> pair cdr) cdr)
@@ -212,6 +241,20 @@
       (call meta_free (-> pair car))
       (:= rest Value (-> pair cdr))
       (call free pair)
-      (return rest))))
+      (return rest))
+
+    (defn pair_car (pair Pair) Value
+      (return (-> pair car)))
+
+    (defn pair_cdr (pair Pair) Value
+      (return (-> pair cdr)))
+
+    (defn pair_set_car (pair Pair value Value) void
+      (call meta_free (-> pair car))
+      (= (-> pair car) value))
+
+    (defn pair_set_cdr (pair Pair value Value) void
+      (call meta_free (-> pair cdr))
+      (= (-> pair cdr) value))))
 
 (printc pair.c)
