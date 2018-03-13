@@ -64,7 +64,6 @@ Value d_plus(Value args, Step step, Handler handler) {
 			return plus_pair(args, step, handler);
 		case TYPE_STRING:
 		case TYPE_STRING_VIEW:
-		case TYPE_CHAR:
 			return plus_str(args, step, handler);
 		case TYPE_NAMESPACE:
 			return plus_ns(args, step, handler);
@@ -92,9 +91,7 @@ Value d_minus(Value args, Step step, Handler handler) {
 	return result;
 }
 
-Value d_lt(Value args, Step step, Handler handler) {
-	check_arg_count(args, 0, -1, handler);
-	if (args == NIL) { return NIL; }
+Value lt_int(Value args, Step step, Handler handler) {
 	Value v = pair_car(args);
 	args = pair_cdr(args);
 	while (args != NIL) {
@@ -105,6 +102,35 @@ Value d_lt(Value args, Step step, Handler handler) {
 		args = pair_cdr(args);
 	}
 	return bool_new(true);
+}
+
+Value lt_str(Value args, Step step, Handler handler) {
+	Value v = pair_car(args);
+	args = pair_cdr(args);
+	while (args != NIL) {
+		if (str_cmp(v, pair_car(args)) >= 0) {
+			return bool_new(false);
+		}
+		v = pair_car(args);
+		args = pair_cdr(args);
+	}
+	return bool_new(true);
+}
+
+Value d_lt(Value args, Step step, Handler handler) {
+	check_arg_count(args, 0, -1, handler);
+	if (args == NIL) { return bool_new(true); }
+	switch (meta_type(pair_car(args))) {
+		case TYPE_INT:
+			return lt_int(args, step, handler);
+		case TYPE_STRING:
+		case TYPE_STRING_VIEW:
+			return lt_str(args, step, handler);
+		default:
+			return error_handle(handler,
+					str_append(str_lit("< not defined on value of type "),
+						type_str(meta_type(pair_car(args)))));
+	}
 }
 
 Value d_dec(Value args, Step step, Handler handler) {
