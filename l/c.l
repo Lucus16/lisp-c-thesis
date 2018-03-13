@@ -3,8 +3,8 @@
 ; TODO: nested lines in e.g. structs
 
 ; CONFIGURATION
-(def indentation '\t')
-(def newline '\n')
+(def indentation "\t")
+(def newline "\n")
 
 (def (step9 l) (apply + l))
 
@@ -26,7 +26,7 @@
 (def (flatten-spaced tree level tail) (if
     (no tree) tail
     (no (cdr tree)) (flatten-c (car tree) level tail)
-    (flatten-c (car tree) level (cons-fixline ' '
+    (flatten-c (car tree) level (cons-fixline " "
         (flatten-spaced (cdr tree) level tail)))))
 
 (def (flatten-line tree level tail)
@@ -48,14 +48,11 @@
   (def result (flatten-c tree 0 nil))
   (if (= (car result) ulinetoken) (cdr result) result))
 
-(def (parenthesize x) (list '(' x ')'))
+(def (parenthesize x) (list "(" x ")"))
 (def (sepby sep l)
   (if (no l) nil
     (no (cdr l)) l
     (cons (car l) (cons sep (sepby sep (cdr l))))))
-
-(def (emit x)
-  ((x emitf) x))
 
 (def (printc x) (print (step9 (step8 (emit x)))))
 
@@ -79,7 +76,7 @@
 (def (commalist' l)
   (if (no l) nil
     (no (cdr l)) (list (car l))
-    (cons (list (car l) ',') (commalist' (cdr l)))))
+    (cons (list (car l) ",") (commalist' (cdr l)))))
 
 (def (commalist l)
   (cons uspaced (commalist' l)))
@@ -94,10 +91,11 @@
 (def (fragment parent params emitexpr env)
   (def result (new parent
       new (fn args (match (+ result (ns)) params args))
-      emitf (fn (i) (eval emitexpr (+ env i)))
-      map (fn (o f) (apply (result new)
-          (map1 (fn (x) (f (lookup o x) TODO)) params)))))
+      emitf (fn (i) (eval emitexpr (+ env i)))))
   result)
+
+(def (emit x)
+  ((x emitf) x))
 
 (devau (deffrag (name . params) emitexpr) o
   (bind O name (fragment Fragment params emitexpr o)))
@@ -110,7 +108,7 @@
   (map1 [list (line) (emit _)] declns))
 
 (deffrag (Identifier name)
-  (str name))
+  name)
 (def Identifier (O Identifier))
 
 (deffrag (FunctionDefinition returntype name params cstmt)
@@ -137,7 +135,7 @@
   (SizeofExpr expr) (list "sizeof(" (emit expr) ")"))
 
 (deffrags Statement
-  (ExpressionStmt expr) (line (emit expr) ';')
+  (ExpressionStmt expr) (line (emit expr) ";")
   (CompoundStmt stmts) (list "{" (indent (map1 emit stmts)) "}")
   (ReturnStmt expr) (line "return " (emit expr) ";"))
 
@@ -151,20 +149,20 @@
   (list "*" (emit declr)))
 
 (deffrag (MemberDecln type name)
-  (line (spaced (emit type) (emit name)) ';'))
+  (line (spaced (emit type) (emit name)) ";"))
 
 (deffrag (ParamDecln type name)
   (list (emit type) " " (emit name)))
 
 (deffrag (Declaration type declarators)
-  (line (spaced (emit type) (commalist (map1 emit declarators))) ';'))
+  (line (spaced (emit type) (commalist (map1 emit declarators))) ";"))
 
 (deffrag (DeclaratorInitializer declarator initializer)
   (list (emit declarator) " = " (emit initializer)))
 
 (def (eval-or-id code env)
   (if (issymbol code)
-    (lookup env code ((O Identifier new) code))
+    (lookup env code ((O Identifier new) (repr code)))
     (eval code env)))
 
 ; Give short names to trivial constructors
@@ -193,7 +191,7 @@
     (def header (eval-or-id header env))
     ((O IncludeDirective new) (if
         (isstr header) (repr header)
-        (issymbol header) (+ '<' (repr header) '>')))))
+        (issymbol header) (+ "<" (repr header) ">")))))
 
 (defin C call (vau (function . args) env
     ((O CallExpr new) (eval-or-id function env)
