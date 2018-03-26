@@ -160,6 +160,12 @@
     (no (cdr l)) (strx (car l))
     (apply str (cons (+ (strx (car l)) (strx (car (cdr l)))) (cdr (cdr l))))))
 
+(def (dyn)
+  (devau (result . args) env
+    (if (no args) (getdyn result)
+      (eval (cons withdyn (cons result args)) env)))
+  result)
+
 (devau (defns name . stmts) e
   (eval (list def name (cons ns stmts)) e))
 
@@ -187,6 +193,7 @@
   (def f (eval (car l) e))
   (if (isfn f) (do
       (def args (eval (cons list (cdr l)) e))
+      (print (cons (car l) args))
       (def result (apply f args))
       (print (cons (car l) args) " => " result)
       result)
