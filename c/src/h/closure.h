@@ -8,4 +8,4 @@
 typedef struct {} *Closure;
 
 Closure		closure_new(Value argnames, Value body, Namespace context);
-Value		closure_apply(Closure closure, Value args, Step step, Context ctx);
+Value		closure_apply(Closure closure, Value args, Context ctx);

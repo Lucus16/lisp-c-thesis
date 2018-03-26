@@ -6,7 +6,7 @@
 #include "var.h"
 #include "ns.h"
 
-Value var_apply(Var var, Value args, Step step, Context ctx) {
+Value var_apply(Var var, Value args, Context ctx) {
 	if (args == NIL) {
 		return var_get(var);
 	}
@@ -16,7 +16,7 @@ Value var_apply(Var var, Value args, Step step, Context ctx) {
 	return NIL;
 }
 
-Value d_var(Value args, Step step, Context ctx) {
+Value d_var(Value args, Context ctx) {
 	Value initial;
 	if (args == NIL) {
 		initial = NIL;

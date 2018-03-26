@@ -12,4 +12,4 @@ Value eval(Value code, Namespace stat, Context ctx);
 Value eval_list(Value args, Namespace stat, Context ctx);
 
 // Consumes f, args, stat, looks at step, ctx
-Value apply(Value f, Value args, Namespace stat, Step step, Context ctx);
+Value apply(Value f, Value args, Namespace stat, Context ctx);

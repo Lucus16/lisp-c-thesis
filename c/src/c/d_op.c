@@ -8,7 +8,7 @@
 #include "int.h"
 #include "ns.h"
 
-Value plus_pair(Value args, Step step, Context ctx) {
+Value plus_pair(Value args, Context ctx) {
 	if (args == NIL) { return NIL; }
 	List list; list_init(&list);
 	for (; pair_cdr(args) != NIL; args = pair_cdr(args)) {
@@ -20,7 +20,7 @@ Value plus_pair(Value args, Step step, Context ctx) {
 	return list_finish(&list, meta_refer(pair_car(args)));
 }
 
-Value plus_str(Value args, Step step, Context ctx) {
+Value plus_str(Value args, Context ctx) {
 	Value result = pair_car(args);
 	if (meta_type(result) == TYPE_CHAR) {
 		result = str_format("%c", char_get(result));
@@ -39,7 +39,7 @@ Value plus_str(Value args, Step step, Context ctx) {
 	return result;
 }
 
-Value plus_ns(Value args, Step step, Context ctx) {
+Value plus_ns(Value args, Context ctx) {
 	Value result = meta_refer(as_namespace(pair_car(args), ctx));
 	args = pair_cdr(args);
 	for (; args != NIL; args = pair_cdr(args)) {
@@ -48,7 +48,7 @@ Value plus_ns(Value args, Step step, Context ctx) {
 	return result;
 }
 
-Value plus_int(Value args, Step step, Context ctx) {
+Value plus_int(Value args, Context ctx) {
 	Value result = pair_car(args);
 	args = pair_cdr(args);
 	for (; args != NIL; args = pair_cdr(args)) {
@@ -57,18 +57,18 @@ Value plus_int(Value args, Step step, Context ctx) {
 	return result;
 }
 
-Value d_plus(Value args, Step step, Context ctx) {
+Value d_plus(Value args, Context ctx) {
 	check_arg_count(args, 1, -1, ctx);
 	switch (meta_type(pair_car(args))) {
 		case TYPE_PAIR:
-			return plus_pair(args, step, ctx);
+			return plus_pair(args, ctx);
 		case TYPE_STRING:
 		case TYPE_STRING_VIEW:
-			return plus_str(args, step, ctx);
+			return plus_str(args, ctx);
 		case TYPE_NAMESPACE:
-			return plus_ns(args, step, ctx);
+			return plus_ns(args, ctx);
 		case TYPE_INT:
-			return plus_int(args, step, ctx);
+			return plus_int(args, ctx);
 		default:
 			return ctx_handle(ctx,
 					str_append(str_lit("+ not defined on values of type "),
@@ -76,7 +76,7 @@ Value d_plus(Value args, Step step, Context ctx) {
 	}
 }
 
-Value d_minus(Value args, Step step, Context ctx) {
+Value d_minus(Value args, Context ctx) {
 	check_arg_count(args, 0, -1, ctx);
 	if (args == NIL) {
 		return int_new(0);
@@ -91,7 +91,7 @@ Value d_minus(Value args, Step step, Context ctx) {
 	return result;
 }
 
-Value lt_int(Value args, Step step, Context ctx) {
+Value lt_int(Value args, Context ctx) {
 	Value v = pair_car(args);
 	args = pair_cdr(args);
 	while (args != NIL) {
@@ -104,7 +104,7 @@ Value lt_int(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value lt_str(Value args, Step step, Context ctx) {
+Value lt_str(Value args, Context ctx) {
 	Value v = pair_car(args);
 	args = pair_cdr(args);
 	while (args != NIL) {
@@ -117,15 +117,15 @@ Value lt_str(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_lt(Value args, Step step, Context ctx) {
+Value d_lt(Value args, Context ctx) {
 	check_arg_count(args, 0, -1, ctx);
 	if (args == NIL) { return bool_new(true); }
 	switch (meta_type(pair_car(args))) {
 		case TYPE_INT:
-			return lt_int(args, step, ctx);
+			return lt_int(args, ctx);
 		case TYPE_STRING:
 		case TYPE_STRING_VIEW:
-			return lt_str(args, step, ctx);
+			return lt_str(args, ctx);
 		default:
 			return ctx_handle(ctx,
 					str_append(str_lit("< not defined on value of type "),
@@ -133,7 +133,7 @@ Value d_lt(Value args, Step step, Context ctx) {
 	}
 }
 
-Value d_dec(Value args, Step step, Context ctx) {
+Value d_dec(Value args, Context ctx) {
 	check_arg_count(args, 1, 1, ctx);
 	return int_subtract(pair_car(args), int_new(1));
 }

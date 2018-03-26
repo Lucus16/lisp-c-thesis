@@ -9,5 +9,4 @@ typedef Value (SpecF)(Value, Namespace, Step, Context);
 typedef SpecF *SpecFP;
 
 SpecialForm	special_new(SpecFP apply);
-Value		special_apply(SpecialForm f, Value args, Namespace stat,
-		Step step, Context ctx);
+Value		special_apply(SpecialForm f, Value args, Namespace stat, Context ctx);

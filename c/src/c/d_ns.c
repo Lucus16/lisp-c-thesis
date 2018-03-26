@@ -33,7 +33,7 @@
 // (using <namespace> | (<namespaces> ...) <code>) runs code in a new namespace
 // which has all bindings in the namespaces
 
-Value ns_apply(Namespace ns, Value args, Step step, Context ctx) {
+Value ns_apply(Namespace ns, Value args, Context ctx) {
 	check_arg_count(args, 0, -1, ctx);
 	Value result = meta_refer(ns);
 	while (meta_type(args) == TYPE_PAIR) {
@@ -48,12 +48,12 @@ Value ns_apply(Namespace ns, Value args, Step step, Context ctx) {
 	return result;
 }
 
-Value d_this(Value args, Namespace stat, Step step, Context ctx) {
+Value d_this(Value args, Namespace stat, Context ctx) {
 	check_arg_count(args, 0, 0, ctx);
 	return meta_refer(stat);
 }
 
-Value d_super(Value args, Namespace stat, Step step, Context ctx) {
+Value d_super(Value args, Namespace stat, Context ctx) {
 	check_arg_count(args, 0, 1, ctx);
 	if (args == NIL) {
 		return meta_refer(ns_super(stat));
@@ -63,7 +63,7 @@ Value d_super(Value args, Namespace stat, Step step, Context ctx) {
 						meta_refer(stat), ctx), ctx)));
 }
 
-Value d_ns(Value args, Namespace stat, Step step, Context ctx) {
+Value d_ns(Value args, Namespace stat, Context ctx) {
 	check_arg_count(args, 0, -1, ctx);
 	Namespace result = ns_new(ns_empty());
 	while (args != NIL && pair_cdr(args) != NIL) {
@@ -78,34 +78,34 @@ Value d_ns(Value args, Namespace stat, Step step, Context ctx) {
 	return result;
 }
 
-Value d_keys(Value args, Step step, Context ctx) {
+Value d_keys(Value args, Context ctx) {
 	check_arg_count(args, 1, 1, ctx);
 	return ns_keys(as_namespace(pair_car(args), ctx));
 }
 
-Value d_freeze(Value args, Step step, Context ctx) {
+Value d_freeze(Value args, Context ctx) {
 	check_arg_count(args, 1, 1, ctx);
 	Namespace ns = as_namespace(pair_car(args), ctx);
 	ns_freeze(ns);
 	return meta_refer(ns);
 }
 
-Value d_eval(Value args, Step step, Context ctx) {
+Value d_eval(Value args, Context ctx) {
 	check_arg_count(args, 2, 2, ctx);
-	return step_set(step, meta_refer(pair_car(args)),
+	return ctx_bounce(meta_refer(pair_car(args)),
 			meta_refer(as_namespace(pair_car(pair_cdr(args)), ctx)),
 			ctx);
 }
 
-Value d_apply(Value args, Step step, Context ctx) {
+Value d_apply(Value args, Context ctx) {
 	check_arg_count(args, 2, 2, ctx);
 	Value f = meta_refer(pair_car(args));
 	args = meta_refer(pair_car(pair_cdr(args)));
 	switch (meta_type(f)) {
 		case TYPE_PRIMITIVE:
-			return prim_apply(f, args, step, ctx);
+			return prim_apply(f, args, ctx);
 		case TYPE_CLOSURE:
-			return closure_apply(f, args, step, ctx);
+			return closure_apply(f, args, ctx);
 		default: {
 			String msg = str_append(str_lit("Attempt to apply value of type "),
 					type_str(meta_type(f)));
@@ -116,7 +116,7 @@ Value d_apply(Value args, Step step, Context ctx) {
 	}
 }
 
-Value d_do(Value args, Namespace stat, Step step, Context ctx) {
+Value d_do(Value args, Namespace stat, Context ctx) {
 	check_arg_count(args, 0, -1, ctx);
 	stat = ns_new(meta_refer(stat));
 	args = eval_list(meta_refer(args), stat, ctx);
@@ -130,7 +130,7 @@ Value d_do(Value args, Namespace stat, Step step, Context ctx) {
 	return result;
 }
 
-Value d_devau(Value args, Namespace stat, Step step, Context ctx) {
+Value d_devau(Value args, Namespace stat, Context ctx) {
 	check_arg_count(args, 3, -1, ctx);
 	if (!ns_mutable(stat)) {
 		ctx_handle(ctx, str_lit("Namespace not mutable."));
@@ -145,7 +145,7 @@ Value d_devau(Value args, Namespace stat, Step step, Context ctx) {
 	return NIL;
 }
 
-Value d_def(Value args, Namespace stat, Step step, Context ctx) {
+Value d_def(Value args, Namespace stat, Context ctx) {
 	check_arg_count(args, 1, -1, ctx);
 	if (!ns_mutable(stat)) {
 		ctx_handle(ctx, str_lit("Namespace not mutable."));
@@ -160,12 +160,12 @@ Value d_def(Value args, Namespace stat, Step step, Context ctx) {
 		ns_insert(stat, meta_refer(name), value);
 		return NIL;
 	}
-	Value value = d_do(pair_cdr(args), stat, step, ctx);
+	Value value = d_do(pair_cdr(args), stat, ctx);
 	ns_insert(stat, meta_refer(name), value);
 	return NIL;
 }
 
-Value d_bind(Value args, Step step, Context ctx) {
+Value d_bind(Value args, Context ctx) {
 	check_arg_count(args, 3, 3, ctx);
 	Namespace ns = as_namespace(pair_car(args), ctx);
 	Value name = meta_refer(pair_car(pair_cdr(args)));
@@ -174,7 +174,7 @@ Value d_bind(Value args, Step step, Context ctx) {
 	return NIL;
 }
 
-Value d_lookup(Value args, Step step, Context ctx) {
+Value d_lookup(Value args, Context ctx) {
 	check_arg_count(args, 2, 3, ctx);
 	Value name = pair_car(pair_cdr(args));
 	Namespace ns = as_namespace(pair_car(args), ctx);
@@ -185,7 +185,7 @@ Value d_lookup(Value args, Step step, Context ctx) {
 	}
 }
 
-Value d_let(Value args, Namespace stat, Step step, Context ctx) {
+Value d_let(Value args, Namespace stat, Context ctx) {
 	check_arg_count(args, 1, -1, ctx);
 	stat = ns_new(meta_refer(stat));
 	while (args != NIL && pair_cdr(args) != NIL) {
@@ -198,6 +198,6 @@ Value d_let(Value args, Namespace stat, Step step, Context ctx) {
 	if (args == NIL) {
 		return NIL;
 	} else {
-		return step_set(step, meta_refer(pair_car(args)), stat, ctx);
+		return ctx_bounce(meta_refer(pair_car(args)), stat, ctx);
 	}
 }

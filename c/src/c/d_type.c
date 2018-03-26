@@ -3,7 +3,7 @@
 #include "bool.h"
 #include "pair.h"
 
-Value d_ispair(Value args, Step step, Context ctx) {
+Value d_ispair(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_PAIR) {
 			return bool_new(false);
@@ -13,7 +13,7 @@ Value d_ispair(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_isbool(Value args, Step step, Context ctx) {
+Value d_isbool(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		Value arg = pair_car(args);
 		if (arg != BOOL_TRUE && arg != BOOL_FALSE) {
@@ -24,7 +24,7 @@ Value d_isbool(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_issymbol(Value args, Step step, Context ctx) {
+Value d_issymbol(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_SYMBOL) {
 			return bool_new(false);
@@ -34,7 +34,7 @@ Value d_issymbol(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_isuniq(Value args, Step step, Context ctx) {
+Value d_isuniq(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_UNIQ) {
 			return bool_new(false);
@@ -44,7 +44,7 @@ Value d_isuniq(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_ischar(Value args, Step step, Context ctx) {
+Value d_ischar(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_CHAR) {
 			return bool_new(false);
@@ -54,7 +54,7 @@ Value d_ischar(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_isint(Value args, Step step, Context ctx) {
+Value d_isint(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_INT) {
 			return bool_new(false);
@@ -64,7 +64,7 @@ Value d_isint(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_isstr(Value args, Step step, Context ctx) {
+Value d_isstr(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_STRING &&
 				meta_type(pair_car(args)) != TYPE_STRING_VIEW) {
@@ -75,7 +75,7 @@ Value d_isstr(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_isform(Value args, Step step, Context ctx) {
+Value d_isform(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_VAU &&
 				meta_type(pair_car(args)) != TYPE_SPECIAL_FORM) {
@@ -86,7 +86,7 @@ Value d_isform(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_isfn(Value args, Step step, Context ctx) {
+Value d_isfn(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_CLOSURE &&
 				meta_type(pair_car(args)) != TYPE_PRIMITIVE) {
@@ -97,7 +97,7 @@ Value d_isfn(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_isns(Value args, Step step, Context ctx) {
+Value d_isns(Value args, Context ctx) {
 	while (meta_type(args) == TYPE_PAIR) {
 		if (meta_type(pair_car(args)) != TYPE_NAMESPACE) {
 			return bool_new(false);

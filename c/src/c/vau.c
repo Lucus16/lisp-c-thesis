@@ -32,7 +32,7 @@ Value vau_free(Vau vau) {
 	return rest;
 }
 
-Value vau_apply(Vau vau, Value args, Namespace outer, Step step, Context ctx) {
+Value vau_apply(Vau vau, Value args, Namespace outer, Context ctx) {
 	Namespace inner = ns_new(meta_refer(vau->context));
 	match(inner, vau->params, args, ctx);
 	match(inner, vau->nsparam, outer, ctx);
@@ -44,5 +44,5 @@ Value vau_apply(Vau vau, Value args, Namespace outer, Step step, Context ctx) {
 	}
 	code = meta_refer(pair_car(code));
 	meta_free(vau);
-	return step_set(step, code, inner, ctx);
+	return ctx_bounce(code, inner, ctx);
 }

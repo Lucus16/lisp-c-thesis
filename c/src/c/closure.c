@@ -29,7 +29,7 @@ Value closure_free(Closure closure) {
 	return rest;
 }
 
-Value closure_apply(Closure closure, Value args, Step step, Context ctx) {
+Value closure_apply(Closure closure, Value args, Context ctx) {
 	Namespace stat = ns_new(meta_refer(closure->context));
 	match(stat, closure->params, args, ctx);
 	meta_free(args);
@@ -44,5 +44,5 @@ Value closure_apply(Closure closure, Value args, Step step, Context ctx) {
 	}
 	code = meta_refer(pair_car(code));
 	meta_free(closure);
-	return step_set(step, code, stat, ctx);
+	return ctx_bounce(code, stat, ctx);
 }

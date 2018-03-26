@@ -2,7 +2,7 @@
 #include "equals.h"
 #include "meta.h"
 
-Value d_is(Value args, Step step, Context ctx) {
+Value d_is(Value args, Context ctx) {
 	check_arg_count(args, 0, -1, ctx);
 	if (args == NIL) {
 		return bool_new(true);
@@ -18,7 +18,7 @@ Value d_is(Value args, Step step, Context ctx) {
 	return bool_new(true);
 }
 
-Value d_eq(Value args, Step step, Context ctx) {
+Value d_eq(Value args, Context ctx) {
 	check_arg_count(args, 0, -1, ctx);
 	if (args == NIL) {
 		return bool_new(true);
