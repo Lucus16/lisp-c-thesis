@@ -34,6 +34,6 @@ void match(Namespace ns, Value names, Value values, Handler mismatch) {
 		}
 	}
 	error_handle(mismatch, str_append(str_append(str_append(
-						str_lit("Mismatched: "), repr(names)),
-					str_lit(" and ")), repr(values)));
+						str_lit("Mismatched, expected: "), repr(names)),
+					str_lit(", got: ")), repr(values)));
 }
