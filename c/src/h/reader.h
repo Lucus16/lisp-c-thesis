@@ -2,16 +2,16 @@
 
 #include <stdio.h>
 
-#include "error.h"
+#include "context.h"
 #include "value.h"
 #include "meta.h"
 #include "str.h"
 
 typedef struct {} *Reader;
 
-Reader		reader_path(const char *path, Handler handler);
-Reader		reader_file(FILE *fp, Handler handler);
-Reader		reader_string(String str, Handler handler);
+Reader		reader_path(const char *path, Context ctx);
+Reader		reader_file(FILE *fp, Context ctx);
+Reader		reader_string(String str, Context ctx);
 
 bool		reader_empty(Reader reader);
 bool		reader_ok(Reader reader);

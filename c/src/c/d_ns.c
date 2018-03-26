@@ -33,44 +33,44 @@
 // (using <namespace> | (<namespaces> ...) <code>) runs code in a new namespace
 // which has all bindings in the namespaces
 
-Value ns_apply(Namespace ns, Value args, Step step, Handler handler) {
-	check_arg_count(args, 0, -1, handler);
+Value ns_apply(Namespace ns, Value args, Step step, Context ctx) {
+	check_arg_count(args, 0, -1, ctx);
 	Value result = meta_refer(ns);
 	while (meta_type(args) == TYPE_PAIR) {
 		Value arg = pair_car(args);
 		if (meta_type(result) != TYPE_NAMESPACE) {
-			return error_handle(handler, str_append(
+			return ctx_handle(ctx, str_append(
 						str_lit("Expected namespace, got: "), repr(result)));
 		}
 		args = pair_cdr(args);
-		result = eval(meta_refer(arg), result, handler);
+		result = eval(meta_refer(arg), result, ctx);
 	}
 	return result;
 }
 
-Value d_this(Value args, Namespace stat, Step step, Handler handler) {
-	check_arg_count(args, 0, 0, handler);
+Value d_this(Value args, Namespace stat, Step step, Context ctx) {
+	check_arg_count(args, 0, 0, ctx);
 	return meta_refer(stat);
 }
 
-Value d_super(Value args, Namespace stat, Step step, Handler handler) {
-	check_arg_count(args, 0, 1, handler);
+Value d_super(Value args, Namespace stat, Step step, Context ctx) {
+	check_arg_count(args, 0, 1, ctx);
 	if (args == NIL) {
 		return meta_refer(ns_super(stat));
 	}
 	return meta_refer(ns_super(as_namespace(eval(
 						meta_refer(pair_car(args)),
-						meta_refer(stat), handler), handler)));
+						meta_refer(stat), ctx), ctx)));
 }
 
-Value d_ns(Value args, Namespace stat, Step step, Handler handler) {
-	check_arg_count(args, 0, -1, handler);
+Value d_ns(Value args, Namespace stat, Step step, Context ctx) {
+	check_arg_count(args, 0, -1, ctx);
 	Namespace result = ns_new(ns_empty());
 	while (args != NIL && pair_cdr(args) != NIL) {
 		Value names = pair_car(args);
 		Value values = eval(meta_refer(pair_car(pair_cdr(args))),
-				meta_refer(stat), handler);
-		match(result, names, values, handler);
+				meta_refer(stat), ctx);
+		match(result, names, values, ctx);
 		meta_free(names);
 		meta_free(values);
 		args = pair_cdr(pair_cdr(args));
@@ -78,48 +78,48 @@ Value d_ns(Value args, Namespace stat, Step step, Handler handler) {
 	return result;
 }
 
-Value d_keys(Value args, Step step, Handler handler) {
-	check_arg_count(args, 1, 1, handler);
-	return ns_keys(as_namespace(pair_car(args), handler));
+Value d_keys(Value args, Step step, Context ctx) {
+	check_arg_count(args, 1, 1, ctx);
+	return ns_keys(as_namespace(pair_car(args), ctx));
 }
 
-Value d_freeze(Value args, Step step, Handler handler) {
-	check_arg_count(args, 1, 1, handler);
-	Namespace ns = as_namespace(pair_car(args), handler);
+Value d_freeze(Value args, Step step, Context ctx) {
+	check_arg_count(args, 1, 1, ctx);
+	Namespace ns = as_namespace(pair_car(args), ctx);
 	ns_freeze(ns);
 	return meta_refer(ns);
 }
 
-Value d_eval(Value args, Step step, Handler handler) {
-	check_arg_count(args, 2, 2, handler);
+Value d_eval(Value args, Step step, Context ctx) {
+	check_arg_count(args, 2, 2, ctx);
 	return step_set(step, meta_refer(pair_car(args)),
-			meta_refer(as_namespace(pair_car(pair_cdr(args)), handler)),
-			handler);
+			meta_refer(as_namespace(pair_car(pair_cdr(args)), ctx)),
+			ctx);
 }
 
-Value d_apply(Value args, Step step, Handler handler) {
-	check_arg_count(args, 2, 2, handler);
+Value d_apply(Value args, Step step, Context ctx) {
+	check_arg_count(args, 2, 2, ctx);
 	Value f = meta_refer(pair_car(args));
 	args = meta_refer(pair_car(pair_cdr(args)));
 	switch (meta_type(f)) {
 		case TYPE_PRIMITIVE:
-			return prim_apply(f, args, step, handler);
+			return prim_apply(f, args, step, ctx);
 		case TYPE_CLOSURE:
-			return closure_apply(f, args, step, handler);
+			return closure_apply(f, args, step, ctx);
 		default: {
 			String msg = str_append(str_lit("Attempt to apply value of type "),
 					type_str(meta_type(f)));
 			meta_free(f);
 			meta_free(args);
-			return error_handle(handler, msg);
+			return ctx_handle(ctx, msg);
 		}
 	}
 }
 
-Value d_do(Value args, Namespace stat, Step step, Handler handler) {
-	check_arg_count(args, 0, -1, handler);
+Value d_do(Value args, Namespace stat, Step step, Context ctx) {
+	check_arg_count(args, 0, -1, ctx);
 	stat = ns_new(meta_refer(stat));
-	args = eval_list(meta_refer(args), stat, handler);
+	args = eval_list(meta_refer(args), stat, ctx);
 	Value orig_args = args;
 	Value result = NIL;
 	for (; args != NIL; args = pair_cdr(args)) {
@@ -130,12 +130,12 @@ Value d_do(Value args, Namespace stat, Step step, Handler handler) {
 	return result;
 }
 
-Value d_devau(Value args, Namespace stat, Step step, Handler handler) {
-	check_arg_count(args, 3, -1, handler);
+Value d_devau(Value args, Namespace stat, Step step, Context ctx) {
+	check_arg_count(args, 3, -1, ctx);
 	if (!ns_mutable(stat)) {
-		error_handle(handler, str_lit("Namespace not mutable."));
+		ctx_handle(ctx, str_lit("Namespace not mutable."));
 	}
-	check_arg_count(pair_car(args), 1, -1, handler);
+	check_arg_count(pair_car(args), 1, -1, ctx);
 	Value value = vau_new(
 			meta_refer(pair_cdr(pair_car(args))),
 			meta_refer(pair_car(pair_cdr(args))),
@@ -145,10 +145,10 @@ Value d_devau(Value args, Namespace stat, Step step, Handler handler) {
 	return NIL;
 }
 
-Value d_def(Value args, Namespace stat, Step step, Handler handler) {
-	check_arg_count(args, 1, -1, handler);
+Value d_def(Value args, Namespace stat, Step step, Context ctx) {
+	check_arg_count(args, 1, -1, ctx);
 	if (!ns_mutable(stat)) {
-		error_handle(handler, str_lit("Namespace not mutable."));
+		ctx_handle(ctx, str_lit("Namespace not mutable."));
 	}
 	Value name = pair_car(args);
 	if (meta_type(name) == TYPE_PAIR) {
@@ -160,44 +160,44 @@ Value d_def(Value args, Namespace stat, Step step, Handler handler) {
 		ns_insert(stat, meta_refer(name), value);
 		return NIL;
 	}
-	Value value = d_do(pair_cdr(args), stat, step, handler);
+	Value value = d_do(pair_cdr(args), stat, step, ctx);
 	ns_insert(stat, meta_refer(name), value);
 	return NIL;
 }
 
-Value d_bind(Value args, Step step, Handler handler) {
-	check_arg_count(args, 3, 3, handler);
-	Namespace ns = as_namespace(pair_car(args), handler);
+Value d_bind(Value args, Step step, Context ctx) {
+	check_arg_count(args, 3, 3, ctx);
+	Namespace ns = as_namespace(pair_car(args), ctx);
 	Value name = meta_refer(pair_car(pair_cdr(args)));
 	Value value = meta_refer(pair_car(pair_cdr(pair_cdr(args))));
 	ns_insert(ns, name, value);
 	return NIL;
 }
 
-Value d_lookup(Value args, Step step, Handler handler) {
-	check_arg_count(args, 2, 3, handler);
+Value d_lookup(Value args, Step step, Context ctx) {
+	check_arg_count(args, 2, 3, ctx);
 	Value name = pair_car(pair_cdr(args));
-	Namespace ns = as_namespace(pair_car(args), handler);
+	Namespace ns = as_namespace(pair_car(args), ctx);
 	if (pair_cdr(pair_cdr(args)) == NIL) {
-		return ns_lookup(ns, name, handler);
+		return ns_lookup(ns, name, ctx);
 	} else {
 		return ns_lookup_default(ns, name, pair_car(pair_cdr(pair_cdr(args))));
 	}
 }
 
-Value d_let(Value args, Namespace stat, Step step, Handler handler) {
-	check_arg_count(args, 1, -1, handler);
+Value d_let(Value args, Namespace stat, Step step, Context ctx) {
+	check_arg_count(args, 1, -1, ctx);
 	stat = ns_new(meta_refer(stat));
 	while (args != NIL && pair_cdr(args) != NIL) {
 		Value names = meta_refer(pair_car(args));
 		Value values = meta_refer(pair_car(pair_cdr(args)));
-		values = eval(values, meta_refer(stat), handler);
-		match(stat, names, values, handler);
+		values = eval(values, meta_refer(stat), ctx);
+		match(stat, names, values, ctx);
 		args = pair_cdr(pair_cdr(args));
 	}
 	if (args == NIL) {
 		return NIL;
 	} else {
-		return step_set(step, meta_refer(pair_car(args)), stat, handler);
+		return step_set(step, meta_refer(pair_car(args)), stat, ctx);
 	}
 }

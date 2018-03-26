@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "equals.h"
-#include "error.h"
+#include "context.h"
 #include "value.h"
 #include "meta.h"
 #include "repr.h"
@@ -75,7 +75,7 @@ Value ns_lookup_default(Namespace ns, Value key, Value default_value) {
 	return meta_refer(default_value);
 }
 
-Value ns_lookup(Namespace ns, Value key, Handler undef_handler) {
+Value ns_lookup(Namespace ns, Value key, Context undef_handler) {
 	for (; ns != NULL; ns = ns->super) {
 		for (NSEntry entry = ns->first; entry != NULL; entry = entry->next) {
 			if (equals(entry->key, key)) {
@@ -83,7 +83,7 @@ Value ns_lookup(Namespace ns, Value key, Handler undef_handler) {
 			}
 		}
 	}
-	return error_handle(undef_handler,
+	return ctx_handle(undef_handler,
 			str_append(str_lit("Undefined: "), repr(key)));
 }
 

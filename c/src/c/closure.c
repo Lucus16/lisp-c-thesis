@@ -29,9 +29,9 @@ Value closure_free(Closure closure) {
 	return rest;
 }
 
-Value closure_apply(Closure closure, Value args, Step step, Handler handler) {
+Value closure_apply(Closure closure, Value args, Step step, Context ctx) {
 	Namespace stat = ns_new(meta_refer(closure->context));
-	match(stat, closure->params, args, handler);
+	match(stat, closure->params, args, ctx);
 	meta_free(args);
 	if (closure->body == NIL) {
 		meta_free(closure);
@@ -40,9 +40,9 @@ Value closure_apply(Closure closure, Value args, Step step, Handler handler) {
 	}
 	Value code = closure->body;
 	for (; pair_cdr(code) != NIL; code = pair_cdr(code)) {
-		meta_free(eval(meta_refer(pair_car(code)), meta_refer(stat), handler));
+		meta_free(eval(meta_refer(pair_car(code)), meta_refer(stat), ctx));
 	}
 	code = meta_refer(pair_car(code));
 	meta_free(closure);
-	return step_set(step, code, stat, handler);
+	return step_set(step, code, stat, ctx);
 }

@@ -6,22 +6,22 @@
 #include "var.h"
 #include "ns.h"
 
-Value var_apply(Var var, Value args, Step step, Handler handler) {
+Value var_apply(Var var, Value args, Step step, Context ctx) {
 	if (args == NIL) {
 		return var_get(var);
 	}
-	check_arg_count(args, 1, 1, handler);
+	check_arg_count(args, 1, 1, ctx);
 	var_set(var, meta_refer(pair_car(args)));
 	meta_free(var);
 	return NIL;
 }
 
-Value d_var(Value args, Step step, Handler handler) {
+Value d_var(Value args, Step step, Context ctx) {
 	Value initial;
 	if (args == NIL) {
 		initial = NIL;
 	} else {
-		check_arg_count(args, 1, 1, handler);
+		check_arg_count(args, 1, 1, ctx);
 		initial = meta_refer(pair_car(args));
 	}
 	return var_new(initial);

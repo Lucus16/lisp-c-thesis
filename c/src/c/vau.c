@@ -32,17 +32,17 @@ Value vau_free(Vau vau) {
 	return rest;
 }
 
-Value vau_apply(Vau vau, Value args, Namespace outer, Step step, Handler handler) {
+Value vau_apply(Vau vau, Value args, Namespace outer, Step step, Context ctx) {
 	Namespace inner = ns_new(meta_refer(vau->context));
-	match(inner, vau->params, args, handler);
-	match(inner, vau->nsparam, outer, handler);
+	match(inner, vau->params, args, ctx);
+	match(inner, vau->nsparam, outer, ctx);
 	meta_free(args);
 	meta_free(outer);
 	Value code = vau->body;
 	for (; pair_cdr(code) != NIL; code = pair_cdr(code)) {
-		eval(meta_refer(pair_car(code)), meta_refer(inner), handler);
+		eval(meta_refer(pair_car(code)), meta_refer(inner), ctx);
 	}
 	code = meta_refer(pair_car(code));
 	meta_free(vau);
-	return step_set(step, code, inner, handler);
+	return step_set(step, code, inner, ctx);
 }

@@ -1,8 +1,8 @@
 #include <string.h>
 
 #include "defaults.h"
+#include "context.h"
 #include "reader.h"
-#include "error.h"
 #include "parse.h"
 #include "repr.h"
 #include "init.h"
@@ -18,14 +18,14 @@ void skip_line(Reader reader) {
 	}
 }
 
-int run_file(Handler handler, Reader reader, Namespace ns, bool interactive) {
+int run_file(Context ctx, Reader reader, Namespace ns, bool interactive) {
 	while (!reader_empty(reader)) {
-		if (error_occurred(handler)) {
+		if (error_occurred(ctx)) {
 			if (reader_empty(reader)) {
-				meta_free(error_get_msg(handler));
+				meta_free(ctx_get_err_msg(ctx));
 				return 0;
 			}
-			str_println(stderr, error_get_msg(handler));
+			str_println(stderr, ctx_get_err_msg(ctx));
 			skip_line(reader);
 			if (interactive) {
 				continue;
@@ -37,7 +37,7 @@ int run_file(Handler handler, Reader reader, Namespace ns, bool interactive) {
 			str_print(stdout, str_lit("> "));
 		}
 		Value code = parse_value(reader);
-		Value result = eval(code, meta_refer(ns), handler);
+		Value result = eval(code, meta_refer(ns), ctx);
 		if (interactive && result != NIL) {
 			str_println(stdout, repr(result));
 		}
@@ -49,9 +49,9 @@ int run_file(Handler handler, Reader reader, Namespace ns, bool interactive) {
 int main(int argc, const char **argv) {
 	init_all();
 	Namespace ns = ns_new(defaults_get());
-	Handler handler = error_new_handler();
-	if (error_occurred(handler)) {
-		str_println(stderr, error_get_msg(handler));
+	Context ctx = ctx_new();
+	if (error_occurred(ctx)) {
+		str_println(stderr, ctx_get_err_msg(ctx));
 		return 1;
 	}
 
@@ -64,11 +64,11 @@ int main(int argc, const char **argv) {
 				i++;
 				arg = argv[i];
 			} else {
-				error_handle(handler, str_lit("Usage: repl [-i path]*"));
+				ctx_handle(ctx, str_lit("Usage: repl [-i path]*"));
 				return 1;
 			}
-			Reader reader = reader_path(arg, handler);
-			int rcode = run_file(handler, reader, ns, false);
+			Reader reader = reader_path(arg, ctx);
+			int rcode = run_file(ctx, reader, ns, false);
 			ns = ns_new(ns);
 			meta_free(reader);
 			if (rcode != 0) {
@@ -77,9 +77,9 @@ int main(int argc, const char **argv) {
 		}
 	}
 
-	Reader reader = reader_file(stdin, handler);
-	int rcode = run_file(handler, reader, ns, true);
+	Reader reader = reader_file(stdin, ctx);
+	int rcode = run_file(ctx, reader, ns, true);
 	meta_free(reader);
-	meta_free(handler);
+	ctx_free(ctx);
 	return rcode;
 }

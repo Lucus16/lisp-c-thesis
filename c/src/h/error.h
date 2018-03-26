@@ -5,9 +5,6 @@
 #include "value.h"
 #include "str.h"
 
-#define error_occurred(handler) (setjmp(*error_get_buf((handler))))
-
-typedef struct {} *Error;
 typedef struct {} *Handler;
 
 Handler		error_new_handler();

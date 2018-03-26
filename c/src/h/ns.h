@@ -1,6 +1,6 @@
 #pragma once
 
-#include "error.h"
+#include "context.h"
 #include "value.h"
 #include "step.h"
 
@@ -11,7 +11,7 @@ Namespace	ns_empty();
 void		ns_insert(Namespace ns, Value key, Value value);
 Namespace	ns_super(Namespace ns);
 Value		ns_lookup_default(Namespace ns, Value key, Value default_value);
-Value		ns_lookup(Namespace ns, Value key, Handler undefined);
+Value		ns_lookup(Namespace ns, Value key, Context undefined);
 void		ns_freeze(Namespace ns);
 Value		ns_keys(Namespace ns);
 bool		ns_mutable(Namespace ns);

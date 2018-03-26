@@ -1,13 +1,13 @@
 #include "constants.h"
 #include "equals.h"
 #include "value.h"
-#include "error.h"
+#include "context.h"
 #include "meta.h"
 #include "type.h"
 #include "core.h"
 #include "repr.h"
 
-void match(Namespace ns, Value names, Value values, Handler mismatch) {
+void match(Namespace ns, Value names, Value values, Context mismatch) {
 	while (true) {
 		Type ntype = meta_type(names);
 		if (ntype == TYPE_SYMBOL || ntype == TYPE_UNIQ) {
@@ -33,7 +33,7 @@ void match(Namespace ns, Value names, Value values, Handler mismatch) {
 			}
 		}
 	}
-	error_handle(mismatch, str_append(str_append(str_append(
+	ctx_handle(mismatch, str_append(str_append(str_append(
 						str_lit("Mismatched, expected: "), repr(names)),
 					str_lit(", got: ")), repr(values)));
 }

@@ -1,13 +1,13 @@
 #include <stdio.h>
 
-#include "error.h"
+#include "context.h"
 #include "value.h"
 #include "meta.h"
 #include "str.h"
 
 typedef struct {
 	Meta _meta;
-	Handler handler;
+	Context ctx;
 	char cur;
 	int line;
 	int col;
@@ -34,7 +34,7 @@ char reader_peek(Reader reader) {
 }
 
 void reader_error(Reader reader, String error) {
-	error_handle(reader->handler, str_append(
+	ctx_handle(reader->ctx, str_append(
 				str_format("At %i,%i: ", reader->line, reader->col), error));
 }
 
@@ -63,9 +63,9 @@ char reader_next(Reader reader) {
 	return reader->cur;
 }
 
-Reader reader_file(FILE *fp, Handler handler) {
+Reader reader_file(FILE *fp, Context ctx) {
 	Reader reader = meta_new(TYPE_FILE_READER, sizeof(*reader));
-	reader->handler = handler;
+	reader->ctx = ctx;
 	reader->line = 1;
 	reader->col = 0;
 	reader->cur = 0;
@@ -74,17 +74,17 @@ Reader reader_file(FILE *fp, Handler handler) {
 	return reader;
 }
 
-Reader reader_path(const char *path, Handler handler) {
+Reader reader_path(const char *path, Context ctx) {
 	FILE *fp = fopen(path, "r");
 	if (fp == NULL) {
-		error_handle(handler, str_format("File not found: %s", path));
+		ctx_handle(ctx, str_format("File not found: %s", path));
 	}
-	return reader_file(fp, handler);
+	return reader_file(fp, ctx);
 }
 
-Reader reader_string(String str, Handler handler) {
+Reader reader_string(String str, Context ctx) {
 	Reader reader = meta_new(TYPE_STRING_READER, sizeof(*reader));
-	reader->handler = handler;
+	reader->ctx = ctx;
 	reader->line = 1;
 	reader->col = 0;
 	reader->cur = 0;

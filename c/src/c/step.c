@@ -1,8 +1,8 @@
 #include "step.h"
 
-Value step_set(Step step, Value code, Value stat, Handler handler) {
+Value step_set(Step step, Value code, Value stat, Context ctx) {
 	step->code = code;
 	step->stat = stat;
-	step->handler = handler;
+	step->ctx = ctx;
 	return NULL;
 }

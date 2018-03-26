@@ -16,7 +16,7 @@ Value type_str(Type type) {
 		case TYPE_PRIMITIVE: return str_lit("Function");
 		case TYPE_SPECIAL_FORM:
 		case TYPE_VAU: return str_lit("Specialform");
-		case TYPE_HANDLER: return str_lit("Handler");
+		case TYPE_HANDLER: return str_lit("Context");
 		case TYPE_NULL: return str_lit("Nil");
 		case TYPE_INT: return str_lit("I61");
 		case TYPE_CHAR: return str_lit("Character");

@@ -1,15 +1,15 @@
 #pragma once
 
 #include "value.h"
-#include "error.h"
+#include "context.h"
 #include "step.h"
 #include "ns.h"
 
-// Consumes args, stat, looks at handler
-Value eval(Value code, Namespace stat, Handler handler);
+// Consumes args, stat, looks at ctx
+Value eval(Value code, Namespace stat, Context ctx);
 
-// Consumes args, stat, looks at handler
-Value eval_list(Value args, Namespace stat, Handler handler);
+// Consumes args, stat, looks at ctx
+Value eval_list(Value args, Namespace stat, Context ctx);
 
-// Consumes f, args, stat, looks at step, handler
-Value apply(Value f, Value args, Namespace stat, Step step, Handler handler);
+// Consumes f, args, stat, looks at step, ctx
+Value apply(Value f, Value args, Namespace stat, Step step, Context ctx);
