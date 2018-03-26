@@ -92,6 +92,7 @@ Value eval(Value code, Namespace stat, Context ctx) {
 			if (step.code != NULL) {
 				code = step.code;
 				stat = step.stat;
+				ctx = step.ctx;
 				continue;
 			}
 			return r;

@@ -18,10 +18,13 @@ typedef struct {
 
 Context ctx_new();
 Context ctx_new_handler(Context ctx);
+Context ctx_new_dynamic(Context parent, Value key, Value value);
 Context ctx_new_trampoline(Context ctx, Step step);
 
 void ctx_free(Context ctx);
-Value ctx_bounce(Value code, Value stat, Context ctx);
+
 void *ctx_handle(Context ctx, String msg);
 jmp_buf *ctx_get_err_buf(Context ctx);
 String ctx_get_err_msg(Context ctx);
+Value ctx_lookup_dynamic(Context ctx, Value key);
+Value ctx_bounce(Value code, Value stat, Context ctx);

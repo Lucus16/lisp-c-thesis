@@ -14,13 +14,23 @@ Context ctx_new() {
 	return ctx;
 }
 
-Context ctx_new_handler(Context ctx) {
-	Context new_ctx = {
+Context ctx_new_handler(Context parent) {
+	Context ctx = {
 		error_new_handler(),
-		ctx.dynamic,
-		NULL,
+		parent.dynamic,
+		parent.step,
 	};
-	return new_ctx;
+	return ctx;
+}
+
+Context ctx_new_dynamic(Context parent, Value key, Value value) {
+	Context ctx = {
+		parent.handler,
+		ns_new(parent.dynamic),
+		parent.step,
+	};
+	ns_insert(ctx.dynamic, key, value);
+	return ctx;
 }
 
 Context ctx_new_trampoline(Context parent, Step step) {
@@ -37,10 +47,6 @@ void ctx_free(Context ctx) {
 	meta_free(ctx.dynamic);
 }
 
-Value ctx_bounce(Value code, Value stat, Context ctx) {
-	return step_set(ctx.step, code, stat, ctx);
-}
-
 void *ctx_handle(Context ctx, String msg) {
 	return error_handle(ctx.handler, msg);
 }
@@ -51,4 +57,12 @@ jmp_buf *ctx_get_err_buf(Context ctx) {
 
 String ctx_get_err_msg(Context ctx) {
 	return error_get_msg(ctx.handler);
+}
+
+Value ctx_lookup_dynamic(Context ctx, Value key) {
+	return ns_lookup(ctx.dynamic, key, ctx);
+}
+
+Value ctx_bounce(Value code, Value stat, Context ctx) {
+	return step_set(ctx.step, code, stat, ctx);
 }
