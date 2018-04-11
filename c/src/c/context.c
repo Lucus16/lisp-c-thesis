@@ -59,8 +59,8 @@ String ctx_get_err_msg(Context ctx) {
 	return error_get_msg(ctx.handler);
 }
 
-Value ctx_lookup_dynamic(Context ctx, Value key) {
-	return ns_lookup(ctx.dynamic, key, ctx);
+Value ctx_lookup_dynamic(Context ctx, Value key, Value default_value) {
+	return ns_lookup_default(ctx.dynamic, key, default_value);
 }
 
 Value ctx_bounce(Value code, Value stat, Context ctx) {

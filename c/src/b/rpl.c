@@ -16,12 +16,12 @@ void skip_line(Reader reader) {
 
 int main(int argc, const char **argv) {
 	init_all();
-	Context ctx = error_new_handler();
+	Context ctx = ctx_new();
 	Reader reader = reader_file(stdin, ctx);
 
 	while (!reader_empty(reader)) {
 		if (error_occurred(ctx)) {
-			str_println(stderr, error_get_msg(ctx));
+			str_println(stderr, ctx_get_err_msg(ctx));
 			skip_line(reader);
 			continue;
 		}

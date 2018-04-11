@@ -26,5 +26,5 @@ void ctx_free(Context ctx);
 void *ctx_handle(Context ctx, String msg);
 jmp_buf *ctx_get_err_buf(Context ctx);
 String ctx_get_err_msg(Context ctx);
-Value ctx_lookup_dynamic(Context ctx, Value key);
+Value ctx_lookup_dynamic(Context ctx, Value key, Value default_value);
 Value ctx_bounce(Value code, Value stat, Context ctx);

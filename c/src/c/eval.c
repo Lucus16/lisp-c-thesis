@@ -31,14 +31,12 @@ Value pair_apply(Value list, Value args, Context ctx) {
 	check_arg_count(args, 1, 1, ctx);
 	int64_t i = int_get(as_int(pair_car(args), ctx));
 	if (i < 0) {
-		return ctx_handle(ctx,
-				str_lit("Attempt to take negative index."));
+		return ctx_handle(ctx, str_lit("Attempt to take negative index."));
 	}
 	Value result;
 	for (; i >= 0; i--) {
 		if (meta_type(list) != TYPE_PAIR) {
-			return ctx_handle(ctx,
-					str_lit("Index out of range."));
+			return ctx_handle(ctx, str_lit("Index out of range."));
 		}
 		result = pair_car(list);
 		list = pair_cdr(list);

@@ -66,6 +66,10 @@ String str_slice(String base, size_t start, size_t end) {
 	return s;
 }
 
+char *str_mem(String s) {
+	return s->start;
+}
+
 Value str_free(String s) {
 	free(s->start);
 	free(s);
@@ -97,7 +101,7 @@ String str_set(String s, size_t index, char value) {
 
 int str_cmp(String left, String right) {
 	size_t min_len = min(str_len(left), str_len(right));
-	int result = strncmp(left->start, right->start, min_len);
+	int result = memcmp(left->start, right->start, min_len);
 	if (result == 0) {
 		if (str_len(left) > str_len(right)) {
 			return 1;
@@ -115,7 +119,7 @@ size_t str_find(String haystack, String needle) {
 	size_t needle_len = str_len(needle);
 	char *end = haystack->end - needle_len;
 	for (char *a = haystack->start; a < end; a++) {
-		if (strncmp(a, needle->start, needle_len) == 0) {
+		if (memcmp(a, needle->start, needle_len) == 0) {
 			return a - haystack->start;
 		}
 	}

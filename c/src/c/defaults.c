@@ -60,6 +60,8 @@ PrimF d_error;
 SpecF d_dyn_with;
 PrimF d_dyn_get;
 
+PrimF d_run;
+
 void defaults_fill() {
 	defaults_add("true", bool_new(true));
 	defaults_add("false", bool_new(false));
@@ -124,4 +126,6 @@ void defaults_fill() {
 
 	special("withdyn", &d_dyn_with);
 	prim("getdyn", &d_dyn_get);
+
+	prim("run", &d_run);
 }

@@ -11,6 +11,6 @@ Value d_dyn_with(Value args, Namespace stat, Context ctx) {
 }
 
 Value d_dyn_get(Value args, Context ctx) {
-	check_arg_count(args, 1, 1, ctx);
-	return ctx_lookup_dynamic(ctx, pair_car(args));
+	check_arg_count(args, 2, 2, ctx);
+	return ctx_lookup_dynamic(ctx, pair_car(args), pair_car(pair_cdr(args)));
 }

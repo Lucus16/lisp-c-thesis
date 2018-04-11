@@ -11,6 +11,7 @@ typedef struct {} *String;
 String		str_new(const char *content, size_t size, size_t buf_size); 
 String		str_lit(const char *content);
 String		str_slice(String base, size_t start, size_t end); 
+char*		str_mem(String s);
 size_t		str_len(String s); 
 char		str_get(String s, size_t index); 
 String		str_set(String s, size_t index, char value); 
