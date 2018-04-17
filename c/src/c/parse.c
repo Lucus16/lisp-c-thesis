@@ -148,3 +148,8 @@ Value parse_value(Reader reader) {
 			return parse_symbol(reader);
 	}
 }
+
+Value parse(Reader reader, Context ctx) {
+	reader_set_context(reader, ctx);
+	return parse_value(reader);
+}

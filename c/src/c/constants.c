@@ -19,6 +19,7 @@ void constants_init() {
 	BOOL_FALSE = uniq_new();
 	BOOL_TRUE = uniq_new();
 
+	SYMBOL_QUESTION_MARK = symbol_new("?", 1);
 	SYMBOL_UNDERSCORE = symbol_new("_", 1);
 	SYMBOL_QUOTE = symbol_new("quote", 5);
 	SYMBOL_DOT = symbol_new(".", 1);

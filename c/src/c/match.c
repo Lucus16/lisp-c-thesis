@@ -23,6 +23,15 @@ void match(Namespace ns, Value names, Value values, Context mismatch) {
 				pair_car(names) == SYMBOL_DOT &&
 				pair_cdr(pair_cdr(names)) == NIL) {
 			names = pair_car(pair_cdr(names));
+		} else if (meta_type(pair_cdr(names)) == TYPE_PAIR &&
+				pair_car(pair_cdr(names)) == SYMBOL_QUESTION_MARK) {
+			if (meta_type(values) == TYPE_PAIR) {
+				match(ns, pair_car(names), pair_car(values), mismatch);
+				values = pair_cdr(values);
+			} else {
+				ns_insert(ns, meta_refer(pair_car(names)), NIL);
+			}
+			names = pair_cdr(pair_cdr(names));
 		} else {
 			if (meta_type(values) == TYPE_PAIR) {
 				match(ns, pair_car(names), pair_car(values), mismatch);

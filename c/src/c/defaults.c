@@ -62,6 +62,8 @@ PrimF d_dyn_get;
 
 PrimF d_run;
 
+PrimF d_evalfile;
+
 void defaults_fill() {
 	defaults_add("true", bool_new(true));
 	defaults_add("false", bool_new(false));
@@ -128,4 +130,5 @@ void defaults_fill() {
 	prim("getdyn", &d_dyn_get);
 
 	prim("run", &d_run);
+	prim("evalfile", &d_evalfile);
 }

@@ -20,3 +20,4 @@ char		reader_peek(Reader reader);
 char		reader_next(Reader reader);
 
 void		reader_error(Reader reader, String error);
+void		reader_set_context(Reader reader, Context ctx);

@@ -21,7 +21,15 @@ bool reader_empty(Reader reader) {
 	if (meta_ptr_type(reader) == TYPE_STRING_READER) {
 		return str_len(reader->str) > 0;
 	} else {
-		return feof(reader->fp);
+		if (reader->fp == NULL) {
+			return true;
+		} else if (feof(reader->fp)) {
+			fclose(reader->fp);
+			reader->fp = NULL;
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 
@@ -91,4 +99,8 @@ Reader reader_string(String str, Context ctx) {
 	reader->str = str;
 	reader->cur = ' ';
 	return reader;
+}
+
+void reader_set_context(Reader reader, Context ctx) {
+	reader->ctx = ctx;
 }
