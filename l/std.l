@@ -22,11 +22,14 @@
       (range' (dec n) (cons (dec n) r))))
   (range' n nil))
 
+(def (len-list x n)
+  (if (no x) n
+    (len-list (cdr x) (+ 1 n))))
+
 (def (len x)
-  (def (len' x n)
-    (if (no x) n
-      (len' (cdr x) (+ 1 n))))
-  (len' x 0))
+  (if (islist x) (len-list x 0)
+    (isstr x) (len-str x 0)
+    (error (+ "Cannot take length of: " (repr x)))))
 
 (def (join sep l)
   (if (no l) ""
@@ -160,11 +163,15 @@
     (no (cdr l)) (strx (car l))
     (apply str (cons (+ (strx (car l)) (strx (car (cdr l)))) (cdr (cdr l))))))
 
-(def (dyn)
+(def (dyn default)
   (devau (result . args) env
-    (if (no args) (getdyn result)
+    (if (no args) (getdyn result default)
       (eval (cons withdyn (cons result args)) env)))
   result)
+
+(devau (using . namespaces) outer
+  (each (eval (cons list namespaces) outer) (fn (inner)
+      (each (keys inner) [bind outer _ (lookup inner _)]))))
 
 (devau (defns name . stmts) e
   (eval (list def name (cons ns stmts)) e))
@@ -189,14 +196,24 @@
   r)
 
 ; TODO: Trace every call recursively
+(def trace-indent (dyn ""))
 (devau (trace . l) e
   (def f (eval (car l) e))
-  (if (isfn f) (do
-      (def args (eval (cons list (cdr l)) e))
-      (print (cons (car l) args))
-      (def result (apply f args))
-      (print (cons (car l) args) " => " result)
-      result)
-    (do
-      (print l)
-      (eval l e))))
+  (if (isfn f) (trace-indent (+ (trace-indent) " ") (do
+        (def args (eval (cons list (cdr l)) e))
+        (print (trace-indent) (cons (car l) args))
+        (def result (apply f args))
+        (print (trace-indent) (cons (car l) args) " => " result)
+        result))
+    (trace-indent (+ (trace-indent) " ") (do
+        (print (trace-indent) l)
+        (eval l e)))))
+
+(export
+  quote quoted brackets
+  != list id const eqx swapargs inc un islist
+  range len join revjoin map1 cars cdrs all any map revmap
+  enumerate zip2 reverse sort dedup > each each2
+  repr print str dyn using
+  defns defin defu
+  lazy tracer trace-indent)

@@ -10,3 +10,5 @@
   (if (not (isns value)) false
     (= type value) true
     (isa type (super value))))
+
+(export obj new con isa)
