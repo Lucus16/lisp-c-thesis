@@ -7,6 +7,7 @@
 #include "repr.h"
 #include "step.h"
 #include "list.h"
+#include "int.h"
 #include "str.h"
 
 typedef struct NSEntry *NSEntry;
@@ -92,6 +93,16 @@ void ns_freeze(Namespace ns) {
 
 bool ns_mutable(Namespace ns) {
 	return ns->mutable;
+}
+
+size_t ns_len(Namespace ns) {
+	size_t result = 0;
+	for (; ns != NULL; ns = ns->super) {
+		for (NSEntry entry = ns->first; entry != NULL; entry = entry->next) {
+			result++;
+		}
+	}
+	return result;
 }
 
 Value ns_keys(Namespace ns) {

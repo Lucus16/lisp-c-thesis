@@ -52,7 +52,7 @@ PrimF d_var;
 SpecF d_this, d_super, d_ns, d_do, d_devau, d_def, d_let;
 PrimF d_keys, d_freeze, d_eval, d_apply, d_bind, d_lookup;
 
-PrimF d_plus, d_minus, d_eq, d_lt, d_dec;
+PrimF d_plus, d_minus, d_eq, d_lt, d_dec, d_len;
 
 SpecF d_try;
 PrimF d_error;
@@ -122,6 +122,7 @@ void defaults_fill() {
 	prim("=", &d_eq);
 	prim("<", &d_lt);
 	prim("dec", &d_dec);
+	prim("len", &d_len);
 
 	special("try", &d_try);
 	prim("error", &d_error);
