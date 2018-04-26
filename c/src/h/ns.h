@@ -2,7 +2,6 @@
 
 #include "context.h"
 #include "value.h"
-#include "step.h"
 
 typedef struct {} *Namespace;
 

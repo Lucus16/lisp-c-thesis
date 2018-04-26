@@ -2,6 +2,7 @@
 
 #include "error.h"
 #include "value.h"
+#include "step.h"
 #include "meta.h"
 #include "ns.h"
 
