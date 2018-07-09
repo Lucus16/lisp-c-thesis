@@ -1,8 +1,53 @@
-[ title page with abstract and index ]
+[
+
+- Any abstractions can be built with only functions, but it costs a lot of
+  runtime overhead. Using functional abstraction to generate code fixes that.
+- Fexprs allow abstractions with simpler notation, like how def does not need
+  you to quote the identifier you want to define, but they can't be easily
+  composed because you'd need to construct a piece of code an then evaluate it.
+  A good solution is to make every fexpr only a simple wrapper around a
+  function that implements the functionality and that can then be used for
+  composition.
+
+First, it is important to look at why languages fail to be universal:
+- Lack of syntactical abstraction.
+- Lack of machine level primitives.
+- Abstractions are chosen top-down instead of bottom-up.
+- Too complicated.
+
+]
+
+[ TODO: NEED MORE EXAMPLES ]
+
+\title{A Better Programming Language}
+\date{\today}
+\author{Lars Jellema}
+\maketitle
 
 # Abstract
 
-# Introduction
+Thousands of programming languages exist and many of them are in common use.
+This makes it clear that no language has managed to become universal. This
+makes sense, as designing a language that works well in all possible use cases
+is a very difficult task. I consider what it would take to build such a language
+and I show how a first attempt can be made fairly easily based on existing
+technologies.
+
+# A Better Language
+
+[
+
+- What prevents current languages from becoming universal?
+	- Lack of generic abstraction
+	- Lack of primitives available
+		- Primitives in the sense of syscalls and machine instructions
+		- Primitives in the sense of constructing functions and namespaces
+	- Lack of syntactical flexibility
+	- Abstractions with large runtime overhead
+	- Complicated semantics
+- How could we get started right now?
+
+]
 
 Thousands of programming languages exist nowadays, yet all of them have various
 kinds of problems. New programming languages are created regularly. Some
@@ -26,8 +71,22 @@ When talking about extensible languages, Lisp-like languages are often seen as
 the forefront in this area. From this point, I will use Lisp to refer to the
 family of Lisp-like languages. Lisp achieves impressive extensibility by making
 their syntax extremely simple: All code consists of S-expressions and these are
-either a literal value, like `3`, a name, like `append`, or a list of more
-S-expressions.
+either a literal value, like `3`, a name, like `append`, or a list of nested
+S-expressions. Lists are denoted by surrounding the list with parentheses and
+separating the elements with spaces. An example S-expression would be:
+
+```
+(symbol (another list) "a string" () 1337)
+```
+
+This S-expression is a list of five elements: First a symbol, then a list of two
+elements with two symbols, then a string, an empty list and a number. Symbols
+are used as the names of functions and variables. Note that a symbol does not
+need to consist of alphanumeric characters, `+` and `<=` are symbols too. When
+looking up a symbol in the environment results in a value v, we say the symbol
+is bound to v at that point. The empty list is usually called nil and is also
+often used to represent the absence of a useful value, like null does in other
+languages.
 
 Lists are evaluated by first evaluating their first element and then choosing
 what to do with the remainder of the list based on this first element. Names are
@@ -38,21 +97,93 @@ to the remainder of the list. It also has corresponding types for names and
 obviously, values. This means programs and program snippets can themselves be
 expressed as data.
 
+```
+(list (quote list) 3 "A string")
+```
+
+When evaluated, this S-expression does the following: It starts by evaluating
+the first element of the list, which is `list`. This is looked up in the
+environment and results in a function that is then applied to the remaining list
+elements. The function in this case constructs a list of its arguments. However,
+functions always evaluate their arguments first. `(quote list)` is evaluated
+next, but `quote` is special: Instead of evaluating its argument, it returns its
+argument unevaluated. That means the result is the symbol `list`. Because this
+argument has now been evaluated, it won't be looked up in the environment and
+the result is thus a symbol, not the function it is bound to. The next two
+arguments return themselves when evaluated because they are simple values. The
+result of the entire expression is `(list 3 "A string")`, a piece of data that
+is also valid code and could be evaluated again if desired.
+
 Lisp uses this ability to express programs as data in order to make arbitrary
 abstractions possible. It does this with macros: Functions that take as input an
 S-expression representing some abstraction and that give as output another
 S-expression, a concrete implementation meant to take the place of the
 abstraction. At compile-time, all such macros are run and all abstractions are
-turned into concrete code, which the Lisp compiler understands.
+turned into concrete code, which the Lisp compiler understands. Here is an
+example macro:
+
+[ TODO: Use the following example instead, which highlights the value of a
+primitive bind:
+
+```
+(defmacro (defun name params body)
+  (quasiquote (def (unquote name)
+      (fn (unquote params) (unquote body)))))
+```
+
+```
+(devau (defun name params body) env
+  (bind env name (mkfn params env body)))
+```
+
+]
+
+```
+(defmacro (if condition then else)
+  (quasiquote (cond
+      ((unqoute condition) (unqoute then))
+	  (true (unqoute else)))))
+```
+
+Here, `defmacro` defines a macro which will be evaluated at compile-time. The
+next list gives the name of the macro, `if` and the parameters, `condition`,
+`then` and `else`. These will be bound to the three arguments that `if` receives
+at compile-time, because this is a macro, these arguments will not be evaluated
+before being passed as happens for functions. The body of the macro consists of
+a `quasiquote` with some nested `unquote`s. This results in the expression in
+the `quasiquote` unevaluated like in `quote`, except for the parts in `unquote`.
+Thus, the symbols that are wrapped in `unquote` are looked up, which will result
+in the arguments that were passed to the macro. For example, if the following
+S-expression appears somewhere in the source code:
+
+```
+(if (no xs) nil (cdr xs))
+```
+
+Then during compilation, it will be replaced with:
+
+```
+(cond
+  ((no xs) nil)
+  (true (cdr xs)))
+```
+
+`cond` takes lists as argument and starts by evaluating the first element of the
+first list. If that gives true, the result of the `cond` will be evaluating the
+rest of that list. If false, it will try the next list. In most Lisps, one of
+`cond` and `if` is defined in terms of the other.
 
 ## Limits of Lisp
 
 Macros have a number of issues however: It is not trivial to write safe macros,
 that work regardless of the context in which they are used. It is also often
 quite hard to debug macros, or even understand what they do, because they
-interleave two very similarly looking S-expressions of which one runs at
+interleave two very similar looking S-expressions of which one runs at
 compile time, in a completely different environment from the other, which runs
-at run time.
+at run time. The `if` macro shown earlier is unsafe: If `cond` is redefined to
+something else at the place where an `if` macro is used, it may do all kinds of
+unexpected things, even though the call to `if` gives no indication that it
+depends on what `cond` is bound to.
 
 While Lisp allows arbitrary abstractions of its primitives by using macros, it
 is still limited by the primitives it makes available. For example, Clojure is
@@ -73,11 +204,36 @@ need for macros which build S-expressions which compile down to the right
 primitives if you can call the primitives directly. This is how F-expressions
 work: They take as parameters pieces of unevaluated code, just like macros, and
 in addition, they take an environment parameter. Their result is not a piece of
-code that can be compiled, but rather a result value, like a function. This
-means they need to run at run time, because the environment wouldn't be
+code that can be compiled, but rather a result value, similar to a function.
+This means they need to run at run time, because the environment wouldn't be
 available otherwise. Therefor, they don't allow the same compile-time
 optimizations as macros do, but they allow all the same abstractions, in clearer
 and more readable code.
+
+For example, here is the same definition of `if` as an F-expression:
+
+```
+(devau (if condition then else) env
+  (cond
+    ((eval condition env) (eval then env))
+    (true (eval else env))))
+```
+
+In this case, the environment at the definition of `if` is captured as in a
+closure. This means `cond` is resolved to the value it had when `if` was defined
+and not to the value it has when `if` is called. This restores lexical scope
+even for syntactical abstractions.
+
+[ syntactical abstraction is necessary ]
+
+[ all primitives available is necessary ]
+
+[ choosing abstractions top-down as in functional programming causes ugly
+abstraction layers which need to translate concepts that don't translate well.
+This ugliness will eventually show up to the user of the language, it cannot be
+fully hidden. ]
+
+[ kiss ]
 
 [ describe current issues ]
 
@@ -170,9 +326,9 @@ F-expressions can be used.
 In summary, the central idea of this thesis is to build a simple Lisp
 interpreter and a simple C code generation library in that Lisp language, and
 then to use that library to generate the C code of the Lisp interpreter. While
-doing this it is important to constantly make sure that things stay simple,
-minimal and modular, to make it easy to play around and adapt this language for
-other purposes.
+doing this it is important to constantly make sure that things stay simple and
+modular, to make it easy to play around and adapt this language for other
+purposes.
 
 [ make all primitives available ]
 [ keep it minimal ]
