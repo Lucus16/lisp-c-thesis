@@ -1,54 +1,48 @@
 Title: All Primitives Available
 
 # Introduction
-Programming languages suck
-C++ has limited abstraction
+Programming is about abstraction
+Still need new languages
 
-[ what is my thesis trying to fix? Express any binary. ]
-
-What if I want something that doesn't quite fit the model of the language I'm
-using? I'm basically on my own, some languages might allow me to insert
-arbitrary assembly, but I'd have to recreate much of the plumbing that makes the
-language work. Extending the compiler is usually even harder.
-
-# Lisp
-Lisp has simple syntax
+# Introduction to Lisp
+Lisp syntax is just an ast
+Example: give C code with corresponding ast
 Lisp programs are data
+Example: program that constructs another program
 Lisp macros transform programs
-Lisp has syntactic, unlimited abstraction
-
-# Limits of Lisp
+Example: defun
 Lisp macros are a pain
-Clojure has limited primitives
-Lisps have limited primitives
+Lisp has syntactic abstraction
 
-# All Primitives Available
-All primitives available
+# Problem
+Need for macros indicates need for Turing-completeness at compile time
+Lisps primitives are its syntax and nothing below it
+Syntactic abstraction is a hack
+Syntactic abstraction is not good enough
+Key insight: primitives are as important as abstractions
+
+# Solution
+All Primitives Available
 Fexprs are an exposed primitive
-Fexprs are better than macros
+Example: defun as fexpr
+Fexprs are clearer than macros
 Fexprs are just syntactic sugar
 Quote no longer needed
 Functions can abstract anything
 Don't hide logic in fexprs
+Example: defun in terms of mkfn, mkfn in terms of mktype
 
-# Limit of F-Expressions
-Fexprs have run time overhead
-Fexprs can't express arbitrary machine code
+# Considerations
+All Primitives Available forces you to make internals clean
+Simple
+Orthogonal
+Choose abstractions bottom up
 
-# Compile time F-expressions
-Aren't these just macros
-Compile time everything
-
-# Goals
-
-# The Solution
-Combine C and Lisp
-Compiling Lisp to C sucks [incomplete]
-Generate C using Lisp
-has all the advantages
+# Implementation
+Building on Lisp
+Using Assembly as a first abstraction layer
+Using C as a first abstraction layer
 Existing implementations have large and complicated dependencies
 Self hosting and its own example
 
-
-
-Prefer C over Assembly in this thesis
+# Conclusions
