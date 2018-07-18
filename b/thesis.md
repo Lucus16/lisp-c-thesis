@@ -43,6 +43,43 @@ free to skip it if you already know how Lisp works.
 
 # Introduction to Lisp
 
+The first principle that Lisp is based on is that it has a very simple syntax:
+All data consists of S-expressions and these are either a literal value, like
+`3`, a symbol, like `append`, or a list of nested S-expressions. Lists are
+denoted by surrounding the list with parentheses and separating its elements
+with spaces. An example S-expression would be:
+
+```
+(symbol (another list) "a string" () 1337)
+```
+
+This S-expression is a list of five elements: First a symbol, then a list of two
+symbols, then a string, an empty list and a number. Lists are used as the
+primary means of composing data and this is where Lisp derives its name from:
+LISt Processor. The empty list is usually called `nil` and is often used to
+represent the absence of a useful value, like `null` does in other languages.
+Symbols are unique, named items that allow for symbolic expressions, which is a
+somewhat more abstract way of thinking than using concrete values. Symbols do
+not need to consist of just alphanumeric characters, symbols like `+` and `<=`
+are valid as well.
+
+In Lisp, all code also consists of S-expressions: Symbols represent names for
+functions and values, while lists represent function calls and expressions. Any
+S-expression can be evaluated: A symbol is evaluated by looking it up in some
+sort of environment and this results in a value which is said to be bound to it.
+Function bind their arguments to their respective parameters when called, and
+then evaluate their body in this new environment. Lists are evaluated by first
+evaluating their first element and then proceeding based on the result. Most of
+the time, that result will be a function, in which case the remaining elements
+will also be evaluated and passed to it as arguments. There are also some
+applicatives that don't necessarily evaluate the remaining elements. One of them
+is usually called `quote` and it returns its argument unevaluated. This allows
+us to pass literal lists and symbols to functions that normally evaluate all
+arguments. All values that aren't lists or symbols evaluate to themselves, so
+they don't need to be quoted.
+
+Because Lisp uses the same types and syntax for both code and data,
+
 ```
 (defmacro (defun name params body)
   (quasiquote (def (unquote name)
