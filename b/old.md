@@ -47,13 +47,12 @@ separating the elements with spaces. An example S-expression would be:
 ```
 
 This S-expression is a list of five elements: First a symbol, then a list of two
-elements with two symbols, then a string, an empty list and a number. Symbols
-are used as the names of functions and variables. Note that a symbol does not
-need to consist of alphanumeric characters, `+` and `<=` are symbols too. When
-looking up a symbol in the environment results in a value v, we say the symbol
-is bound to v at that point. The empty list is usually called nil and is also
-often used to represent the absence of a useful value, like null does in other
-languages.
+symbols, then a string, an empty list and a number. Symbols are used as the
+names of functions and variables. Note that a symbol does not need to consist of
+alphanumeric characters, `+` and `<=` are symbols too. When looking up a symbol
+in the environment results in a value v, we say the symbol is bound to v at that
+point. The empty list is usually called nil and is also often used to represent
+the absence of a useful value, like null does in other languages.
 
 Lists are evaluated by first evaluating their first element and then choosing
 what to do with the remainder of the list based on this first element. Names are
