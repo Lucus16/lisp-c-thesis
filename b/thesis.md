@@ -78,13 +78,67 @@ us to pass literal lists and symbols to functions that normally evaluate all
 arguments. All values that aren't lists or symbols evaluate to themselves, so
 they don't need to be quoted.
 
-Because Lisp uses the same types and syntax for both code and data,
+```
+(list (quote slice) "Hello, world!" 0 5)
+```
+
+When evaluated, this S-expresssion does the following: It starts by evaluating
+the first element of the first list, which is the symbol `list`. Symbols are
+looked up in the environment. In the standard environment, `list` resolves to a
+function that returns a list of its arguments. Because it is a function, all the
+arguments are first evaluated. The first argument is a list with the special
+`quote`. It returns its argument unevaluated, so the result is the symbol
+`slice`. The next three arguments are values which evaluate to themselves.
+Finally, the list function builds the following list:
+
+`(slice "Hello, world!" 0 5)`
+
+This S-expression can also be evaluated: It would take a slice from the string
+equal to `"Hello"`, and this shows the power of Lisp: It is very easy to write
+programs that write programs. Lisp uses this ability in something called macros,
+which are quite different from the macros used in C. Lisp macros are functions
+that write parts of your program for you during compile time. They usually take
+one or more pieces of code as arguments and return some new piece of code based
+on them. The reason Lisp macros are so flexible is that they are Turing
+complete, and that they work on something simple: The syntax of Lisp is chosen
+to look just like its abstract syntax tree.
 
 ```
 (defmacro (defun name params body)
   (quasiquote (def (unquote name)
-      (fn (unquote params) (unquote body)))))
+      (lambda (unquote params) (unquote body)))))
 ```
+
+Here, `defmacro` defines a macro which will be evaluated at compile-time. Its
+first argument defines the name of the new macro, `defun`, and the names of its
+parameters, `name`, `params`, and `body`. These will be bound to the three
+arguments that any invocation of `defun` will receive. The body of the macro
+consists of a `quasiquote` with some nested `unqoute`s. `quasiquote` returns its
+code inside unevaluated, except for any nested `unquote`s, which are evaluated
+in the same environment that the `quasiquote` expression is. `def` binds a name,
+its first argument, to a value, its second argument. `lambda` returns a new
+function that first binds its arguments to the parameters given in the first
+argument of `lambda` and then executes its second argument in the new
+environment. For example, `(defun double (x) (mul x 2))` would be transformed
+into `(def double (lambda (x) (mul x 2)))`. In this case, the transformation is
+quite simple, but it allows you to define functions just a little easier, and
+defining functions is something you do a lot in Lisp.
+
+# Syntactic Abstraction
+
+The abstraction that macros offer is unlike other abstractions: It doesn't
+abstract over some specific concepts in the language, but rather over its
+syntax. This means macros can be used to abstract over any concept in the
+language that has some corresponding syntax. This makes syntactic abstraction
+quite powerful. It also has a number of drawbacks however. The syntax of a
+language is often not designed to be abstracted over, even in Lisp. The macro
+defined above can give some very unexpected behavior if `def` or `lambda` is
+bound to something different. A call to the macro gives no indication that it
+depends on those bindings however. Macros can also be quite confusing to read
+because they interleave two or more S-expressions that are evaluated at
+different times in different environments.
+
+# All Primitives Available
 
 ```
 (devau (defun name params body) env

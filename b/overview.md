@@ -11,8 +11,8 @@ Lisp programs are data
 Example: program that constructs another program
 Lisp macros transform programs
 Example: defun
-Lisp macros are a pain
 Lisp has syntactic abstraction
+Lisp macros are a pain
 
 # Problem
 Need for macros indicates need for Turing-completeness at compile time
