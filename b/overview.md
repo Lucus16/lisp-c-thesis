@@ -34,9 +34,11 @@ Example: defun in terms of mkfn, mkfn in terms of mktype
 
 # Considerations
 All Primitives Available forces you to make internals clean
+Clear separation between syntax and semantics
 Simple
 Orthogonal
 Choose abstractions bottom up
+Optimizations should still adhere to the simple interface
 
 # Implementation
 Building on Lisp

@@ -138,6 +138,19 @@ depends on those bindings however. Macros can also be quite confusing to read
 because they interleave two or more S-expressions that are evaluated at
 different times in different environments.
 
+Macros were originally invented to allow programmers to write their own
+abstractions. Instead of needing to extend the compiler for every specific kind
+of abstraction they might want to use, they made it possible to describe these
+abstractions purely in terms of the syntax of the language, something which they
+were already used to. This solution has the advantage of being easy to implement
+and learn, but it also has drawbacks. Not only do macros have difficulty dealing
+with the different contexts, but they are also still limited to the concepts of
+the language which have corresponding syntax. Many useful concepts that exist in
+the compiler do not. An example of this is the intermediate representations that
+most compilers use. Some concepts are best expressed in terms of those
+intermediate representations, rather than in terms of the existing syntax in a
+language.
+
 # All Primitives Available
 
 ```
