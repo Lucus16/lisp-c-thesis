@@ -1,62 +1,9 @@
 ; C Generation
 
-; TODO: nested lines in e.g. structs
+(include std)
+(include obj)
 
-; CONFIGURATION
-(def indentation "\t")
-(def newline "\n")
-
-(def (step9 l) (apply + l))
-
-(defu uline uindent uspaced ulinetoken)
-
-(def (indent' level tail)
-  (if (= level 0) tail
-    (indent' (dec level) (cons indentation tail))))
-
-(def (line . l) (cons uline l))
-(def (indent . l) (cons uindent l))
-(def (spaced . l) (cons uspaced l))
-
-(def (cons-fixline head tail)
-  (if (and (ispair tail) (= (car tail) ulinetoken))
-    (cons head (cons newline (cdr tail)))
-    (cons head tail)))
-
-(def (flatten-spaced tree level tail) (if
-    (no tree) tail
-    (no (cdr tree)) (flatten-c (car tree) level tail)
-    (flatten-c (car tree) level (cons-fixline " "
-        (flatten-spaced (cdr tree) level tail)))))
-
-(def (flatten-line tree level tail)
-  (def tail (if (and (ispair tail) (= (car tail) ulinetoken))
-      (cdr tail) tail))
-  (cons ulinetoken (indent' level
-      (flatten-c tree level (cons newline tail)))))
-
-(def (flatten-c tree level tail) (if
-    (no tree) tail
-    (or (isstr tree) (ischar tree)) (cons-fixline tree tail)
-    (not (ispair tree)) (error (+ "Expected string, found: " (repr tree)))
-    (= (car tree) uindent) (flatten-c (cdr tree) (inc level) tail)
-    (= (car tree) uline) (flatten-line (cdr tree) level tail)
-    (= (car tree) uspaced) (flatten-spaced (cdr tree) level tail)
-    (flatten-c (car tree) level (flatten-c (cdr tree) level tail))))
-
-(def (step8 tree)
-  (def result (flatten-c tree 0 nil))
-  (if (= (car result) ulinetoken) (cdr result) result))
-
-(def (parenthesize x) (list "(" x ")"))
-(def (sepby sep l)
-  (if (no l) nil
-    (no (cdr l)) l
-    (cons (car l) (cons sep (sepby sep (cdr l))))))
-
-(def (printc x) (print (step9 (step8 (emit x)))))
-
-; SETUP
+(include c/flatten)
 
 (def Fragment (new obj))
 (def Constant (new Fragment))
@@ -68,34 +15,63 @@
 
 (defns O)
 
-(def (spacelist l)
-  (if (no l) nil
-    (no (cdr l)) (list (car l))
-    (cons (car l) (cons " " (commalist (cdr l))))))
-
-(def (commalist' l)
-  (if (no l) nil
-    (no (cdr l)) (list (car l))
-    (cons (list (car l) ",") (commalist' (cdr l)))))
-
-(def (commalist l)
-  (cons uspaced (commalist' l)))
-
 (def (each2 l f)
   (if (no l) nil
     (cons (f (l 0) (l 1)) (each2 (cdr (cdr l)) f))))
 
+(def (each3 l f)
+  (if (no l) nil
+    (cons (f (l 0) (l 1) (l 2)) (each3 (cdr (cdr (cdr l))) f))))
+
 (def (paramlist params)
   (commalist (each2 params (fn (name type) (spaced name type)))))
 
+(def (fragsonly x)
+  (if (islist x) (flatten (map1 fragsonly x))
+    (isa Fragment x) (list x)
+    nil))
+
+(def (fragargs x)
+  (fragsonly (map1 [lookup x _] (x paramsf))))
+
 (def (fragment parent params emitexpr env)
   (def result (new parent
+      paramsf params
       new (fn args (match (+ result (ns)) params args))
-      emitf (fn (i) (eval emitexpr (+ env i)))))
+      emitf (fn (i) (eval emitexpr (+ env i)))
+      childf fragargs))
   result)
 
 (def (emit x)
   ((x emitf) x))
+
+(def (printc x)
+  ((defaults print) (cflatten (emit x))))
+
+(def (str-include x)
+  (if (isstr x) (repr x)
+    (issymbol x) (+ "<" (repr x) ".h>")
+    (error (+ "Cannot be used as include: " (repr x)))))
+
+(def (subfrags x)
+  ((x childf) x))
+
+(def (preorder x)
+  (cons x (flatten (map1 preorder (subfrags x)))))
+
+(devau (getdefault ns name default) env
+  (lookup (eval ns env) name (eval default env)))
+
+(def (genheaders xs) (then xs
+    (map1 [preorder _])
+    flatten
+    (map1 [getdefault _ headers nil])
+    (keep some)
+    (map1 str-include)
+    (sort <)
+    dedup
+    (map1 (O IncludeDirective new))
+    ((O IncludeBlock new))))
 
 (devau (deffrag (name . params) emitexpr) o
   (bind O name (fragment Fragment params emitexpr o)))
@@ -107,14 +83,17 @@
 (deffrag (TranslationUnit declns)
   (map1 [list (line) (emit _)] declns))
 
-(deffrag (Identifier name)
+(deffrag (Identifier name object headers)
   name)
 (def Identifier (O Identifier))
 
+(deffrag (Comment lines)
+  (map1 [line "// " _] lines))
+
 (deffrag (FunctionDefinition returntype name params cstmt)
-  (spaced (emit returntype)
+  (line (spaced (emit returntype)
     (list (emit name) (parenthesize (commalist (map1 emit params))))
-    (emit cstmt)))
+    (emit cstmt))))
 
 ; Define multiple fragments with a specific parent object
 (devau (deffrags parent . l) o
@@ -123,16 +102,39 @@
       (bind O name (fragment parent params emitexpr o)))))
 
 (deffrags PPDirective
-  (IncludeDirective header) (line "#include " header))
+  (PragmaOnceDirective) "#pragma once"
+  (DefineDirective name value) (line "#define " (emit name) " " (emit value))
+  (IncludeDirective header) (line "#include " header)
+  (IncludeBlock includes) (map1 emit includes))
 
 (deffrags Expression
-  (AssignmentExpr lhs rhs) (list (emit lhs) " = " (emit rhs))
+  (AssignmentExpr lhs rhs) (spaced (emit lhs) "=" (emit rhs))
   (PtrAccessExpr object member) (list (emit object) "->" (emit member))
   (AccessExpr object member) (list (emit object) "." (emit member))
   (CallExpr function args) (list
     (emit function) "(" (commalist (map1 emit args)) ")")
+  (IndexExpr array index) (list (emit array) "[" (emit index) "]")
+  (PostIncrementExpr expr) (list (emit expr) "++")
+  (PostDecrementExpr expr) (list (emit expr) "--")
+  (PreIncrementExpr expr) (list "++" (emit expr))
+  (PreDecrementExpr expr) (list "--" (emit expr))
+  (SizeofExpr expr) (list "sizeof(" (emit expr) ")")
+  (AddressExpr expr) (list "&" (emit expr))
   (DerefExpr ptr) (list "*" (emit ptr))
-  (SizeofExpr expr) (list "sizeof(" (emit expr) ")"))
+  (NegativeExpr expr) (list "-" (emit expr))
+  (EqualityExpr lhs rhs) (spaced (emit lhs) "==" (emit rhs))
+  (InequalityExpr lhs rhs) (spaced (emit lhs) "!=" (emit rhs))
+  (BitwiseNotExpr expr) (list "~" (emit expr))
+  (BitwiseAndExpr lhs rhs) (spaced (emit lhs) "&" (emit rhs))
+  (BitwiseOrExpr lhs rhs) (spaced (emit lhs) "|" (emit rhs))
+  (BitwiseXorExpr lhs rhs) (spaced (emit lhs) "^" (emit rhs))
+  (LogicalNotExpr expr) (list "!" (emit expr))
+  (LogicalAndExpr lhs rhs) (spaced (emit lhs) "&&" (emit rhs))
+  (LogicalOrExpr lhs rhs) (spaced (emit lhs) "||" (emit rhs))
+  (ConditionalExpr cond then else) (spaced
+    (emit cond) "?" (emit then) ":" (emit else))
+  (IntegerLiteral value) (repr value)
+  (StringLiteral value) (repr value))
 
 (deffrags Statement
   (ExpressionStmt expr) (line (emit expr) ";")
@@ -140,10 +142,11 @@
   (ReturnStmt expr) (line "return " (emit expr) ";"))
 
 (deffrags Specifier
-  (StructSpec members) (list "struct {" (indent (map1 emit members)) "}"))
+  (StructSpec members) (list "struct {" (indent (map1 emit members)) "}")
+  (EnumSpec members) (list "enum {" (indent (map1 emit members)) "}"))
 
 (deffrag (TypedefDecln type name)
-  (line "typedef " (emit type) " " (emit name)))
+  (line "typedef " (emit type) " " (emit name) ";"))
 
 (deffrag (PointerDeclr declr)
   (list "*" (emit declr)))
@@ -160,9 +163,12 @@
 (deffrag (DeclaratorInitializer declarator initializer)
   (list (emit declarator) " = " (emit initializer)))
 
-(def (eval-or-id code env)
-  (if (issymbol code)
-    (lookup env code ((O Identifier new) (repr code)))
+(def (eval-convert code env)
+  (if (issymbol code) (do
+      (def sym (lookup env code nil))
+      (if (isa Fragment sym) sym ((O Identifier new) (repr code) nil nil)))
+    (isint code) ((O IntegerLiteral new) code)
+    (isstr code) ((O StringLiteral new) code)
     (eval code env)))
 
 ; Give short names to trivial constructors
@@ -173,7 +179,7 @@
 ; These trivial constructors convert unknown symbols to Identifiers
 ((vau l o (each2 l (fn (cname oname)
         (bind C cname (vau args env
-            (apply ((lookup O oname) new) (map1 [eval-or-id _ env] args)))))))
+            (apply ((lookup O oname) new) (map1 [eval-convert _ env] args)))))))
   = AssignmentExpr
   . AccessExpr
   -> PtrAccessExpr
@@ -185,34 +191,50 @@
 
 ; Create some non-trivial constructors
 (defin C do (fn stmts ((O CompoundStmt new) (map asstmt stmts))))
-(defin C id (vau (name) _ ((O Identifier new) name)))
+(defin C id (vau (name) _ ((O Identifier new) name nil nil)))
+(defin C comment (fn lines ((O Comment new) lines)))
 
-(defin C include (vau (header) env
-    (def header (eval-or-id header env))
-    ((O IncludeDirective new) (if
-        (isstr header) (repr header)
-        (issymbol header) (+ "<" (repr header) ">")))))
+(defin C define (vau (name value) env
+    ((O DefineDirective new) ((O Identifier new) (str name) nil nil)
+      (eval-convert value env))))
+
+(defin C include (vau headers _
+    ((O IncludeBlock new)
+      (map1 [(O IncludeDirective new) (str-include _)] headers))))
 
 (defin C call (vau (function . args) env
-    ((O CallExpr new) (eval-or-id function env)
-      (map1 [eval-or-id _ env] args))))
+    ((O CallExpr new) (eval-convert function env)
+      (map1 [eval-convert _ env] args))))
 
 (defin C := (vau (name type value) env
-    ((O Declaration new) (eval-or-id type env)
-      (list ((O DeclaratorInitializer new) (eval-or-id name env)
-          (eval-or-id value env))))))
+    ((O Declaration new) (eval-convert type env)
+      (list ((O DeclaratorInitializer new) (eval-convert name env)
+          (eval-convert value env))))))
 
 (defin C struct (vau l env
     ((O StructSpec new) (each2 l (fn (name type)
-          ((O MemberDecln new) (eval-or-id type env) (eval-or-id name env)))))))
+          ((O MemberDecln new) (eval-convert type env) (eval-convert name env)))))))
 
 (defin C defn (vau (name params returntype . body) env
     ((O FunctionDefinition new)
-      (eval-or-id returntype env)
-      (eval-or-id name env)
+      (eval-convert returntype env)
+      (eval-convert name env)
       (each2 params (fn (name type) ((O ParamDecln new)
-            (eval-or-id type env) (eval-or-id name env))))
-      ((O CompoundStmt new) (map1 [asstmt (eval-or-id _ env)] body)))))
+            (eval-convert type env) (eval-convert name env))))
+      ((O CompoundStmt new) (map1 [asstmt (eval-convert _ env)] body)))))
 
-(def cfile (vau declns _
-    ((O TranslationUnit new) (map1 [eval _ C] declns))))
+(def cfile (vau declns env
+    (def env (+ env C))
+    (def declns (map1 [eval _ env] declns))
+    ((O TranslationUnit new) (cons (genheaders declns) declns))))
+
+(def hfile (vau declns env
+    (def env (+ env C))
+    (def declns (map1 [eval _ env] declns))
+    ((O TranslationUnit new) (cons ((O PragmaOnceDirective new))
+        (cons (genheaders declns) declns)))))
+
+(devau (defc name body) _ (eval body C))
+
+(export O C Fragment
+  subfrags preorder genheaders cfile hfile printc)

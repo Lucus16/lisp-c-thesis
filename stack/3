@@ -1,0 +1,10 @@
+Every object has a bitfield allocated to type tag and one to garbage collection
+Every object has a source location when debug is enabled
+Every object implements new and free
+Every object implements getters and setters
+Some objects implement functionality on top of this.
+
+Abstractions are introduced as new objects with one or several methods to emit
+corresponding C code.
+
+Introduce generic vectors and hashtables

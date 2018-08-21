@@ -1,0 +1,18 @@
+DESIRED HIERARCHY
+
+std.l               Standard library
+std/sort.l          sort
+std/str.l           repr, print, lower, upper, join, split, ...
+std/trace.l         convenience fexprs for tracing execution
+c/emit.l            emit C code from Fragment objects
+c/util.l            utilities
+c/objects.l         Fragments for each of the basic parts of syntax
+c/constructors.l    Constructors for each of the objects
+cl/types.l          Type tags for objects and simple values
+cl/gc.l             Garbage collection hooks
+cl/source.l         Source code tracing hooks
+cl/unwind.l         Stack unwinding hooks
+cl/context.l        error handler, dynamic variables, ...
+cl/generic.l        Generics
+cl/vector.l         Generic vectors
+cl/hashtable.l      Generic hashtables

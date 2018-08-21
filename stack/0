@@ -1,0 +1,5 @@
+(ns
+	type :
+	children (ns type int name "a")
+	declares (list "a")
+	indentation 2)

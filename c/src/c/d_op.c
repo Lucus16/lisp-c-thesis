@@ -61,6 +61,7 @@ Value d_plus(Value args, Context ctx) {
 	check_arg_count(args, 1, -1, ctx);
 	switch (meta_type(pair_car(args))) {
 		case TYPE_PAIR:
+		case TYPE_NULL:
 			return plus_pair(args, ctx);
 		case TYPE_STRING:
 		case TYPE_STRING_VIEW:

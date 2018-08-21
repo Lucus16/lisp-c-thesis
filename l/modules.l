@@ -10,13 +10,27 @@
         (bind modules path (evalfile path (+ outer (ns)))))
       (lookup modules path))
 
+    (def (reversed l r)
+      (if (no l) r
+        (reversed (cdr l) (cons (car l) r))))
+
+    (def oldkeys keys)
+    (def (keys x) (reversed (oldkeys x) nil))
+
+    (def (each l f)
+      (if (some l) (do
+          (f (car l))
+          (each (cdr l) f))))
+
+    (def (reload)
+      (def paths (keys modules))
+      (each paths (fn (path) (bind modules path undefined))))
+
     (devau (import name path ?) env
       (bind env name (import-cached (import-path name path))))
 
     (def (copy-bindings source target names)
-      (if (some names) (do
-          (bind target (car names) (lookup source (car names)))
-          (copy-bindings source target (cdr names))))
+      (each names (fn (name) (bind target name (lookup source name))))
       target)
 
     (def (copy-ns source target)
@@ -29,4 +43,4 @@
     (devau (export . names) env
       (copy-bindings env (ns) names))
 
-    (copy-ns (export import include export) outer)))
+    (copy-ns (export reload import include export) outer)))

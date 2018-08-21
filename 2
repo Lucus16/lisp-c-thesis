@@ -1,0 +1,59 @@
+; What if I want automatic includes and declarations and implicit calls?
+
+; I need intermediate representations for:
+; - Auto-placing parentheses in expressions.
+; - Structure checking.
+; - Generating headers.
+
+; Keeping track of all names and scopes is too complicated and thus out of
+; scope. By extension, any type checking is out of scope. Structure checking is
+; fine.
+
+; How do I infer parentheses and how do I check the structure?
+
+; I prefer programmatically building a piece of C code over generating S
+; expression representations.
+
+; If I keep the initial intermediate representation simple, then how am I going
+; to introduce abstractions and checks? I'd like to avoid redefining the entire
+; intermediate representation for every step.
+; Examples:
+; - Separating type from identifier.
+; - Type and structure checking.
+; - Inlining.
+
+; As a first layer I should consider generating something closer to C:
+; Every C syntax rule has a corresponding object that defines how its instances
+; should be converted to C code, among other things.
+
+; Should I represent sums in pairs like in the C11 specification or as a list
+; which is easier to parse? What about a mix of additions and subtractions? I'll
+; go with pairs because it's simpler.
+
+; O contains the objects that define how a fragment of C is formatted.
+; Objects in O define the following fields:
+; - new - constructor for new instances.
+; - emit - called with an instance to convert to C code.
+; - check - namespace mapping fields to functions checking the structure.
+; - parent - object or list of objects that this object can fulfill the role of.
+(defns O)
+
+; C contains the constructors for making instances of the objects in O.
+(defns C)
+
+; STEPS
+; - Call a constructor from C
+; - The constructor converts some of its arguments:
+;   - numbers to Numbers
+;   - strings to Strings
+;   - CompoundStmts wrap Expressions in ExpressionStmts
+;   - Expressions wrap some Expressions in ParenthesizedExprs
+; - The constructor creates an instance of an object in O and sets the relevant
+;   fields to its converted arguments.
+; - The constructor creates a list of child fragments and stores it in children
+; - Call mapc as a generic tree transformation tool on C fragments
+; - Call checkc which uses mapc and the check field to check the structure
+; - Call emitc which uses mapc and:
+; - Build text tree with newline and indent hints
+; - Flatten text tree and insert indentation and newlines
+; - Call + to create a single string object

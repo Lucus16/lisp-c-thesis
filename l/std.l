@@ -1,3 +1,5 @@
+(include std/sort)
+
 (devau (quote x) _ x)
 (def (quoted x) (list quote x))
 (devau [. code] e (eval (list fn (quote (_)) code) e))
@@ -21,15 +23,6 @@
     (if (< n 1) r
       (range' (dec n) (cons (dec n) r))))
   (range' n nil))
-
-(def (len-list x n)
-  (if (no x) n
-    (len-list (cdr x) (+ 1 n))))
-
-(def (len x)
-  (if (islist x) (len-list x 0)
-    (isstr x) (len-str x 0)
-    (error (+ "Cannot take length of: " (repr x)))))
 
 (def (join sep l)
   (if (no l) ""
@@ -66,6 +59,16 @@
       (cons (apply f (cars ls)) (apply result (cdrs ls)))))
   result)
 
+(def (keep f l)
+  (if (no l) nil
+    (f (car l)) (cons (car l) (keep f (cdr l)))
+    (keep f (cdr l))))
+
+(def (drop f l)
+  (if (no l) nil
+    (f (car l)) (drop f (cdr l))
+    (cons (car l) (drop f (cdr l)))))
+
 (def (revmap f l)
   (def (revmap' l r)
     (if (no l) r
@@ -82,30 +85,10 @@
   (if (or (no a) (no b)) nil
     (cons (list (car a) (car b)) (zip2 (cdr a) (cdr b)))))
 
-(def (reverse l)
-  (def (reverse' l r)
-    (if (no l) r
-      (reverse' (cdr l) (cons (car l) r))))
-  (reverse' l nil))
-
-(def (merge-by op l1 l2 l)
-  (if (and (no l1) (no l2)) (reverse l)
-    (no l1) (merge-by op l1 (cdr l2) (cons (car l2) l))
-    (no l2) (merge-by op (cdr l1) l2 (cons (car l1) l))
-    (op (car l2) (car l1)) (merge-by op l1 (cdr l2) (cons (car l2) l))
-    (merge-by op (cdr l1) l2 (cons (car l1) l))))
-
-(def (sort-by' op l l1 l2)
-  (if (no l) (merge-by op (sort-by op l1) (sort-by op l2) nil)
-    (sort-by' op (cdr l) (cons (car l) l2) l1)))
-
-(def (sort-by op l)
-  (if (no l) l
-    (no (cdr l)) l
-    (sort-by' op l nil nil)))
-
-(def (sort l)
-  (sort-by < l))
+(def (flatten l)
+  (if (no l) nil
+    (no (cdr l)) (car l)
+    (flatten (cons (+ (l 0) (l 1)) (cdr (cdr l))))))
 
 (def (dedup l)
   (if (no l) l
@@ -126,6 +109,16 @@
     (no (cdr l)) (error "Expected even number of args, got 1")
     (do (f (l 0) (l 1))
       (each2 (cdr (cdr l)) f))))
+
+(def (append l1 . l2) (+ l1 l2))
+
+(def (thenfn start actions)
+  (if (no actions) start
+    (ispair (car actions))
+    (thenfn (append (car actions) start) (cdr actions))
+    (thenfn (list (car actions) start) (cdr actions))))
+(devau (then start . actions) env
+  (eval (thenfn start actions) env))
 
 (def rawprint print)
 (def oldrepr repr)
@@ -189,6 +182,13 @@
       (if (= noresult (result)) (result (eval x e)))
       (result))))
 
+(def (memoize f)
+  (def undefined (uniq))
+  (def memory (ns))
+  (fn l
+    (def result (lookup memory l undefined))
+    (if (= undefined result) (apply f l) result)))
+
 ; Trace return value
 (devau (tracer . l) e
   (def r (eval l e))
@@ -212,8 +212,8 @@
 (export
   quote quoted brackets
   != list id const eqx swapargs inc un islist
-  range len join revjoin map1 cars cdrs all any map revmap
+  range len join revjoin map1 cars cdrs all any map revmap flatten keep drop
   enumerate zip2 reverse sort dedup > each each2
-  repr print str dyn using
+  then repr print str dyn using
   defns defin defu
   lazy tracer trace-indent)

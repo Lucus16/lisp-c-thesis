@@ -1,0 +1,18 @@
+FOR VERSION 1 - THIS THESIS:
+INTERPRETER:
+	- Every C function has a corresponding L function wrapping it as thinly as
+	  possible. It may also have corresponding specialforms.
+	- We embrace mutability as it is the C way and we want to stick as close to
+	  C as possible. More beautiful and immutable abstractions can later be
+	  built on top.
+C GENERATION LIBRARY:
+	- Every C syntactic form has a single corresponding L object. We start with
+	  translating directly between C code and S-expressions of these objects.
+	  More beautiful abstractions can later be built on top.
+GENERATE INTERPRETER:
+	- Generate the original interpreter nearly exactly, using abstraction in the
+	  generator only where the output has the same structure.
+	- Result should be as readable as initial implementation and serve as
+	  version 1. At this point we can start building on top of our foundation.
+CLEANUP AND EXAMPLE ABSTRACTIONS:
+	- todo

@@ -1,0 +1,27 @@
+(def (f outer)
+  (if (isa (O Expression) outer)
+    (transform outer (fn (inner)
+        (if (and (isa (O Expression) inner)
+            (< (outer precedence) (inner precedence)))
+          ((O ParenthesizedExpr new) (transform inner f))
+          (transform inner f))))
+    (transform outer f)))
+
+(def (f outer)
+  (if (isa CompoundStmt outer)
+    (apply (outer new) (map (fn (inner)
+          (if (isa Expression inner)
+            ((ExpressionStmt new) ((inner map) f))
+            ((inner map) f))) (outer stmts)))
+    ((outer map) f)))
+
+(def (f outer)
+  (if (isa Expression outer)
+    ((ExpressionStmt new) ((outer mapstmts) f))
+    ((outer mapstmts) f)))
+
+; It should be easy to recurse on every child, but possible to recurse on
+; specific children. It should be easy to recurse with the same transformation,
+; but possible to recurse with a different transformation.
+
+; Therefor, root first.

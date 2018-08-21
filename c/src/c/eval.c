@@ -44,6 +44,15 @@ Value pair_apply(Value list, Value args, Context ctx) {
 	return meta_refer(result);
 }
 
+Value str_apply(Value str, Value args, Context ctx) {
+	check_arg_count(args, 1, 1, ctx);
+	int64_t i = int_get(as_int(pair_car(args), ctx));
+	if (i < 0 || i >= (int64_t)str_len(str)) {
+		return ctx_handle(ctx, str_lit("Index out of range."));
+	}
+	return char_new(str_get(str, i));
+}
+
 Value apply(Value f, Value args, Namespace stat, Context ctx) {
 	switch (meta_type(f)) {
 		case TYPE_PRIMITIVE:
@@ -62,6 +71,9 @@ Value apply(Value f, Value args, Namespace stat, Context ctx) {
 		case TYPE_PAIR:
 		case TYPE_NULL:
 			return pair_apply(f, eval_list(args, stat, ctx), ctx);
+		case TYPE_STRING:
+		case TYPE_STRING_VIEW:
+			return str_apply(f, eval_list(args, stat, ctx), ctx);
 		default: {
 			String msg = str_append(str_lit("Attempt to apply "), repr(f));
 			meta_free(f);

@@ -1,0 +1,35 @@
+Use mapc to gather includes
+
+I don't need to compute all namespaces if I see that as only a check. I can just
+allow any name to be used in any context and add checks for that later.
+
+Instead of generating entire files, I could build a bunch of definitions that
+reference each other and know what file they should go in.
+
+Why? Because it gives me better control over what C functions are in scope if I
+define a file per function instead of as a whole.
+
+I can probably model scope with four unique values that point to the different
+scopes and get assigned new frames at the appropriate times. If I then go over
+the code linearly and resolve identifiers as soon as I encounter them, they
+should point at the right object. Labels will need to be resolved by a function
+after it completes building the function. However, this won't allow me to
+generate forward declarations because the definitions will be relying on them.
+
+(cfile pair
+  ; Not using C yet. defc evaluates with using C. Pair is defined as an
+  ; identifier which knows what it refers to. Functions defined here get pair_
+  ; prepended to their name
+  (defc Pair (typedef (struct
+        _meta Meta
+        car Value
+        cdr Value) (ptr Pair)))
+
+  (defc car (defn car (pair Pair) Value
+      (return (-> pair car)))))
+
+Remove data hiding from C code, see if it can be added in Lisp code later.
+
+Want to add basic system support:
+- fork
+- exec
