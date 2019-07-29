@@ -11,6 +11,8 @@ Lisp programs are data
 Example: program that constructs another program
 Lisp macros transform programs
 Example: defun
+
+# Syntactic Abstraction
 Lisp has syntactic abstraction
 Lisp macros are a pain
 
@@ -46,5 +48,9 @@ Using Assembly as a first abstraction layer
 Using C as a first abstraction layer
 Existing implementations have large and complicated dependencies
 Self hosting and its own example
+
+# Related Work
+LLVM
+cmera
 
 # Conclusions

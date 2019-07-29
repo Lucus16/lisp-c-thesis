@@ -153,6 +153,19 @@ language.
 
 # All Primitives Available
 
+The real issue programming languages have is not the lack of abstractions.
+Turing-completeness at compile time gives the maximum amount of abstraction
+possible. What programming languages, including Lisp lack, is sufficient
+primitives for those abstractions. Lisp offers all its highest level primitives,
+in the form of its syntax, but offers very little beyond that. Just the syntax
+is not enough for integrating a new feature with the language properly. C on the
+other hand, offers the lowest level of primitives: Inline assembly or even
+machine code. While you can build anything you want with these, you still need
+to reimplement large parts of a C compiler if you want it to fit well in the
+language. For a truly extensible language, with support for any compile time
+abstraction, it is important to have primitives at all levels of the language
+available.
+
 ```
 (devau (defun name params body) env
   (bind env name (mkfn params env body)))
